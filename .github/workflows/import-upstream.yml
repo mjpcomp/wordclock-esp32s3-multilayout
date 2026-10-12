@@ -1,0 +1,58 @@
+name: Import reviewed upstream snapshot
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run verifies only; apply commits the reviewed source to main'
+        type: choice
+        options: [dry-run, apply]
+        default: dry-run
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: reviewed-upstream-import-main
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout this public project
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Checkout pinned public upstream
+        uses: actions/checkout@v4
+        with:
+          repository: ESPWortuhr/Multilayout-ESP-Wordclock
+          ref: 68662f20dd1d4d3bdfe344cf0c671db81883cee2
+          path: upstream-snapshot
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify or apply the manifest-scoped import
+        env:
+          IMPORT_MODE: ${{ inputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          flags=()
+          if [[ "$IMPORT_MODE" == "apply" ]]; then
+            flags=(--apply --push)
+          fi
+          python tools/import_upstream.py --source upstream-snapshot --root . --manifest UPSTREAM.json --report "$RUNNER_TEMP/import-report.json" "${flags[@]}"
+      - name: Preserve verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: upstream-import-report
+          path: ${{ runner.temp }}/import-report.json
+          retention-days: 7
+          if-no-files-found: warn
