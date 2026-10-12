@@ -21,18 +21,18 @@ jobs:
       contents: write
     steps:
       - name: Checkout this public project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           ref: main
           fetch-depth: 0
       - name: Checkout pinned public upstream
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           repository: ESPWortuhr/Multilayout-ESP-Wordclock
           ref: 68662f20dd1d4d3bdfe344cf0c671db81883cee2
           path: upstream-snapshot
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12'
       - name: Verify or apply the manifest-scoped import
@@ -47,12 +47,13 @@ jobs:
           if [[ "$IMPORT_MODE" == "apply" ]]; then
             flags=(--apply --push)
           fi
-          python tools/import_upstream.py --source upstream-snapshot --root . --manifest UPSTREAM.json --report "$RUNNER_TEMP/import-report.json" "${flags[@]}"
+          python tools/import_upstream.py --source upstream-snapshot --root . --manifest UPSTREAM.json --report "$RUNNER_TEMP/import-report.txt" "${flags[@]}"
       - name: Preserve verification report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: upstream-import-report
-          path: ${{ runner.temp }}/import-report.json
+          path: ${{ runner.temp }}/import-report.txt
+          archive: false
           retention-days: 7
           if-no-files-found: warn
