@@ -6,15 +6,24 @@
 //--------------------------------------------------------------------------
 // PIN Configuration
 //--------------------------------------------------------------------------
-#define LED_PIN 3 // Use direct pin number (ESP8266 currently unsupported)
+#if defined(WORDCLOCK_BOARD_YD_ESP32S3_N16R8) && WORDCLOCK_BOARD_YD_ESP32S3_N16R8
+#define LED_PIN 5 // YD-ESP32-23: GPIO5 drives the first pixel's data input.
+#else
+#define LED_PIN 3 // Preserve the upstream default for other board profiles.
+#endif
 // Use GPIO 0-39, or 255 to disable an individual hardware button.
 #define POWER_BUTTON_PIN 255
 #define MODE_BUTTON_PIN 255
 #define SPEED_BUTTON_PIN 255
 
 // ESP32: use direct pin numbers
+#if defined(WORDCLOCK_BOARD_YD_ESP32S3_N16R8) && WORDCLOCK_BOARD_YD_ESP32S3_N16R8
+#define SDA_PIN_ESP32 8 // DS3231 data on GPIO8 for the target board.
+#define SCL_PIN_ESP32 9 // DS3231 clock on GPIO9 for the target board.
+#else
 #define SDA_PIN_ESP32 255
 #define SCL_PIN_ESP32 255
+#endif
 
 // ESP32-C3: use direct pin numbers
 #define SDA_PIN_ESP32C3 255
@@ -34,7 +43,7 @@
 // #define DEFAULT_LAYOUT Ger10x11
 // 10 rows, 11 LEDs per row + 4 LEDs for minutes
 //
-#define DEFAULT_LAYOUT Ger10x11Alternative
+// #define DEFAULT_LAYOUT Ger10x11Alternative
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with modified
 // layout for extra words in the matrix from the Github user @dbambus
 //
@@ -79,7 +88,7 @@
 // based on design of Github user @Eisbaeeer
 //
 // #define DEFAULT_LAYOUT Ger16x8
-// 16 rows, each 8 LED's per row, based on a 16x16 presoldered WS2812b matrix
+// 8 rows, each 16 LED's per row, based on a 16x16 presoldered WS2812b matrix
 // and a 3D printed case
 //
 // #define DEFAULT_LAYOUT Ger16x18
@@ -104,6 +113,8 @@
 /**********************/
 /*       English      */
 /**********************/
+// Project default: Mirc0. English face; the registry retains other layouts.
+#define DEFAULT_LAYOUT Eng10x11Mirc0
 //
 // #define DEFAULT_LAYOUT  Eng10x11
 // 10 rows, 11 LED's per row + 4 LED's for minutes, with modified
