@@ -35,6 +35,7 @@ ClockType *usedClockType = nullptr;
 
 #include "LedStripInterface.h"
 #include "NeoPixelBusLedStripAdapter.h"
+#include "PrefixStatusRuntime.h"
 
 WiFiClient client;
 
@@ -78,6 +79,7 @@ void ensureTimezone();
 LedStripInterface *activeLedStrip = nullptr;
 
 void deleteActiveLedStrip() {
+    prefixStatusRuntime::resetDisplay();
     delete activeLedStrip;
     activeLedStrip = nullptr;
 }
@@ -114,6 +116,7 @@ void time_is_set(struct timeval *tv) {
 void time_is_set() {
     const time_t utc = time(nullptr);
 #endif
+    if (utc > 100000000) prefixStatusRuntime::noteTimeSet();
     if (externalRTC) {
         RTC.adjust(DateTime(utc));
     }
@@ -746,4 +749,5 @@ void loop() {
     // Clockwork
     //------------------------------------------------
     clockWork.loop(tm);
+    prefixStatusRuntime::service();
 }
