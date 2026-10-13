@@ -4,7 +4,8 @@ i18next.init({
 	autorun: true,
 	debug: isLocalEnvironment(),
 	detection: {
-		order: ["querystring", "cookie", "navigator"],
+		// Explicit choices remain supported; otherwise use the English fallback.
+		order: ["querystring", "cookie"],
 		caches: ["cookie"],
 		cookieMinutes: 172800 // 120 days
 	},
@@ -36,6 +37,7 @@ i18next.init({
 	if (error) {
 		console.error("error while initializing i18next", error);
 	}
+	document.documentElement.lang = i18next.resolvedLanguage;
 	initLanguageDropdown(i18next.resolvedLanguage);
 	applyLanguageToAnnotatedElements();
 	applyLanguageSpecialCases();
