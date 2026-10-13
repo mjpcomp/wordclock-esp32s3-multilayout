@@ -1,5 +1,8 @@
 i18next.use(window.i18nextBrowserLanguageDetector);
 
+// English label for the registered Mirc0. face; other UI languages use fallback.
+TRANSLATION_EN_US.view.front["en-10-11-mirc0"] = "English 10 x 11 (Mirc0.)";
+
 i18next.init({
 	autorun: true,
 	debug: isLocalEnvironment(),

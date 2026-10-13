@@ -3,22 +3,37 @@
 Active repository: mjpcomp/wordclock-esp32s3-multilayout.
 Working branch: feature/optional-status-prefix.
 
-The new YD_ESP32S3_N16R8 environment is the default build environment. It extends the existing ESP32 environment, retains its pinned espressif32 6.9.0 platform, libraries and asset-generation script, and selects the ESP32-S3 board profile with 16 MB quad flash / 8 MB octal PSRAM settings. It does not enable the optional leading pixel.
-
-Build explicitly with:
+YD_ESP32S3_N16R8 is the default build environment. It extends the existing ESP32 environment and retains its espressif32 6.9.0 platform, library constraints and asset-generation script. The profile selects the S3 board with 16 MB quad flash / 8 MB octal PSRAM settings. The prefix pixel stays OFF unless explicitly enabled.
 
 ```text
 pio run -e YD_ESP32S3_N16R8
 ```
 
-Node/npm are still needed for the existing Grunt-generated web assets. A successful INI parse or JavaScript syntax check is NOT a successful PlatformIO/firmware build.
+Node/npm are needed for Grunt-generated web assets. A parsed INI, host test or JavaScript syntax check is not a successful firmware build. Do not flash until the real S3 build and configuration review pass.
 
-Do not flash this intermediate profile yet. Registration/default selection of the Mirc0 English layout, board GPIO defaults and the English layout label remain pending. The WORDCLOCK_BOARD_YD_ESP32S3_N16R8 flag is reserved for that following board-default patch; the current Config.h does not consume it yet. Existing defaults are still LED GPIO3, disabled ESP32 I2C and the German alternative layout. Old EEPROM settings are preserved and may override future defaults; do not change SERNR or erase flash automatically.
+## Current defaults
 
-The intended next defaults are LED GPIO5, RTC SDA GPIO8 / SCL GPIO9, GRB, DS3231, one LED per letter and serpentine rows. Buttons remain disabled. USB/upload/serial behavior must be checked on the actual board/connector; this patch does not force USB CDC flags or an upload port.
+Mirc0. English is registered as Eng10x11Mirc0, ID36, key en-10-11-mirc0, and is the sole DEFAULT_LAYOUT. Registry validation now accepts the previously rejected ID35 without renumbering existing layouts. The target profile flag selects LED GPIO5, DS3231 SDA GPIO8 and SCL GPIO9. GRB, DS3231, Normal build, four minute dots and serpentine rows remain configured. Other profiles retain their old pin defaults.
 
-The browser UI now uses English when no explicit query-string or saved cookie language choice is present. Other languages remain selectable. Browser language alone no longer overrides the English default.
+SERNR remains440; stored valid layout/pin choices can override defaults. Select Mirc0 and the correct pins explicitly in the web settings if upgrading an existing installation. Do not clear EEPROM or change SERNR just to force defaults. The UI uses English absent a saved/explicit language choice; other languages remain selectable.
 
-Review finding: CLOCK_TYPES_LIST has ID35 before its final ID34 entry, but the old implicit ClockTypeDefMax was35, incorrectly rejecting the registered ID35. The forthcoming registry patch must preserve IDs, add Mirc0 as36, and fix max/validation. The imported LED factory already selects NeoEsp32Rmt0Ws2812xMethod for ESP32; verify S3 compilation before replacing it. It currently allocates MAX_LED_COUNT=300 logical pixels in Normal mode; prefix mode adds one to that allocation rather than assuming an exact115-pixel frame.
+The imported factory already selects NeoEsp32Rmt0Ws2812xMethod for ESP32. Verify actual S3/library compilation before replacing it. Normal mode currently allocates300 logical pixels; prefix adds one to the allocation. The physical Mirc0 face uses114 pixels, but do not assume an exact115-pixel transport frame.
 
-Future comments/docs should be English. Retain compatibility-sensitive names/keys and upstream attribution; explain inherited German names in English comments instead of blind renaming.
+## Optional buttons
+
+Button support is already compiled in. POWER_BUTTON_PIN, MODE_BUTTON_PIN and SPEED_BUTTON_PIN remain255 (disabled). Configure verified GPIOs only when adding buttons. Enabled inputs use INPUT_PULLUP: an open switch normally reads HIGH; pressing a normally-open switch to GND reads LOW. Do not connect a button input to5V. Unconnected pull-up inputs are not a meaningful current-draw concern, but assigning unused pins creates unnecessary conflicts/noise exposure.
+
+Avoid LED/RTC pins, flash/PSRAM connections, boot-strapping/USB pins and other on-board uses. The inherited validation still has legacy pin-range limits; do not assume every exposed S3 pin can be selected safely. Review the actual N16R8 pinout before choosing button GPIOs. This update does not assign buttons or change their actions.
+
+## Checks and remaining work
+
+```text
+python tests/test_mirc0_layout.py
+python tests/test_mirc0_defaults.py
+python tests/test_status_prefix.py
+python tests/test_prefix_status_policy.py
+```
+
+Defaults tests use mocked platform headers. Node-based label/config checks run when Node is available. They do not execute the real i18next detector or a browser. Previous layout tests do not execute the full ClockWork renderer. Full firmware compilation, formatting, USB/upload/serial checks and hardware validation remain pending. Do not claim target readiness from host checks alone.
+
+Maintain English comments/docs/diagnostics. Retain compatibility-sensitive identifiers and settings keys with English explanations, and preserve upstream credits/licenses.
