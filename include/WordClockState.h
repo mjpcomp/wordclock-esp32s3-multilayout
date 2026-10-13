@@ -20,6 +20,7 @@
     X(Eng08x08, 3, _en08x08, "en-08-08")                                       \
     X(Eng10x11, 4, _en10x11, "en-10-11")                                       \
     X(Eng11x12, 5, _en11x12, "en-11-12")                                       \
+    X(Eng10x11Mirc0, 36, _mirc0_en10x11, "en-10-11-mirc0")                \
     /* ES (Spanish) */                                                         \
     X(Es08x08Cuarto, 6, _es08x08Cuarto, "es-08-08-cuarto")                     \
     X(Es10x11, 7, _es10x11, "es-10-11")                                        \
@@ -61,38 +62,39 @@
     /* TR (Turkish) */                                                         \
     X(Tr10x11, 34, _tr10x11, "tr-10-11")
 
+// Legacy German identifiers are retained; English meanings are documented below.
 enum ClockWords : uint8_t {
-    ESIST = 0,
-    VOR = 1,
-    NACH = 2,
-    UHR = 3,
+    ESIST = 0, // IT IS
+    VOR = 1, // TO (before the next hour)
+    NACH = 2, // PAST (after the current hour)
+    UHR = 3, // O'CLOCK
 
-    FUENF = 4,
-    ZEHN = 5,
-    VIERTEL = 6,
-    DREIVIERTEL = 22,
-    ZWANZIG = 7,
-    HALB = 8,
-    EINS = 9,
+    FUENF = 4, // FIVE minutes
+    ZEHN = 5, // TEN minutes
+    VIERTEL = 6, // QUARTER
+    DREIVIERTEL = 22, // THREE QUARTERS (regional wording)
+    ZWANZIG = 7, // TWENTY minutes
+    HALB = 8, // HALF
+    EINS = 9, // ONE
 
-    H_EIN = 10,
-    H_ZWEI = 11,
-    H_DREI = 12,
-    H_VIER = 13,
-    H_FUENF = 14,
-    H_SECHS = 15,
-    H_SIEBEN = 16,
-    H_ACHT = 17,
-    H_NEUN = 18,
-    H_ZEHN = 19,
-    H_ELF = 20,
-    H_ZWOELF = 21,
-    H_MITTERNACHT = 23
+    H_EIN = 10, // Hour ONE
+    H_ZWEI = 11, // Hour TWO
+    H_DREI = 12, // Hour THREE
+    H_VIER = 13, // Hour FOUR
+    H_FUENF = 14, // Hour FIVE
+    H_SECHS = 15, // Hour SIX
+    H_SIEBEN = 16, // Hour SEVEN
+    H_ACHT = 17, // Hour EIGHT
+    H_NEUN = 18, // Hour NINE
+    H_ZEHN = 19, // Hour TEN
+    H_ELF = 20, // Hour ELEVEN
+    H_ZWOELF = 21, // Hour TWELVE
+    H_MITTERNACHT = 23 // MIDNIGHT
 };
 
 struct MqttData {
     bool state;
-    char serverAdress[PAYLOAD_LENGTH];
+    char serverAdress[PAYLOAD_LENGTH]; // MQTT broker address; upstream spelling retained.
     char user[PAYLOAD_LENGTH];
     char password[PAYLOAD_LENGTH];
     char clientId[PAYLOAD_LENGTH];
@@ -197,7 +199,7 @@ enum BitmapSymbol : uint8_t {
 };
 
 struct GLOBAL {
-    uint16_t sernr;
+    uint16_t sernr; // EEPROM configuration signature; existing field name retained.
     uint16_t prog;
     uint8_t param1;
     bool progInit;
@@ -215,18 +217,18 @@ struct GLOBAL {
     char hostname[PAYLOAD_LENGTH];
     char scrollingText[PAYLOAD_LENGTH];
 
-    uint8_t h6;
-    uint8_t h8;
-    uint8_t h12;
-    uint8_t h16;
-    uint8_t h18;
-    uint8_t h20;
-    uint8_t h22;
-    uint8_t h24;
+    uint8_t h6; // Brightness from 06:00 to 07:59
+    uint8_t h8; // Brightness from 08:00 to 11:59
+    uint8_t h12; // Brightness from 12:00 to 15:59
+    uint8_t h16; // Brightness from 16:00 to 17:59
+    uint8_t h18; // Brightness from 18:00 to 19:59
+    uint8_t h20; // Brightness from 20:00 to 21:59
+    uint8_t h22; // Brightness from 22:00 to 23:59
+    uint8_t h24; // Brightness from 00:00 to 05:59
 
     uint8_t clockTypeDef;
     BuildTypeDef buildTypeDef;
-    uint8_t Colortype;
+    uint8_t Colortype; // LED channel order; upstream capitalization retained.
     WhiteType wType;
     BitmapSymbol bitmapSymbol;
 
@@ -387,7 +389,14 @@ enum ClockTypeDef : uint8_t {
 #define X(name, id, var, i18n) name = id,
     CLOCK_TYPES_LIST
 #undef X
-        ClockTypeDefMax,
+        ClockTypeDefMax = 37, // One past highest ID; registry order is not numeric.
 };
 
-inline bool isValidClockTypeDef(uint8_t type) { return type < ClockTypeDefMax; }
+inline bool isValidClockTypeDef(uint8_t type) {
+    switch (type) {
+#define X(name, id, var, i18n) case id: return true;
+        CLOCK_TYPES_LIST
+#undef X
+    default: return false;
+    }
+}
