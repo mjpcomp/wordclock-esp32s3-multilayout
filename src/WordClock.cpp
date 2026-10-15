@@ -645,17 +645,23 @@ void setup() {
     //-------------------------------------
 
     // Find BH1750 and initialize if available else fallback to LDR if available
-    byte bh1750Address = i2cBus::findBH1750Address(G.i2cSdaPin, G.i2cSclPin);
+    if (clockTestPolicy::BRIGHTNESS_SENSORS) {
+        byte bh1750Address = i2cBus::findBH1750Address(G.i2cSdaPin, G.i2cSclPin);
 
-    if (bh1750Address != 0) {
-        lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, bh1750Address);
-        Serial.println("BH1750 initialized");
-        bh1750Initialized = true;
-        autoBrightUsingBH1750 = true;
+        if (bh1750Address != 0) {
+            lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, bh1750Address);
+            Serial.println("BH1750 initialized");
+            bh1750Initialized = true;
+            autoBrightUsingBH1750 = true;
+        } else {
+            Serial.println("BH1750 initialisation error, using LDR if available");
+            bh1750Initialized = false;
+            autoBrightUsingBH1750 = false;
+        }
     } else {
-        Serial.println("BH1750 initialisation error, using LDR if available");
         bh1750Initialized = false;
         autoBrightUsingBH1750 = false;
+        Serial.println("Brightness sensors disabled by test policy");
     }
 
     //-------------------------------------
