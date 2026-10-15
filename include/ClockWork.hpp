@@ -265,51 +265,7 @@ ClockType *ClockWork::getPointer(uint8_t type) {
 
 //------------------------------------------------------------------------------
 
-void ClockWork::initLedStrip(uint8_t num) {
-    NeoMultiFeature::setColortype(num);
-    const uint16_t ledCount = MAX_LED_COUNT * getLedsPerLetter(G.buildTypeDef);
-
-    if (activeLedPin != G.hardwarePins.led || activeLedColorType != num ||
-        activeLedCount != ledCount) {
-        deleteActiveLedStrip();
-        activeLedPin = G.hardwarePins.led;
-        activeLedColorType = num;
-        activeLedCount = ledCount;
-    }
-
-    if (activeLedStrip != nullptr) {
-        return;
-    }
-
-#ifdef ESP8266
-    if (num == Grbw) {
-        if (G.hardwarePins.led == LED_PIN) {
-            activeLedStrip =
-                new RgbwLedStripAdapter<Neo800KbpsMethod>(ledCount);
-        } else {
-            activeLedStrip =
-                new RgbwLedStripAdapter<NeoEsp8266BitBangWs2812xMethod>(
-                    ledCount, G.hardwarePins.led);
-        }
-    } else if (G.hardwarePins.led == LED_PIN) {
-        activeLedStrip = new RgbLedStripAdapter<Neo800KbpsMethod>(ledCount);
-    } else {
-        activeLedStrip = new RgbLedStripAdapter<NeoEsp8266BitBangWs2812xMethod>(
-            ledCount, G.hardwarePins.led);
-    }
-#else
-#if defined(ESP32)
-    pinMode(G.hardwarePins.led, OUTPUT);
-#endif
-    if (num == Grbw) {
-        activeLedStrip = new RgbwLedStripAdapter<NeoEsp32Rmt0Ws2812xMethod>(
-            ledCount, G.hardwarePins.led);
-    } else {
-        activeLedStrip = new RgbLedStripAdapter<NeoEsp32Rmt0Ws2812xMethod>(
-            ledCount, G.hardwarePins.led);
-    }
-#endif
-}
+#include "ClockWorkLedFactory.hpp"
 
 //------------------------------------------------------------------------------
 
