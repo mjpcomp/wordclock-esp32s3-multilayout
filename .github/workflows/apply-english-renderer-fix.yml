@@ -19,18 +19,30 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 2
-      - name: Verify checkpoint, apply exact patch, and test
+      - name: Apply reviewed replacements with exact input and output checks
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "6bf3108b8a8796202359f93022f68e3457184043"
+          test "$(git rev-parse HEAD^)" = "53387d417ded9ab7f9bffac16010b97c13147f0e"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/apply-english-renderer-fix.yml"
-          printf '%s  %s\n' \
-            'f5473e0b55828a8272cd4fa1ca8a9ed690456e9f7f5ea8ac16d2c54cf9fc5073' 'include/ClockWork.hpp' \
-            '829490ee806259fec6afad18e3f03b60dc75f2b938605cb7dedb297c2bb76ab9' 'docs/patches/mirc0-english-renderer-fix.patch' | sha256sum --check
-          git apply --check docs/patches/mirc0-english-renderer-fix.patch
-          git apply docs/patches/mirc0-english-renderer-fix.patch
-          printf '%s  %s\n' '2ce69e5ca229f543b1736badd51379fbd15dcd4b56c4b95e8e173467b7e69ea3' 'include/ClockWork.hpp' | sha256sum --check
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          path = Path('include/ClockWork.hpp')
+          source = path.read_bytes()
+          if hashlib.sha256(source).hexdigest() != 'f5473e0b55828a8272cd4fa1ca8a9ed690456e9f7f5ea8ac16d2c54cf9fc5073':
+              raise SystemExit('Unexpected renderer input; refusing to edit')
+          replacements = [('if (G.clockTypeDef == Eng10x11) {', 'if (usedClockType->usedLang() == LanguageAbbreviation::EN) {'), ('if (G.clockTypeDef == Eng10x11 || G.clockTypeDef == It10x11 ||\n                G.clockTypeDef == Es10x11 || G.clockTypeDef == Ro10x11) {', 'if (usedClockType->usedLang() == LanguageAbbreviation::EN ||\n                G.clockTypeDef == It10x11 || G.clockTypeDef == Es10x11 ||\n                G.clockTypeDef == Ro10x11) {'), ('} else if (G.clockTypeDef == Eng10x11 ||\n                       G.clockTypeDef == Eng08x08 ||', '} else if (usedClockType->usedLang() == LanguageAbbreviation::EN ||')]
+          for old, new in replacements:
+              old, new = old.encode(), new.encode()
+              if source.count(old) != 1:
+                  raise SystemExit('Expected exactly one occurrence of each reviewed replacement')
+              source = source.replace(old, new, 1)
+          if hashlib.sha256(source).hexdigest() != '2ce69e5ca229f543b1736badd51379fbd15dcd4b56c4b95e8e173467b7e69ea3':
+              raise SystemExit('Unexpected renderer output; refusing to write')
+          path.write_bytes(source)
+          print('Verified exact renderer input and output; three reviewed replacements applied')
+          PY
           git diff --check
           command -v g++
           python3 tests/test_english_renderer.py
