@@ -1,0 +1,68 @@
+name: Integrate RTC call-site isolation
+
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/integrate-rtc-isolation.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Apply only the reviewed RTC guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d217e929dc06c095b72d75dcc572d42e5107356a"
+          expected=$(printf '%s\n' '.github/workflows/integrate-rtc-isolation.yml' 'tests/test_rtc_isolation.py' | sort)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          path = Path('src/WordClock.cpp')
+          data = path.read_bytes()
+          if hashlib.sha256(data).hexdigest() != 'd07868d7a7008abea34e73d502dfa8c2a0f2e0f076a5bee653634c0734507e79':
+              raise SystemExit('Unexpected RTC source input; refusing to edit')
+          replacements = [('RTC_Type RTC;', '#include "ClockTestPolicy.h"\n#if WORDCLOCK_TEST_MODE == 2\nRTC_DS3231 RTC;\n#elif WORDCLOCK_TEST_MODE == 0\nRTC_Type RTC;\n#endif'), ('    if (externalRTC) {\n        RTC.adjust(DateTime(utc));\n    }', '#if WORDCLOCK_TEST_MODE != 1\n    if (externalRTC) {\n        RTC.adjust(DateTime(utc));\n    }\n#endif'), ('    if (RTC.begin() == true) {\n        Serial.println("External real-time clock found");\n        struct timeval tv;\n        tv.tv_sec = RTC.now().unixtime();\n        settimeofday(&tv, nullptr);\n        network.rtcMode();\n        externalRTC = true;\n    } else {\n        Serial.println("No external real-time clock found");\n        externalRTC = false;\n    }\n', '#if WORDCLOCK_TEST_MODE == 1\n    externalRTC = false;\n    Serial.println("External RTC disabled by test policy");\n#else\n    if (RTC.begin() == true) {\n        Serial.println("External real-time clock found");\n        struct timeval tv{};\n        tv.tv_sec = RTC.now().unixtime();\n        settimeofday(&tv, nullptr);\n        network.rtcMode();\n        externalRTC = true;\n    } else {\n        Serial.println("No external real-time clock found");\n        externalRTC = false;\n    }\n#endif\n')]
+          for old, new in replacements:
+              old, new = old.encode(), new.encode()
+              if data.count(old) != 1:
+                  raise SystemExit('Expected exactly one match for each reviewed RTC edit')
+              data = data.replace(old, new, 1)
+          if hashlib.sha256(data).hexdigest() != 'a6b9489cb6c4b95273a7327c96bdc6435e1c905f29af43eed5fcc9b41fb18bc4':
+              raise SystemExit('Unexpected RTC source output; refusing to write')
+          path.write_bytes(data)
+          print('Verified and applied the reviewed RTC call-site guards')
+          PY
+          git diff --check
+      - name: Run all seven host suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_clock_test_foundation.py
+          python3 tests/test_button_isolation.py
+          python3 tests/test_english_renderer.py
+          python3 tests/test_led_factory.py
+          python3 tests/test_brightness_isolation.py
+          python3 tests/test_i2c_isolation.py
+          python3 tests/test_rtc_isolation.py
+      - name: Commit only the tested RTC source change
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git diff --name-only)" = "src/WordClock.cpp"
+          test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- src/WordClock.cpp
+          git commit -m 'fix: isolate direct RTC access in test modes'
+          git push origin HEAD:refs/heads/feature/optional-status-prefix
