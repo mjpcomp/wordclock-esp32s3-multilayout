@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HardwareButtonController.h"
+#include "ClockTestPolicy.h"
 #include <NeoPixelBus.h>
 
 class ClockWork {
@@ -93,11 +94,17 @@ public:
     void initHardwareButtons();
     uint32_t getLuxValue() const { return lux; }
     float getAdcValue() const {
+        // Zero is a test-mode sentinel, not a sampled voltage.
+        if (!clockTestPolicy::BRIGHTNESS_SENSORS) return 0.0f;
         uint16_t adcRaw = analogRead(A0);
         float voltage = (adcRaw * 3.3f) / 1023.0f;
         return round(voltage * 100.0f) / 100.0f;
     }
-    uint16_t getAdcRawValue() const { return analogRead(A0); }
+    uint16_t getAdcRawValue() const {
+        // Zero is a test-mode sentinel, not a sampled ADC value.
+        if (!clockTestPolicy::BRIGHTNESS_SENSORS) return 0;
+        return analogRead(A0);
+    }
 
     //------------------------------------------------------------------------------
     // Minute Functions
