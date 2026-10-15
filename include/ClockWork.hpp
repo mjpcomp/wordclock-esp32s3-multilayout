@@ -823,7 +823,7 @@ void ClockWork::showMinute(uint8_t min) {
 //------------------------------------------------------------------------------
 
 void ClockWork::checkForValidLanguageVariant() {
-    if (G.clockTypeDef == Eng10x11) {
+    if (usedClockType->usedLang() == LanguageAbbreviation::EN) {
         G.languageVariant[ItIs15] = false;
         G.languageVariant[ItIs20] = true;
         G.languageVariant[ItIs40] = true;
@@ -921,8 +921,9 @@ void ClockWork::setMinute(uint8_t min, uint8_t &offsetHour, bool &fullHour) {
                 usedClockType->show(FrontWord::v_nach);
             }
         } else if (23 <= min && min <= 37) { // half
-            if (G.clockTypeDef == Eng10x11 || G.clockTypeDef == It10x11 ||
-                G.clockTypeDef == Es10x11 || G.clockTypeDef == Ro10x11) {
+            if (usedClockType->usedLang() == LanguageAbbreviation::EN ||
+                G.clockTypeDef == It10x11 || G.clockTypeDef == Es10x11 ||
+                G.clockTypeDef == Ro10x11) {
                 usedClockType->show(FrontWord::halb);
                 usedClockType->show(FrontWord::nach);
             } else {
@@ -1053,8 +1054,7 @@ void ClockWork::setMinute(uint8_t min, uint8_t &offsetHour, bool &fullHour) {
             if (G.clockTypeDef == Tr10x11) {
                 usedClockType->show(FrontWord::halb);
                 fullHour = true;
-            } else if (G.clockTypeDef == Eng10x11 ||
-                       G.clockTypeDef == Eng08x08 ||
+            } else if (usedClockType->usedLang() == LanguageAbbreviation::EN ||
                        G.clockTypeDef == It10x11 || G.clockTypeDef == Ro10x11 ||
                        G.clockTypeDef == Es10x11 ||
                        G.clockTypeDef == Es08x08Cuarto) {
