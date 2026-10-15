@@ -53,7 +53,12 @@ HTTPUpdateServer httpUpdater;
 // https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
 const char TZ_Europe_Berlin[] = "CET-1CEST,M3.5.0,M10.5.0/3";
 
+#include "ClockTestPolicy.h"
+#if WORDCLOCK_TEST_MODE == 2
+RTC_DS3231 RTC;
+#elif WORDCLOCK_TEST_MODE == 0
 RTC_Type RTC;
+#endif
 
 #include "ClockWork.h"
 #include "Frame.h"
@@ -117,9 +122,11 @@ void time_is_set() {
     const time_t utc = time(nullptr);
 #endif
     if (utc > 100000000) prefixStatusRuntime::noteTimeSet();
+#if WORDCLOCK_TEST_MODE != 1
     if (externalRTC) {
         RTC.adjust(DateTime(utc));
     }
+#endif
 
     struct tm tm;
     localtime_r(&utc, &tm);
@@ -535,9 +542,13 @@ void setup() {
     // Start external real-time clock
     //-------------------------------------
 
+#if WORDCLOCK_TEST_MODE == 1
+    externalRTC = false;
+    Serial.println("External RTC disabled by test policy");
+#else
     if (RTC.begin() == true) {
         Serial.println("External real-time clock found");
-        struct timeval tv;
+        struct timeval tv{};
         tv.tv_sec = RTC.now().unixtime();
         settimeofday(&tv, nullptr);
         network.rtcMode();
@@ -546,6 +557,7 @@ void setup() {
         Serial.println("No external real-time clock found");
         externalRTC = false;
     }
+#endif
 #ifdef ESP8266
     settimeofday_cb(time_is_set);
 #elif defined(ESP32)
