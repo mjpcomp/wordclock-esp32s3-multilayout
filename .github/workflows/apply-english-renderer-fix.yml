@@ -1,0 +1,47 @@
+name: Apply reviewed English renderer fix
+
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/apply-english-renderer-fix.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-reviewed-fix:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the triggering commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Verify checkpoint, apply exact patch, and test
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "6bf3108b8a8796202359f93022f68e3457184043"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = ".github/workflows/apply-english-renderer-fix.yml"
+          printf '%s  %s\n' \
+            'f5473e0b55828a8272cd4fa1ca8a9ed690456e9f7f5ea8ac16d2c54cf9fc5073' 'include/ClockWork.hpp' \
+            '829490ee806259fec6afad18e3f03b60dc75f2b938605cb7dedb297c2bb76ab9' 'docs/patches/mirc0-english-renderer-fix.patch' | sha256sum --check
+          git apply --check docs/patches/mirc0-english-renderer-fix.patch
+          git apply docs/patches/mirc0-english-renderer-fix.patch
+          printf '%s  %s\n' '2ce69e5ca229f543b1736badd51379fbd15dcd4b56c4b95e8e173467b7e69ea3' 'include/ClockWork.hpp' | sha256sum --check
+          git diff --check
+          command -v g++
+          python3 tests/test_english_renderer.py
+          test "$(git diff --name-only)" = "include/ClockWork.hpp"
+      - name: Commit only the tested renderer change
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- include/ClockWork.hpp
+          git commit -m 'fix: use English language rules for Mirc0 and English layouts'
+          git push origin HEAD:refs/heads/feature/optional-status-prefix
