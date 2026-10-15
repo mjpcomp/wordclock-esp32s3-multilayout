@@ -1,0 +1,74 @@
+name: Integrate brightness isolation
+
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/integrate-brightness-isolation.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Apply only the reviewed brightness guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "0b945e7b9cad45c4a0cc8616df5a37746db8afdd"
+          expected=$(printf '%s\n' '.github/workflows/integrate-brightness-isolation.yml' 'tests/test_brightness_isolation.py' | sort)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          spec = {'include/ClockWork.h': {'before': '580163190be413714fd562ed9cf463828deb1209219e7cdae2c62981cba0225a', 'after': '613ffd3c15f23ae739819a9ac0775bee9032e49d96c9b030c2ef030db4a7e30c', 'replacements': [('#include "HardwareButtonController.h"', '#include "HardwareButtonController.h"\n#include "ClockTestPolicy.h"'), ('float getAdcValue() const {', 'float getAdcValue() const {\n        // Zero is a test-mode sentinel, not a sampled voltage.\n        if (!clockTestPolicy::BRIGHTNESS_SENSORS) return 0.0f;'), ('uint16_t getAdcRawValue() const { return analogRead(A0); }', 'uint16_t getAdcRawValue() const {\n        // Zero is a test-mode sentinel, not a sampled ADC value.\n        if (!clockTestPolicy::BRIGHTNESS_SENSORS) return 0;\n        return analogRead(A0);\n    }')]}, 'include/ClockWork.hpp': {'before': 'e1d2f0f785469036125d577b4244df7a57ffdb2e1141d15bfe91a102c7e4acff', 'after': 'd7d2a10ee859fab41b7f2f3f833930fbed568769647a299f7d8c8ac7f2a2a1fa', 'replacements': [('void ClockWork::loopAutoBrightLogic() {', 'void ClockWork::loopAutoBrightLogic() {\n    if (!clockTestPolicy::BRIGHTNESS_SENSORS) return;')]}, 'src/WordClock.cpp': {'before': '58d12979f97e12db90a87a2b50da5b6300f042b8f91c9478e4d0960f7c8bebf7', 'after': 'd07868d7a7008abea34e73d502dfa8c2a0f2e0f076a5bee653634c0734507e79', 'replacements': [('    // Find BH1750 and initialize if available else fallback to LDR if available\n    byte bh1750Address = i2cBus::findBH1750Address(G.i2cSdaPin, G.i2cSclPin);\n\n    if (bh1750Address != 0) {\n        lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, bh1750Address);\n        Serial.println("BH1750 initialized");\n        bh1750Initialized = true;\n        autoBrightUsingBH1750 = true;\n    } else {\n        Serial.println("BH1750 initialisation error, using LDR if available");\n        bh1750Initialized = false;\n        autoBrightUsingBH1750 = false;\n    }\n', '    // Find BH1750 and initialize if available else fallback to LDR if available\n    if (clockTestPolicy::BRIGHTNESS_SENSORS) {\n        byte bh1750Address = i2cBus::findBH1750Address(G.i2cSdaPin, G.i2cSclPin);\n\n        if (bh1750Address != 0) {\n            lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, bh1750Address);\n            Serial.println("BH1750 initialized");\n            bh1750Initialized = true;\n            autoBrightUsingBH1750 = true;\n        } else {\n            Serial.println("BH1750 initialisation error, using LDR if available");\n            bh1750Initialized = false;\n            autoBrightUsingBH1750 = false;\n        }\n    } else {\n        bh1750Initialized = false;\n        autoBrightUsingBH1750 = false;\n        Serial.println("Brightness sensors disabled by test policy");\n    }\n')]}}
+          outputs = {}
+          for filename, item in spec.items():
+              data = Path(filename).read_bytes()
+              if hashlib.sha256(data).hexdigest() != item['before']:
+                  raise SystemExit('Unexpected source input: ' + filename)
+              for old, new in item['replacements']:
+                  old, new = old.encode(), new.encode()
+                  if data.count(old) != 1:
+                      raise SystemExit('Expected exactly one replacement match: ' + filename)
+                  data = data.replace(old, new, 1)
+              if hashlib.sha256(data).hexdigest() != item['after']:
+                  raise SystemExit('Unexpected source output: ' + filename)
+              outputs[filename] = data
+          for filename, data in outputs.items():
+              Path(filename).write_bytes(data)
+          print('Verified and applied the reviewed ADC/brightness/startup guards')
+          PY
+          git diff --check
+      - name: Run all five host suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_clock_test_foundation.py
+          python3 tests/test_button_isolation.py
+          python3 tests/test_english_renderer.py
+          python3 tests/test_led_factory.py
+          python3 tests/test_brightness_isolation.py
+      - name: Publish reviewed source-only commits after tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(printf '%s\n' 'include/ClockWork.h' 'include/ClockWork.hpp' 'src/WordClock.cpp' | sort)
+          test "$(git diff --name-only | sort)" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- include/ClockWork.h
+          git commit -m 'fix: disable ADC getters in immutable test modes' -- include/ClockWork.h
+          git add -- include/ClockWork.hpp
+          git commit -m 'fix: skip brightness sampling in immutable test modes' -- include/ClockWork.hpp
+          git add -- src/WordClock.cpp
+          git commit -m 'fix: skip startup light sensor probing in test modes' -- src/WordClock.cpp
+          test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$GITHUB_SHA"
+          git push origin HEAD:refs/heads/feature/optional-status-prefix
