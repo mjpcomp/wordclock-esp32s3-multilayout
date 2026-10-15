@@ -1,4 +1,5 @@
 #include "HardwareButtonController.h"
+#include "ClockTestPolicy.h"
 
 static constexpr uint32_t HARDWARE_BUTTON_DEBOUNCE_MS = 40;
 static constexpr uint32_t HARDWARE_BUTTON_LONG_PRESS_MS = 2000;
@@ -40,6 +41,9 @@ HardwareButtonController::actionFor(ButtonId button,
 //------------------------------------------------------------------------------
 
 void HardwareButtonController::begin(const HardwarePins &hardwarePins) {
+    if (!clockTestPolicy::BUTTON_INPUTS) {
+        return;
+    }
     pins = hardwarePins;
 
     for (uint8_t i = 0; i < ButtonCount; i++) {
@@ -59,6 +63,9 @@ void HardwareButtonController::begin(const HardwarePins &hardwarePins) {
 //------------------------------------------------------------------------------
 
 HardwareButtonAction HardwareButtonController::loop() {
+    if (!clockTestPolicy::BUTTON_INPUTS) {
+        return HardwareButtonAction::None;
+    }
     const uint32_t now = millis();
 
     for (uint8_t i = 0; i < ButtonCount; i++) {
