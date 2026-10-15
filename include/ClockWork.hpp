@@ -40,6 +40,7 @@ ledGain = gain for LEDs: 0.0-100.0% (n % of the configured bri:effectBri)
 */
 
 void ClockWork::loopAutoBrightLogic() {
+    if (!clockTestPolicy::BRIGHTNESS_SENSORS) return;
     if (G.autoBrightEnabled != 1)
         return;
 
