@@ -2,6 +2,12 @@
 
 #include "Config.h"         // SDA_PIN_* / SCL_PIN_*
 #include "WordClockState.h" // HARDWARE_PIN_DISABLED
+#include "ClockTestPolicy.h"
+
+#if WORDCLOCK_TEST_MODE != 0 && (!defined(ESP32) || !defined(CONFIG_IDF_TARGET_ESP32S3))
+#error "I2C test modes require the ESP32-S3 target"
+#endif
+
 #include <Wire.h>
 
 namespace i2cBus {
@@ -19,6 +25,12 @@ bool pinIsInRange(uint8_t pin) { return pin <= MAX_I2C_PIN; }
 } // namespace
 
 Pins defaultPins() {
+    if (!clockTestPolicy::RTC) {
+        return {HARDWARE_PIN_DISABLED, HARDWARE_PIN_DISABLED};
+    }
+    if (clockTestPolicy::IS_TEST) {
+        return {clockTestPolicy::RTC_SDA, clockTestPolicy::RTC_SCL};
+    }
 #if defined(ESP8266)
     return {SDA_PIN_ESP8266, SCL_PIN_ESP8266};
 #elif defined(ESP32)
@@ -54,6 +66,14 @@ bool pinsAreValid(uint8_t sdaPin, uint8_t sclPin) {
 }
 
 void begin(uint8_t sdaPin, uint8_t sclPin) {
+    // Enforce capabilities before even Wire.end() can touch the bus.
+    if (!clockTestPolicy::RTC) {
+        return;
+    }
+    if (clockTestPolicy::IS_TEST) {
+        sdaPin = clockTestPolicy::RTC_SDA;
+        sclPin = clockTestPolicy::RTC_SCL;
+    }
 #ifndef ESP8266
     Wire.end();
 #endif
@@ -71,6 +91,10 @@ void begin(uint8_t sdaPin, uint8_t sclPin) {
 ScanResult scan(uint8_t sdaPin, uint8_t sclPin, uint8_t restoreSdaPin,
                 uint8_t restoreSclPin) {
     ScanResult result;
+    if (!clockTestPolicy::RTC) {
+        result.status = ScanStatus::Disabled;
+        return result;
+    }
 
     if (!pinsAreValid(sdaPin, sclPin)) {
         result.status = ScanStatus::Invalid;
@@ -82,11 +106,19 @@ ScanResult scan(uint8_t sdaPin, uint8_t sclPin, uint8_t restoreSdaPin,
         return result;
     }
 
+    if (!clockTestPolicy::permitsI2cPins(sdaPin, sclPin)) {
+        result.status = ScanStatus::Invalid;
+        return result;
+    }
+
     result.status = ScanStatus::Ok;
     begin(sdaPin, sclPin);
     delay(10);
 
     for (uint8_t address = 1; address < 127; address++) {
+        if (!clockTestPolicy::permitsI2cAddress(address)) {
+            continue;
+        }
         Wire.beginTransmission(address);
         if (Wire.endTransmission() == 0) {
             result.addresses[result.addressCount++] = address;
@@ -101,6 +133,9 @@ ScanResult scan(uint8_t sdaPin, uint8_t sclPin, uint8_t restoreSdaPin,
 }
 
 byte findBH1750Address(uint8_t sdaPin, uint8_t sclPin) {
+    if (!clockTestPolicy::BRIGHTNESS_SENSORS) {
+        return 0;
+    }
     if (!pinsAreEnabled(sdaPin, sclPin)) {
         return 0;
     }
