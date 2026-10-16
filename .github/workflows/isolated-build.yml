@@ -1,0 +1,69 @@
+name: Isolated ESP32-S3 builds (no upload)
+
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+
+permissions:
+  contents: read
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Run seven host suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation; do
+            python3 "tests/test_${suite}.py"
+          done
+  firmware:
+    needs: host-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+    env:
+      BUILD_ENV: ${{ matrix.environment }}
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Install pinned build tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "build-evidence/$BUILD_ENV"
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18 2>&1 | tee "build-evidence/$BUILD_ENV/tool-install.log"
+      - name: Compile complete application and real web assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('ClockType.gen.h', 'version.gen.h', 'WebPageContent.gen.inc'):
+              (Path('include') / name).unlink(missing_ok=True)
+          PY
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
+          .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
+      - name: Preserve build evidence, including failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: build-evidence-${{ matrix.environment }}-${{ github.sha }}
+          path: build-evidence/${{ matrix.environment }}/
+          if-no-files-found: warn
+          retention-days: 14
