@@ -56,8 +56,18 @@ jobs:
           for name in ('ClockType.gen.h', 'version.gen.h', 'WebPageContent.gen.inc'):
               (Path('include') / name).unlink(missing_ok=True)
           PY
-          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+          # Generate metadata before the final build; no later build target may invalidate its binaries.
           .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
+          test -s compile_commands.json
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -v 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+          {
+            printf 'Working directory: '; pwd
+            printf 'Build environment: %s\n' "$BUILD_ENV"
+            find ".pio/build/$BUILD_ENV" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+          } | tee "build-evidence/$BUILD_ENV/artifact-inventory.txt"
+          test -s ".pio/build/$BUILD_ENV/firmware.bin"
+          test -s ".pio/build/$BUILD_ENV/firmware.elf"
+          test -s compile_commands.json
           .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
       - name: Preserve build evidence, including failure logs
         if: always()
