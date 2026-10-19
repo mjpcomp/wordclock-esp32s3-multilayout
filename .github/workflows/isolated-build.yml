@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Run eight host suites
+      - name: Run ten host suites
         shell: bash
         run: |
           set -euo pipefail
-          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence; do
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model; do
             python3 "tests/test_${suite}.py"
           done
   firmware:
