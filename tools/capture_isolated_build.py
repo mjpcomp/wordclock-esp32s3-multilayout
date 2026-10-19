@@ -31,10 +31,19 @@ def record(path):
 
 def collect_command(dest,name,args):
     run=subprocess.run(args,capture_output=True,text=True)
-    (dest/name).write_text(run.stdout)
-    (dest/(name+'.stderr.txt')).write_text(run.stderr)
-    run.check_returncode()
+    (dest/name).write_text(run.stdout,encoding='utf-8')
+    error_file=dest/(name+'.stderr.txt')
+    error_file.write_text(run.stderr,encoding='utf-8')
+    if run.returncode:
+        detail=run.stderr.strip() or run.stdout.strip() or '(no diagnostic output)'
+        raise SystemExit(f'Report command failed ({run.returncode}): {shlex.join(args)}\n{detail}\nSaved output: {dest/name}; stderr: {error_file}')
     return run.stdout
+
+def collect_json(dest,name,args):
+    text=collect_command(dest,name,args)
+    try:return json.loads(text)
+    except json.JSONDecodeError as error:
+        raise SystemExit(f'Invalid JSON in {dest/name}: {error}') from error
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('environment',choices=MODES)
@@ -42,7 +51,7 @@ def main():
     sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if os.environ.get('GITHUB_SHA',sha)!=sha:raise SystemExit('Checkout SHA mismatch')
     entries=json.loads(Path('compile_commands.json').read_text())
-    main_entries=[e for e in entries if e['file'].replace('\\','/').endswith('src/WordClock.cpp')]
+    main_entries=[e for e in entries if e['file'].replace(chr(92),'/').endswith('src/WordClock.cpp')]
     if not main_entries:raise SystemExit('No WordClock compile command')
     expected={'WORDCLOCK_TEST_MODE':MODES[env],'WORDCLOCK_EXPECT_TEST_MODE':MODES[env],
               'WORDCLOCK_BOARD_YD_ESP32S3_N16R8':'1','BOARD_HAS_PSRAM':'1',
@@ -61,8 +70,12 @@ def main():
         shutil.copyfile(source,dest/name);artifacts.append(record(dest/name))
     shutil.copyfile('compile_commands.json',dest/'compile_commands.json')
     pio=[sys.executable,'-m','platformio']
-    packages=json.loads(collect_command(dest,'resolved-packages.json',pio+['pkg','list','-e',env,'--json-output']))
-    config=json.loads(collect_command(dest,'project-config.json',pio+['project','config','--json-output']))
+    package_args=pio+['pkg','list','-e',env]
+    package_text=collect_command(dest,'resolved-packages.txt',package_args)
+    if not package_text.strip():raise SystemExit('Empty installed-package report')
+    packages={'format':'text','command':package_args,'report_file':'resolved-packages.txt',
+              'sha256':record(dest/'resolved-packages.txt')['sha256'],'text':package_text}
+    config=collect_json(dest,'project-config.json',pio+['project','config','--json-output'])
     versions={}
     for name,args in {'platformio':pio+['--version'],'node':['node','--version'],'npm':['npm','--version']}.items():
         versions[name]=collect_command(dest,name+'-version.txt',args).strip()

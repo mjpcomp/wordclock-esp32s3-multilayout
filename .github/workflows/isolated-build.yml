@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Run seven host suites
+      - name: Run eight host suites
         shell: bash
         run: |
           set -euo pipefail
-          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation; do
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence; do
             python3 "tests/test_${suite}.py"
           done
   firmware:
@@ -40,13 +40,17 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Install pinned build tool
+      - name: Install pinned build tool and record CLI support
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p "build-evidence/$BUILD_ENV"
           python3 -m venv .ci-venv
           .ci-venv/bin/python -m pip install platformio==6.1.18 2>&1 | tee "build-evidence/$BUILD_ENV/tool-install.log"
+          .ci-venv/bin/python -m platformio --version | tee "build-evidence/$BUILD_ENV/core-version.txt"
+          .ci-venv/bin/python -m platformio pkg list --help > "build-evidence/$BUILD_ENV/pkg-list-help.txt"
+          .ci-venv/bin/python -m platformio project config --help > "build-evidence/$BUILD_ENV/project-config-help.txt"
+          grep -q -- '--json-output' "build-evidence/$BUILD_ENV/project-config-help.txt"
       - name: Compile complete application and real web assets
         shell: bash
         run: |
@@ -56,10 +60,16 @@ jobs:
           for name in ('ClockType.gen.h', 'version.gen.h', 'WebPageContent.gen.inc'):
               (Path('include') / name).unlink(missing_ok=True)
           PY
-          # Generate metadata before the final build; no later build target may invalidate its binaries.
           .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
           test -s compile_commands.json
-          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -v 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+          # Keep the full verbose output as evidence without flooding the console.
+          if .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -v > "build-evidence/$BUILD_ENV/build.log" 2>&1; then
+            tail -n 25 "build-evidence/$BUILD_ENV/build.log"
+          else
+            build_status=$?
+            tail -n 120 "build-evidence/$BUILD_ENV/build.log"
+            exit "$build_status"
+          fi
           {
             printf 'Working directory: '; pwd
             printf 'Build environment: %s\n' "$BUILD_ENV"
