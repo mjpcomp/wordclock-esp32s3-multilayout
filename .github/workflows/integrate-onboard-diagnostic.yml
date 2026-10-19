@@ -1,0 +1,75 @@
+name: Integrate onboard diagnostic application
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/integrate-onboard-diagnostic.yml]
+permissions:
+  contents: write
+jobs:
+  integrate:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Guard and apply exact integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "feea7108642a0ed1d3797ccff174b69151ffd8f5"
+          expected=$(printf '%s\n' '.github/workflows/integrate-onboard-diagnostic.yml' 'docs/gpio48-application-integration.md' 'include/OnboardDiagnosticApplication.hpp' 'tools/integrate_onboard_diagnostic.py' | sort)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
+          python3 tools/integrate_onboard_diagnostic.py --self-test
+          python3 tools/integrate_onboard_diagnostic.py
+          git diff --check
+      - name: Run all twelve host suites against repository sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+      - name: Compile both isolated applications and capture candidate evidence
+        shell: bash
+        env:
+          PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          for BUILD_ENV in YD_ESP32S3_N16R8_BOARD_ONLY YD_ESP32S3_N16R8_RTC_ONLY; do
+            export BUILD_ENV
+            mkdir -p "build-evidence/$BUILD_ENV"
+            .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
+            .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+            .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
+          done
+      - name: Commit only tested application and CI edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(printf '%s\n' '.github/workflows/isolated-build.yml' 'src/WordClock.cpp' | sort)
+          test "$(git diff --name-only | sort)" = "$expected"
+          test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$GITHUB_SHA"
+          mkdir -p build-evidence
+          git diff --binary > build-evidence/tested-integration.patch
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- src/WordClock.cpp .github/workflows/isolated-build.yml
+          git commit -m 'feat: connect isolated GPIO48 diagnostics to application events'
+          git rev-parse HEAD > build-evidence/integration-commit.txt
+          git push origin HEAD:refs/heads/feature/optional-status-prefix
+      - name: Preserve candidate evidence and failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: onboard-integration-evidence-${{ github.sha }}
+          path: build-evidence/
+          if-no-files-found: warn
+          retention-days: 14
