@@ -3,6 +3,7 @@
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 CPP = r"""#include "OnboardDiagnosticRuntime.h"
@@ -68,4 +69,5 @@ def main():
    str(work/'test.cpp'),'-o',str(work/'test')],check=True)
   subprocess.run([str(work/'test')],check=True)
  print('PASS: source truthfulness, callback deferral, original event timestamps, frame deltas/reset, masking, expiry, wrap and sink forwarding.')
+ subprocess.run([sys.executable,str(ROOT/'tests/test_onboard_time_report.py')],check=True)
 if __name__=='__main__': main()
