@@ -18,15 +18,16 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Guard and apply exact integration
+      - name: Guard and apply exact application integration
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "60debd544b52a517f3f8ce2f9580e440c7fb0fa8"
-          expected=$(printf '%s\n' '.github/workflows/integrate-onboard-diagnostic.yml' 'docs/gpio48-rtc-test-repair.md' 'tests/test_rtc_isolation.py' | sort)
+          test "$(git rev-parse HEAD^)" = "1c75549a2f5f5918dc96534e5b4af35bb41e9018"
+          expected=$(printf '%s\n' '.github/workflows/integrate-onboard-diagnostic.yml' '.github/workflows/isolated-build.yml' 'docs/gpio48-workflow-permission-repair.md' 'tools/integrate_onboard_diagnostic.py' | sort)
           test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
           python3 tools/integrate_onboard_diagnostic.py --self-test
           python3 tools/integrate_onboard_diagnostic.py
+          test "$(git diff --name-only)" = "src/WordClock.cpp"
           git diff --check
       - name: Run all twelve host suites against repository sources
         shell: bash
@@ -50,19 +51,19 @@ jobs:
             .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
             .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
           done
-      - name: Commit only tested application and CI edits
+      - name: Commit only tested application source
         shell: bash
         run: |
           set -euo pipefail
-          expected=$(printf '%s\n' '.github/workflows/isolated-build.yml' 'src/WordClock.cpp' | sort)
-          test "$(git diff --name-only | sort)" = "$expected"
+          test "$(git diff --name-only)" = "src/WordClock.cpp"
           test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$GITHUB_SHA"
           mkdir -p build-evidence
           git diff --binary > build-evidence/tested-integration.patch
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- src/WordClock.cpp .github/workflows/isolated-build.yml
+          git add -- src/WordClock.cpp
           git commit -m 'feat: connect isolated GPIO48 diagnostics to application events'
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = "src/WordClock.cpp"
           git rev-parse HEAD > build-evidence/integration-commit.txt
           git push origin HEAD:refs/heads/feature/optional-status-prefix
       - name: Preserve candidate evidence and failure logs

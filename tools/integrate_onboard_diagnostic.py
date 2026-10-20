@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply only reviewed onboard application/CI anchors; refuse partial repeats."""
+"""Apply reviewed application anchors only; never write workflow files."""
 from pathlib import Path
 import sys
 
@@ -17,10 +17,7 @@ MAIN = [
  ('    prefixStatusRuntime::service();\n',
   '    prefixStatusRuntime::service();\n    onboardDiagnosticApplication::service();\n'),
 ]
-SUITES = 'clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model'
-CI = [('Run ten host suites','Run twelve host suites'),
-      ('for suite in '+SUITES+'; do',
-       'for suite in '+SUITES+' onboard_diagnostic_sink onboard_diagnostic_runtime; do')]
+SUITES = 'clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime'
 
 def transform(text, edits):
  for old,new in edits:
@@ -30,21 +27,22 @@ def transform(text, edits):
  return text
 
 def self_test():
- for edits in (MAIN,CI):
-  before='\n'.join(old for old,_ in edits)
-  after=transform(before,edits)
-  for _,new in edits: assert new in after
-  for broken in (after,before+edits[0][0],before.replace(edits[0][0],'',1)):
-   try: transform(broken,edits)
-   except ValueError: pass
-   else: raise AssertionError('Unsafe input accepted')
- print('PASS: application/CI anchors, duplicate/missing anchor refusal and repeat refusal; fixture test only.')
+ before='\n'.join(old for old,_ in MAIN)
+ after=transform(before,MAIN)
+ for _,new in MAIN: assert new in after
+ for broken in (after,before+MAIN[0][0],before.replace(MAIN[0][0],'',1)):
+  try: transform(broken,MAIN)
+  except ValueError: pass
+  else: raise AssertionError('Unsafe input accepted')
+ print('PASS: application anchors and repeat/missing/duplicate refusal; fixture test only.')
 
 def main():
  if '--self-test' in sys.argv: self_test(); return
- paths=[Path('src/WordClock.cpp'),Path('.github/workflows/isolated-build.yml')]
- # Compute both outputs before modifying either file.
- outputs=[transform(p.read_text(),edits) for p,edits in zip(paths,(MAIN,CI))]
- for p,text in zip(paths,outputs): p.write_text(text)
- print('Applied reviewed onboard hooks and twelve-suite CI registration.')
+ ci=Path('.github/workflows/isolated-build.yml').read_text()
+ if ci.count('for suite in '+SUITES+'; do') != 1:
+  raise ValueError('Twelve-suite CI must already be committed; refusing application edit')
+ path=Path('src/WordClock.cpp')
+ output=transform(path.read_text(),MAIN)
+ path.write_text(output)
+ print('Applied reviewed onboard application hooks; workflow files were not written.')
 if __name__=='__main__': main()
