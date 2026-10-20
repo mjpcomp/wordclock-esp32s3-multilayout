@@ -1,0 +1,69 @@
+name: Brightness schedule foundation tests
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - include/BrightnessSchedule.h
+      - include/BrightnessScheduleStorage.h
+      - tests/brightness_schedule_test.cpp
+      - tests/brightness_schedule_storage_test.cpp
+      - tests/test_brightness_schedule.py
+      - tests/test_brightness_schedule_storage.py
+      - .github/workflows/brightness-schedule-tests.yml
+permissions:
+  contents: read
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Run evaluator and storage fault suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule.py
+          python3 tests/test_brightness_schedule_storage.py
+  native-smoke:
+    needs: host-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+    env:
+      BUILD_ENV: ${{ matrix.environment }}
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Add temporary compile-only native API check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('src/BrightnessScheduleStorageCompileCheck.cpp').write_text(
+              '#include "BrightnessScheduleStorage.h"\n'
+              'static_assert(brightnessScheduleStorage::MAX_BYTES == 112, "record bounds");\n'
+              'void brightnessScheduleStorageCompileCheck() {\n'
+              '    brightnessScheduleStorage::NvsBackend backend;\n'
+              '    brightnessScheduleStorage::Store store(backend);\n'
+              '    (void)store;\n'
+              '}\n')
+          PY
+      - name: Compile against the actual ESP32 framework (no upload)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
