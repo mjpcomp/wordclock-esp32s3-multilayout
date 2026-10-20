@@ -11,6 +11,14 @@ const script=fs.readFileSync(path.join(root,"webpage/script.js"),"utf8");
 const ui=fs.readFileSync(path.join(root,"webpage/i18n.js"),"utf8");
 const english=fs.readFileSync(path.join(root,"webpage/language/en.js"),"utf8");
 const german=fs.readFileSync(path.join(root,"webpage/language/de.js"),"utf8");
+const css=fs.readFileSync(path.join(root,"webpage/style.css"),"utf8");
+const languageRule=css.match(/\.menu \.language\s*\{([^}]+)\}/)[1];
+const optionRule=css.match(/\.menu \.language option\s*\{([^}]+)\}/)[1];
+assert(languageRule.includes("color: var(--app-text);"));
+assert(languageRule.includes("background: var(--app-surface-solid);"));
+assert(languageRule.includes("color-scheme: light;"));
+assert(optionRule.includes("color: var(--app-text);"));
+assert(optionRule.includes("background-color: var(--app-surface-solid);"));
 for(const text of [script,ui,english])new vm.Script(text);
 assert(!script.includes('"Verbinden"')&&!script.includes('"Verbinden ..."'));
 assert(!script.includes('WLAN Netzwerke werden gesucht'));
@@ -34,7 +42,7 @@ const c={console,window:{i18nextBrowserLanguageDetector:{}},isLocalEnvironment:(
 c.i18next={isInitialized:true,use(){},init(o){options=o;},on(n,fn){events[n]=fn;},
  t(key,o={}){let v=options.resources[lang].translation;for(const k of key.split('.'))v=v&&v[k];return typeof v==="string"?v:(o.defaultValue||key);}};
 vm.createContext(c);vm.runInContext(english,c);vm.runInContext(german,c);vm.runInContext(ui,c);
-assert.strictEqual(options.resources.en.translation.functions.mode.scrollingtext,"Scrolling text");
+assert.strictEqual(options.resources.en.translation.functions.mode.scrollingtext,"Scrolling Text");
 assert.strictEqual(options.resources.en.translation.settings.restart.restart,"Save current settings");
 assert.strictEqual(options.resources.en.translation.view.language['it-is-quarterly'],"Every 15 minutes");
 assert.strictEqual(options.resources.en.translation.view.front['en-10-11-mirc0'],"English 10 x 11 (Mirc0.)");
