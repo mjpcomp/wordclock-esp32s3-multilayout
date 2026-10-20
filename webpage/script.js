@@ -36,7 +36,7 @@ const iro = window.iro; // require("@jaames/iro");
 }(this, this.document));
 
 // minified.js dependency removed
-let debugMessageReconfigured = " was reconfigured.";
+let debugMessageReconfigured = " change requested.";
 let websocket;
 let ipEsp = "ws://192.168.4.1";
 let debug = true;
@@ -200,7 +200,6 @@ function initConfigValues() {
 	transitionDemo = false;
 }
 
-/* eslint-disable no-console */
 function debugMessage(debugMessage, someObject) {
 	if (debug === true) {
 
@@ -263,27 +262,80 @@ if (swatchGrid) {
 	});
 }
 
+function connectionText(key, fallback) {
+	if (typeof i18next === "undefined" || !i18next.isInitialized) return fallback;
+	return i18next.t(key, { defaultValue: fallback });
+}
+
+function refreshConnectionText() {
+	const state = websocket ? websocket.readyState : 3;
+	const open = state === 1;
+	const pending = state === 0;
+	const closing = state === 2;
+	let statusKey = "disconnected";
+	let statusFallback = "Disconnected";
+	if (open) {
+		statusKey = "connected";
+		statusFallback = "Connected";
+	} else if (pending) {
+		statusKey = "connecting";
+		statusFallback = "Connecting…";
+	} else if (closing) {
+		statusKey = "disconnecting";
+		statusFallback = "Disconnecting…";
+	}
+	const statusEl = document.getElementById("status");
+	if (statusEl) {
+		statusEl.classList.toggle("online", open);
+		statusEl.classList.toggle("offline", !open);
+		statusEl.value = connectionText(`settings.status.${statusKey}`, statusFallback);
+	}
+	document.querySelectorAll(".status-button").forEach(btn => {
+		let key = "settings.status.connect";
+		let fallback = "Connect";
+		if (open) {
+			key = "settings.status.disconnect";
+			fallback = "Disconnect";
+		} else if (pending) {
+			key = "settings.status.connecting";
+			fallback = "Connecting…";
+		} else if (closing) {
+			key = "settings.status.disconnecting";
+			fallback = "Disconnecting…";
+		} else if (btn.closest("#section-connection-lost")) {
+			key = "connection-lost.button";
+			fallback = "Reconnect";
+		}
+		btn.textContent = connectionText(key, fallback);
+	});
+}
+
+window.refreshConnectionText = refreshConnectionText;
+
+function handleConnectionButton() {
+	if (this.value === "1") {
+		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "0"; });
+		if (websocket) websocket.close();
+	} else {
+		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "1"; });
+		initWebsocket();
+	}
+	refreshConnectionText();
+}
+
 function initWebsocket() {
 	websocket = new WebSocket(ipEsp);
+	refreshConnectionText();
 
 	websocket.onopen = function(event) {
 
-		const statusEl = document.getElementById("status");
-		if (statusEl) {
-			statusEl.classList.add("online");
-			statusEl.classList.remove("offline");
-			statusEl.setAttribute("value", "Online");
-		}
-
-		document.querySelectorAll(".status-button").forEach(btn => {
-			btn.textContent = "Disconnect";
-			btn.value = "1";
-		});
+		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "1"; });
+		refreshConnectionText();
 
 		const connLostEl = document.getElementById("section-connection-lost");
 		if (connLostEl) connLostEl.style.display = "none";
 
-		debugMessage("The connection with the websocket has been established.", event);
+		debugMessage("WebSocket connected.", event);
 
 		sendCmd(CMD.REQ_COLOR_VALUES);
 		sendCmd(CMD.REQ_TRANSITION);
@@ -292,24 +344,15 @@ function initWebsocket() {
 
 	websocket.onclose = function(event) {
 
-		const statusEl = document.getElementById("status");
-		if (statusEl) {
-			statusEl.classList.remove("online");
-			statusEl.classList.add("offline");
-			statusEl.setAttribute("value", "Offline");
-		}
-
-		document.querySelectorAll(".status-button").forEach(btn => {
-			btn.textContent = "Verbinden";
-			btn.value = "0";
-		});
+		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "0"; });
+		refreshConnectionText();
 
 		const connLostEl = document.getElementById("section-connection-lost");
 		if (connLostEl) connLostEl.style.display = "block";
 
 		autoBrightStop();
 
-		debugMessage(`The connection with the websocket was closed (code ${event.code}).`, event);
+		debugMessage(`WebSocket disconnected (code ${event.code}).`, event);
 	};
 
 	websocket.onmessage = function(event) {
@@ -516,7 +559,7 @@ function initWebsocket() {
 		}
 	};
 	websocket.onerror = function(event) {
-		debugMessage("An error occurred while connecting to the websocket.", event);
+		debugMessage("WebSocket connection failed.", event);
 	};
 }
 
@@ -728,21 +771,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 
 	document.querySelectorAll(".status-button").forEach(btn => {
-		btn.addEventListener("click", function() {
-			let value = this.value;
-			const statusEl = document.getElementById("status");
-			if (statusEl) statusEl.textContent = "Verbinden ...";
-
-			if (value === "1") {
-				value = 0;
-				document.querySelectorAll(".status-button").forEach(btn => { btn.value = value; });
-				if (websocket) websocket.close();
-			} else {
-				value = 1;
-				document.querySelectorAll(".status-button").forEach(btn => { btn.value = value; });
-				initWebsocket();
-			}
-		});
+		btn.addEventListener("click", handleConnectionButton);
 	});
 
 	const clockBtn = document.getElementById("_clock");
@@ -909,7 +938,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	if (wlanScanBtn) {
 		wlanScanBtn.addEventListener("click", function() {
 			sendCmd(CMD.REQ_WIFI_LIST);
-			document.getElementById("wlanlist").innerHTML = "<div>WLAN Netzwerke werden gesucht</div>";
+			document.getElementById("wlanlist").textContent = connectionText("settings.wifi.scanning", "Scanning for Wi-Fi networks…");
 		});
 	}
 
@@ -917,7 +946,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	if (timeServerBtn) {
 		timeServerBtn.addEventListener("click", function() {
 			sendCmd(CMD.SET_TIMESERVER, getPaddedString(document.getElementById("timeserver").value, DATA_TIMESERVER_TEXT_LENGTH));
-			debugMessage(`Timeserver${debugMessageReconfigured}`);
+			debugMessage(`NTP server${debugMessageReconfigured}`);
 		});
 	}
 
@@ -934,7 +963,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	if (scrollTextBtn) {
 		scrollTextBtn.addEventListener("click", function() {
 			sendCmd(CMD.SET_SCROLLINGTEXT, getPaddedString(document.getElementById("scrollingtext").value, DATA_SCROLLINGTEXT_LENGTH));
-			debugMessage(`ScrollingText${debugMessageReconfigured}`);
+			debugMessage(`Scrolling text${debugMessageReconfigured}`);
 		});
 	}
 
