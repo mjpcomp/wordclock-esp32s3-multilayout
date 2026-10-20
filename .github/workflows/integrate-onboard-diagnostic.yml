@@ -22,8 +22,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "feea7108642a0ed1d3797ccff174b69151ffd8f5"
-          expected=$(printf '%s\n' '.github/workflows/integrate-onboard-diagnostic.yml' 'docs/gpio48-application-integration.md' 'include/OnboardDiagnosticApplication.hpp' 'tools/integrate_onboard_diagnostic.py' | sort)
+          test "$(git rev-parse HEAD^)" = "60debd544b52a517f3f8ce2f9580e440c7fb0fa8"
+          expected=$(printf '%s\n' '.github/workflows/integrate-onboard-diagnostic.yml' 'docs/gpio48-rtc-test-repair.md' 'tests/test_rtc_isolation.py' | sort)
           test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
           python3 tools/integrate_onboard_diagnostic.py --self-test
           python3 tools/integrate_onboard_diagnostic.py

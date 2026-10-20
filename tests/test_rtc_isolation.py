@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract actual RTC call-site sections; mocks do not certify RTClib/SDK hardware behavior."""
+"""Extract actual RTC sections; host mocks do not certify SDK hardware behavior."""
 from pathlib import Path
 import re
 import shutil
@@ -13,14 +13,21 @@ PRE=r"""#include "ClockTestPolicy.h"
 #include <cassert>
 #include <initializer_list>
 unsigned constructors=0,begins=0,reads=0,adjusts=0,systemSets=0,portal=0,notices=0;
+unsigned ntpNotices=0,rtcNotices=0;
 unsigned driver=0;uint32_t adjusted=0;bool present=false,externalRTC=true;
+int systemSetResult=0;
+uint32_t millis(){return 42;}
 struct DateTime{uint32_t t;explicit DateTime(uint32_t v):t(v){}uint32_t unixtime()const{return t;}};
 struct TestTimeval{long tv_sec;long tv_usec;};
 #define timeval TestTimeval
-int settimeofday(const TestTimeval*tv,void*){assert(tv->tv_usec==0&&tv->tv_sec==1700000000);++systemSets;return 0;}
+int settimeofday(const TestTimeval*tv,void*){assert(tv->tv_usec==0&&tv->tv_sec==1700000000);++systemSets;return systemSetResult;}
 struct SerialMock{void println(const char*){}}Serial;
 struct NetworkMock{void rtcMode(){++portal;}}network;
 namespace prefixStatusRuntime{void noteTimeSet(){++notices;}}
+namespace onboardDiagnosticApplication{
+ void noteNtp(uint32_t ms){assert(ms==42);++ntpNotices;}
+ void noteRtc(uint32_t ms){assert(ms==42);++rtcNotices;}
+}
 #if WORDCLOCK_TEST_MODE != 1
 // No hardware RTC types exist in the board-only test translation unit.
 template<unsigned Id>struct MockRtc{
@@ -39,20 +46,35 @@ int main(){
  if(WORDCLOCK_TEST_MODE==2)assert(driver==3231);
  if(WORDCLOCK_TEST_MODE==0)assert(driver==8523);
  for(bool found:{false,true}){
-  present=found;externalRTC=true;begins=reads=systemSets=portal=0;
-  setupRtc();
-  if(WORDCLOCK_TEST_MODE==1){assert(!externalRTC&&begins==0&&reads==0&&systemSets==0&&portal==0);}
-  else{assert(begins==1&&externalRTC==found&&reads==unsigned(found)&&systemSets==unsigned(found)&&portal==unsigned(found));}
+  present=found;externalRTC=true;begins=reads=systemSets=portal=rtcNotices=0;
+  systemSetResult=0;setupRtc();
+  if(WORDCLOCK_TEST_MODE==1){assert(!externalRTC&&begins==0&&reads==0&&systemSets==0&&portal==0&&rtcNotices==0);}
+  else{assert(begins==1&&externalRTC==found&&reads==unsigned(found)&&systemSets==unsigned(found)&&portal==unsigned(found));assert(rtcNotices==(EXPECT_RTC_NOTE&&found?1u:0u));}
  }
+ present=true;externalRTC=true;rtcNotices=0;systemSetResult=1;
+ setupRtc();assert(rtcNotices==0);systemSetResult=0;
  for(bool staleFlag:{false,true}){
-  externalRTC=staleFlag;adjusts=notices=0;
+  externalRTC=staleFlag;adjusts=notices=ntpNotices=0;
   for(uint32_t i=0;i<100;++i)syncTime(1700000000+i);
-  assert(notices==100);
+  assert(notices==100&&ntpNotices==(EXPECT_NTP_NOTE?100u:0u));
   assert(adjusts==(WORDCLOCK_TEST_MODE!=1&&staleFlag?100u:0u));
   if(adjusts)assert(adjusted==1700000099);
  }
 }
 """
+
+def extract_callback(source):
+    # Start after the architecture-specific time_is_set signature/utc branch,
+    # not after a particular diagnostic statement or its brace formatting.
+    start=source.index('void time_is_set(')
+    branch_end=re.search(r'^#endif[^\S\n]*\n',source[start:],re.M)
+    if branch_end is None:raise ValueError('Missing time_is_set architecture branch')
+    start+=branch_end.end()
+    end=source.index('    struct tm tm;',start)
+    callback=source[start:end]
+    if callback.count('prefixStatusRuntime::noteTimeSet()')!=1:
+        raise ValueError('Expected one time notification in callback')
+    return callback
 
 def main():
     compiler=shutil.which('g++')
@@ -68,9 +90,7 @@ def main():
     start=source.index('\n',source.index('const char TZ_Europe_Berlin[]'))+1
     end=source.index('#include "ClockWork.h"',start)
     declaration=source[start:end]
-    start=source.index('    if (utc > 100000000) prefixStatusRuntime::noteTimeSet();')
-    end=source.index('    struct tm tm;',start)
-    callback=source[start:end]
+    callback=extract_callback(source)
     title=source.index('    // Start external real-time clock')
     divider=source.index('    //-------------------------------------',title)
     start=source.index('\n',divider)+1
@@ -89,10 +109,11 @@ def main():
             exe=work/f'test-{mode}'
             subprocess.run([compiler,'-std=c++11','-Wall','-Wextra','-Werror',
                             '-fsanitize=undefined,bounds','-fno-sanitize-recover=all',
-                            f'-DWORDCLOCK_TEST_MODE={mode}','-I'+str(work),
-                            str(work/'test.cpp'),'-o',str(exe)],check=True)
+                            f'-DWORDCLOCK_TEST_MODE={mode}',
+                            '-DEXPECT_NTP_NOTE='+str(int('onboardDiagnosticApplication::noteNtp(' in callback)),
+                            '-DEXPECT_RTC_NOTE='+str(int('onboardDiagnosticApplication::noteRtc(' in startup)),
+                            '-I'+str(work),str(work/'test.cpp'),'-o',str(exe)],check=True)
             subprocess.run([str(exe)],check=True)
-    print('PASS: RTC declaration/startup/callback guards in modes0/1/2, DS3231 selection, stale flags, time notices and initialized timeval; host only.')
+    print('PASS: RTC modes0/1/2, DS3231 selection, stale flags, time notices, valid-load hook and initialized timeval; host only.')
 
-if __name__=='__main__':
-    main()
+if __name__=='__main__':main()
