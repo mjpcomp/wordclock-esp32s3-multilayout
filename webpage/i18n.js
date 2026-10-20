@@ -74,6 +74,7 @@ function applyLanguageSpecialCases() {
 	} else {
 		menuLink.setAttribute("aria-label", i18next.t("menu.aria-show-menu"));
 	}
+	if (typeof window.refreshConnectionText === "function") window.refreshConnectionText();
 }
 
 function initLanguageDropdown(language) {
