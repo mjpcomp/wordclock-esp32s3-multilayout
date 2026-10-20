@@ -18,15 +18,23 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Guard and apply the reviewed UI migration
+      - name: Guard and apply the reviewed UI migration and lint repair
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "5c8a559712fe1d35accba947e21d83a7303932db"
-          expected=$(printf '%s\n' '.github/workflows/integrate-english-ui.yml' 'docs/english-ui-cleanup-phase1.md' 'tests/test_english_ui_cleanup.py' 'tools/apply_english_ui_cleanup.py' | sort)
+          test "$(git rev-parse HEAD^)" = "8afc45b2bcf5220905e639bad4fcd1011ca07b67"
+          expected=$(printf '%s\n' '.github/workflows/integrate-english-ui.yml' 'docs/english-ui-lint-repair.md' 'tools/repair_english_ui_lint.py' | sort)
           test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
           python3 tools/apply_english_ui_cleanup.py
+          python3 tools/repair_english_ui_lint.py
           git diff --check
+      - name: Run the project ESLint task before downloading target toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build-evidence
+          npm ci --silent 2>&1 | tee build-evidence/npm-ci.log
+          npx --no-install grunt eslint:files 2>&1 | tee build-evidence/eslint.log
       - name: Run UI behavior tests and twelve existing host suites
         shell: bash
         run: |
