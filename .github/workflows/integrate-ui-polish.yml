@@ -1,0 +1,84 @@
+name: Integrate UI polish
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/integrate-ui-polish.yml]
+permissions:
+  contents: write
+jobs:
+  integrate:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Guard and apply only the reviewed UI polish
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d981f2f3e3505e5c28803649e32c0c430da613f1"
+          expected=$(printf '%s\n' '.github/workflows/integrate-ui-polish.yml' 'docs/ui-polish-validation.md' 'tools/apply_ui_polish.py' | sort)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | sort)" = "$expected"
+          python3 tools/apply_ui_polish.py
+          git diff --check
+      - name: Run actual web lint and UI regression checks first
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build-evidence
+          npm ci --silent 2>&1 | tee build-evidence/npm-ci.log
+          npx --no-install grunt lint 2>&1 | tee build-evidence/web-lint.log
+          python3 tests/test_english_ui_cleanup.py 2>&1 | tee build-evidence/ui-tests.log
+          python3 tests/test_mirc0_defaults.py
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+      - name: Compile both isolated applications and capture candidate evidence
+        shell: bash
+        env:
+          PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+        run: |
+          set -euo pipefail
+          git diff --binary > build-evidence/tested-ui.patch
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          for BUILD_ENV in YD_ESP32S3_N16R8_BOARD_ONLY YD_ESP32S3_N16R8_RTC_ONLY; do
+            export BUILD_ENV
+            mkdir -p "build-evidence/$BUILD_ENV"
+            .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
+            .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" 2>&1 | tee "build-evidence/$BUILD_ENV/build.log"
+            .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
+          done
+      - name: Publish the three tested files in separate commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(printf '%s\n' 'tests/test_english_ui_cleanup.py' 'webpage/language/en.js' 'webpage/style.css' | sort)
+          test "$(git diff --name-only | sort)" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          expected_remote="$GITHUB_SHA"
+          for file in webpage/style.css webpage/language/en.js tests/test_english_ui_cleanup.py; do
+            test "$(git ls-remote origin refs/heads/feature/optional-status-prefix | cut -f1)" = "$expected_remote"
+            git add -- "$file"
+            git commit -m "fix(ui): apply reviewed language-menu polish to $file"
+            test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = "$file"
+            git push origin HEAD:refs/heads/feature/optional-status-prefix
+            expected_remote=$(git rev-parse HEAD)
+          done
+          test -z "$(git diff --name-only)"
+          git log -3 --format='%H %s' > build-evidence/published-ui-commits.txt
+      - name: Preserve candidate evidence and failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ui-polish-evidence-${{ github.sha }}
+          path: build-evidence/
+          if-no-files-found: warn
+          retention-days: 14
