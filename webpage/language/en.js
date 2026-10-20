@@ -44,7 +44,7 @@ let TRANSLATION_EN_US = {
 			"color": "Color",
 			"seconds": "Seconds",
 			"digital-clock": "Digital Clock",
-			"scrollingtext": "Scrolling text",
+			"scrollingtext": "Scrolling Text",
 			"rainbow": "Rainbow",
 			"color-change": "Color Change",
 			"symbol": "Symbol"
