@@ -83,8 +83,11 @@ void ensureTimezone();
 
 LedStripInterface *activeLedStrip = nullptr;
 
+#include "OnboardDiagnosticApplication.hpp"
+
 void deleteActiveLedStrip() {
     prefixStatusRuntime::resetDisplay();
+    onboardDiagnosticApplication::resetFrames();
     delete activeLedStrip;
     activeLedStrip = nullptr;
 }
@@ -121,7 +124,10 @@ void time_is_set(struct timeval *tv) {
 void time_is_set() {
     const time_t utc = time(nullptr);
 #endif
-    if (utc > 100000000) prefixStatusRuntime::noteTimeSet();
+    if (utc > 100000000) {
+        prefixStatusRuntime::noteTimeSet();
+        onboardDiagnosticApplication::noteNtp(millis());
+    }
 #if WORDCLOCK_TEST_MODE != 1
     if (externalRTC) {
         RTC.adjust(DateTime(utc));
@@ -550,7 +556,9 @@ void setup() {
         Serial.println("External real-time clock found");
         struct timeval tv{};
         tv.tv_sec = RTC.now().unixtime();
-        settimeofday(&tv, nullptr);
+        const bool timeLoaded = settimeofday(&tv, nullptr) == 0;
+        if (timeLoaded && tv.tv_sec > 100000000)
+            onboardDiagnosticApplication::noteRtc(millis());
         network.rtcMode();
         externalRTC = true;
     } else {
@@ -571,7 +579,10 @@ void setup() {
     if (G.bootShowWifi) {
         led.setBitmapSymbol(WLAN100, HsbColor(0.66f, 1.0f, 0.2f));
     }
+    onboardDiagnosticApplication::connecting(true);
+    onboardDiagnosticApplication::service();
     network.setup(G.hostname);
+    onboardDiagnosticApplication::connecting(false);
 #if WIFI_VERBOSE
     int strength = network.getQuality();
     Serial.printf("Signal strength: %i\n", strength);
@@ -768,4 +779,5 @@ void loop() {
     //------------------------------------------------
     clockWork.loop(tm);
     prefixStatusRuntime::service();
+    onboardDiagnosticApplication::service();
 }
