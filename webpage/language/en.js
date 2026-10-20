@@ -1,5 +1,5 @@
 let TRANSLATION_EN_US = {
-	"title": "Wordclock",
+	"title": "Word Clock",
 
 	"menu": {
 		"aria-show-menu": "Show Menu",
@@ -17,8 +17,8 @@ let TRANSLATION_EN_US = {
 	},
 
 	"connection-lost": {
-		"button": "Connect",
-		"text": "The connection to the Word Clock has been lost."
+		"button": "Reconnect",
+		"text": "Connection to the Word Clock lost. Select Reconnect to try again."
 	},
 
 	"reboot-recommended": {
@@ -40,11 +40,11 @@ let TRANSLATION_EN_US = {
 		},
 		"mode": {
 			"h2": "Mode",
-			"wordclock": "Wordclock",
+			"wordclock": "Word Clock",
 			"color": "Color",
 			"seconds": "Seconds",
 			"digital-clock": "Digital Clock",
-			"scrollingtext": "Scrollingtext",
+			"scrollingtext": "Scrolling text",
 			"rainbow": "Rainbow",
 			"color-change": "Color Change",
 			"symbol": "Symbol"
@@ -123,9 +123,9 @@ let TRANSLATION_EN_US = {
 	"view": {
 		"h1": "View Options",
 		"front": {
-			"h2": "Front",
+			"h2": "Clock face",
 			"text": "Changes to the matrix size are only applied when the clock is restarted.",
-			"variant": "Choice of Clock Variant",
+			"variant": "Clock layout",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternative",
 			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternative Frame",
@@ -167,8 +167,8 @@ let TRANSLATION_EN_US = {
 			"mirror-horizontally": "Mirror Word Clock Horizontally",
 			"extra-led-per-row": "Add Extra LED per Row",
 			"flip-horz-vert": "Flip Horizontally and Vertically Layout",
-			"meander-rows": "Rows placed in meanders",
-			"buildtype": "Buildtype",
+			"meander-rows": "Serpentine row wiring",
+			"buildtype": "LED arrangement",
 			"normal": "Each LED corresponds to one letter",
 			"doubleResM1": "Every second LED corresponds to one letter",
 			"doubleRes": "Two LEDs per letter",
@@ -177,25 +177,25 @@ let TRANSLATION_EN_US = {
 		},
 		"language": {
 			"h2": "Language",
-			"hide-it-is": "„Display 'It is'“",
+			"hide-it-is": "Show “It is”",
 			"it-is-off": "Off",
-			"it-is-hourly": "Hourly",
-			"it-is-half-hourly": "Half-hourly",
-			"it-is-quarterly": "Quarterly",
-			"it-is-permanent": "Permanent",
-			"at-nine-fifteen": "On 9:15 It Is ...",
+			"it-is-hourly": "Every hour",
+			"it-is-half-hourly": "Every 30 minutes",
+			"it-is-quarterly": "Every 15 minutes",
+			"it-is-permanent": "Always",
+			"at-nine-fifteen": "At 9:15, display…",
 			"quarter-past-nine": "Quarter Past Nine", // German: viertel nach neun
 			"quarter-nine": "Quarter Ten", // German: viertel zehn
-			"at-nine-twenty": "On 9:20 It Is ...",
+			"at-nine-twenty": "At 9:20, display…",
 			"twenty-past-nine": "Twenty Past Nine", // German: zwanzig nach neun
 			"ten-before-half-past-ten": "Ten to Half Past Nine", // German: zehn vor halb zehn
-			"at-nine-fourty": "On 9:40 It Is ...",
+			"at-nine-fourty": "At 9:40, display…",
 			"twenty-before-ten": "Twenty to Ten", // German: zwanzig vor zehn
 			"ten-after-half-past-ten": "Ten After Half Past Nine", // German: zehn nach halb zehn
-			"at-nine-fourtyfive-german": "On 9:45 It Is ...",
+			"at-nine-fourtyfive-german": "At 9:45, display…",
 			"quarter-to-ten": "Quarter to Ten", // German: viertel vor zehn
 			"three-quarter-ten": "Three Quarter Ten", // German: dreiviertel zehn
-			"at-nine-fourtyfive-english": "On 9:45 It Is ...",
+			"at-nine-fourtyfive-english": "At 9:45, display…",
 			"quarter-to-ten-english": "Quarter to Ten",
 			"a-quarter-to-ten-english": "A Quarter to Ten"
 		},
@@ -210,7 +210,7 @@ let TRANSLATION_EN_US = {
 		},
 		"seconds": {
 			"h2": "Seconds",
-			"in-border": "Seconds in the Border",
+			"in-border": "Show seconds around the frame",
 			"off": "Off",
 			"point": "Dot",
 			"sector": "Sector",
@@ -231,7 +231,12 @@ let TRANSLATION_EN_US = {
 		"status": {
 			"h2": "Status",
 			"label": "Connection Status",
-			"connect": "Connect"
+			"connect": "Connect",
+			"connected": "Connected",
+			"disconnected": "Disconnected",
+			"connecting": "Connecting…",
+			"disconnecting": "Disconnecting…",
+			"disconnect": "Disconnect"
 		},
 		"led-type": {
 			"h2": "LED Type",
@@ -239,14 +244,14 @@ let TRANSLATION_EN_US = {
 				"Depending on the manufacturer of the SK2812 strips used, there is a different version here that shows the colors in a different order.\n " +
 				"Accordingly, you can set the correct color combination of the stripe here.\n " +
 				"G-Green / B-Blue / R-Red / W-White",
-			"label": "Change of Color Type",
+			"label": "Color order",
 			"ws2812-brg": "WS2812 BRG",
 			"ws2812-grb": "WS2812 GRB",
 			"ws2812-rgb": "WS2812 RGB",
 			"ws2812-rbg": "WS2812 RBG",
 			"ws2812-bgr": "WS2812 BGR",
 			"sk6812-brgw": "SK6812 RGBW",
-			"save": "Save Setting"
+			"save": "Save"
 		},
 		"hardware-pins": {
 			"h2": "Hardware pins",
@@ -266,7 +271,7 @@ let TRANSLATION_EN_US = {
 			"i2c-invalid": "Invalid I2C pins.",
 			"i2c-pair": "SDA and SCL must both be set or both be disabled.",
 			"duplicate": "Each pin can only be used once.",
-			"save": "Save Setting"
+			"save": "Save"
 		},
 		"whitetype": {
 			"h2": "White LED type",
@@ -276,19 +281,19 @@ let TRANSLATION_EN_US = {
 			"cw": "cool white"
 		},
 		"time-server": {
-			"h2": "Time Server",
-			"label": "Time Server",
-			"save": "Save Setting"
+			"h2": "NTP server",
+			"label": "NTP server",
+			"save": "Save"
 		},
 		"timezone": {
-			"h2": "Timezone",
-			"label": "POSIX timezone",
-			"save": "Save Setting"
+			"h2": "Time zone",
+			"label": "Time zone rule (advanced)",
+			"save": "Save"
 		},
 		"manual-time": {
 			"h2": "Set Time Manually",
 			"time": "Time",
-			"save": "Save Setting"
+			"save": "Save"
 		},
 		"brightness": {
 			"h2": "Brightness",
@@ -328,28 +333,28 @@ let TRANSLATION_EN_US = {
 		"hostname": {
 			"h2": "Hostname",
 			"label": "Hostname",
-			"save": "Save Setting"
+			"save": "Save"
 		},
 		"weather": {
 			"h2": "Weather",
 			"api-key": "OpenWeatherMap API Key",
 			"city-id": "OpenWeatherMap City ID",
-			"save": "Save Setting"
+			"save": "Save"
 		},
 		"wifi": {
 			"h2": "Wi-Fi",
-			"help": "Reconfiguration creates its own wireless network.\n " +
-				"Connect to this temporary network, then the target network can be selected.",
+			"help": "The clock starts a temporary setup Wi-Fi network. Connect to it to choose the Wi-Fi network the clock should join.",
 			"ssid": "Wi-Fi Name (SSID)",
-			"other-wifi": "Other Wi-Fi",
+			"other-wifi": "Change Wi-Fi network",
 			"configure": "Configure",
-			"until-restart": "Until Restart",
-			"deactivate": "Deactivate"
+			"scanning": "Scanning for Wi-Fi networks…",
+			"until-restart": "Disable Wi-Fi until restart",
+			"deactivate": "Disable Wi-Fi"
 		},
 		"restart": {
 			"h2": "Restart / Reset",
-			"reset": "Restart",
-			"restart": "Reset to Default Values"
+			"reset": "Restart clock",
+			"restart": "Save current settings"
 		}
 	},
 
@@ -357,7 +362,7 @@ let TRANSLATION_EN_US = {
 		"h1": "Smart Home",
 		"mqtt": {
 			"h2": "MQTT",
-			"text": "The software of the Word Clock can be controlled using MQTT. Here you can integrate the clock via your existing Home Assistant setup in order to be able to control rudimentary functions.",
+			"text": "Control supported clock functions through MQTT and integrate the clock with Home Assistant.",
 			"activate": "Activate MQTT",
 			"server": "Server Address",
 			"port": "Port",
@@ -366,7 +371,7 @@ let TRANSLATION_EN_US = {
 			"client-id": "Client ID",
 			"topic": "Topic",
 			"save": "Save Settings",
-			"discovery": "Send HA Discovery"
+			"discovery": "Publish Home Assistant discovery"
 		}
 	},
 	"about": {
