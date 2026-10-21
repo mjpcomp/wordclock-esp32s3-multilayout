@@ -7,9 +7,9 @@
 namespace brightnessScheduleProtocol {
 namespace storage = brightnessScheduleStorage;
 namespace schedule = brightnessSchedule;
-constexpr size_t MAX_INPUT = 2048;
+constexpr size_t kMaxInput = 2048;
 constexpr size_t MIN_OUTPUT = 2048;
-constexpr size_t REQUEST_CAPACITY = JSON_OBJECT_SIZE(7) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + MAX_INPUT + 128;
+constexpr size_t REQUEST_CAPACITY = JSON_OBJECT_SIZE(7) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + kMaxInput + 128;
 constexpr size_t RESPONSE_CAPACITY = JSON_OBJECT_SIZE(10) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + 512;
 static_assert(schedule::MAX_EVENTS == 16, "Review protocol budgets when capacity changes");
 enum class Action { Get, Save, Reset };
@@ -21,7 +21,7 @@ struct Request {
 };
 inline bool space(uint8_t c) { return c == ' ' || c == '\t' || c == '\r' || c == '\n'; }
 inline bool completeObject(const uint8_t *data, size_t size, size_t &keys) {
-  if (!data || !size || size > MAX_INPUT) return false;
+  if (!data || !size || size > kMaxInput) return false;
   size_t first = 0;
   while (first < size && space(data[first])) ++first;
   if (first == size || data[first] != '{') return false;
