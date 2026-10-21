@@ -6,12 +6,16 @@ on:
       - include/BrightnessSchedule.h
       - include/BrightnessScheduleStorage.h
       - include/BrightnessScheduleProtocol.h
+      - include/BrightnessScheduleTransport.h
+      - src/WebPageAdapter.cpp
       - tests/brightness_schedule_test.cpp
       - tests/brightness_schedule_storage_test.cpp
       - tests/brightness_schedule_protocol_test.cpp
+      - tests/brightness_schedule_transport_test.cpp
       - tests/test_brightness_schedule.py
       - tests/test_brightness_schedule_storage.py
       - tests/test_brightness_schedule_protocol.py
+      - tests/test_brightness_schedule_transport.py
       - .github/workflows/brightness-schedule-tests.yml
 permissions:
   contents: read
@@ -30,13 +34,14 @@ jobs:
           ref: 0b03321ed33fa6965114424fbb023260120c856b
           path: .ci-deps/ArduinoJson
           persist-credentials: false
-      - name: Run evaluator, storage and actual JSON protocol suites
+      - name: Run evaluator, storage, protocol and transport suites
         shell: bash
         run: |
           set -euo pipefail
           python3 tests/test_brightness_schedule.py
           python3 tests/test_brightness_schedule_storage.py
           python3 tests/test_brightness_schedule_protocol.py
+          python3 tests/test_brightness_schedule_transport.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -55,6 +60,16 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
+      - name: Stage reviewed adapter wiring for CI compile only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_transport.py --stage-adapter
+          python3 tests/test_english_ui_cleanup.py
+          python3 tests/test_mirc0_defaults.py
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
       - name: Add temporary compile-only protocol API check
         shell: bash
         run: |
