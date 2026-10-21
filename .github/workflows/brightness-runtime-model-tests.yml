@@ -1,0 +1,64 @@
+name: Brightness runtime model tests
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - include/BrightnessSchedule.h
+      - include/BrightnessScheduleRuntimeModel.h
+      - tests/brightness_schedule_runtime_model_test.cpp
+      - tests/test_brightness_schedule_runtime_model.py
+      - .github/workflows/brightness-runtime-model-tests.yml
+permissions:
+  contents: read
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Run dormant runtime model host tests
+        run: python3 tests/test_brightness_schedule_runtime_model.py
+  native-smoke:
+    needs: host-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+    env:
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+      BUILD_ENV: ${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Add never-called compile check (no runtime wiring)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('src/BrightnessRuntimeModelCompileCheck.cpp').write_text(
+              '#include "BrightnessScheduleRuntimeModel.h"\n'
+              'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
+              'void brightnessRuntimeModelCompileCheck() {\n'
+              ' brightnessScheduleRuntimeModel::Model model;\n'
+              ' (void)model.sample(0,false,false,true);\n'
+              ' brightnessScheduleRuntimeModel::Frame<4> frame;\n'
+              ' (void)frame.configure(4); (void)frame.output(0,10000);\n'
+              '}\n')
+          PY
+      - name: Compile both policy paths without upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
