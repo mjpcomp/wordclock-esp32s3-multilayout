@@ -5,10 +5,13 @@ on:
     paths:
       - include/BrightnessSchedule.h
       - include/BrightnessScheduleStorage.h
+      - include/BrightnessScheduleProtocol.h
       - tests/brightness_schedule_test.cpp
       - tests/brightness_schedule_storage_test.cpp
+      - tests/brightness_schedule_protocol_test.cpp
       - tests/test_brightness_schedule.py
       - tests/test_brightness_schedule_storage.py
+      - tests/test_brightness_schedule_protocol.py
       - .github/workflows/brightness-schedule-tests.yml
 permissions:
   contents: read
@@ -20,12 +23,20 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Run evaluator and storage fault suites
+      - name: Checkout the actual pinned ArduinoJson 6.21.6 headers
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: 0b03321ed33fa6965114424fbb023260120c856b
+          path: .ci-deps/ArduinoJson
+          persist-credentials: false
+      - name: Run evaluator, storage and actual JSON protocol suites
         shell: bash
         run: |
           set -euo pipefail
           python3 tests/test_brightness_schedule.py
           python3 tests/test_brightness_schedule_storage.py
+          python3 tests/test_brightness_schedule_protocol.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -44,19 +55,21 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Add temporary compile-only native API check
+      - name: Add temporary compile-only protocol API check
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          Path('src/BrightnessScheduleStorageCompileCheck.cpp').write_text(
-              '#include "BrightnessScheduleStorage.h"\n'
-              'static_assert(brightnessScheduleStorage::MAX_BYTES == 112, "record bounds");\n'
-              'void brightnessScheduleStorageCompileCheck() {\n'
+          Path('src/BrightnessScheduleProtocolCompileCheck.cpp').write_text(
+              '#include "BrightnessScheduleProtocol.h"\n'
+              'void brightnessScheduleProtocolCompileCheck() {\n'
               '    brightnessScheduleStorage::NvsBackend backend;\n'
               '    brightnessScheduleStorage::Store store(backend);\n'
-              '    (void)store;\n'
+              '    const uint8_t input[] = R"({"command":"brightness-schedule","schema":1,"requestId":"smoke","action":"get"})";\n'
+              '    char output[brightnessScheduleProtocol::MIN_OUTPUT];\n'
+              '    size_t used = 0;\n'
+              '    (void)brightnessScheduleProtocol::handle(store, input, sizeof(input)-1, output, sizeof(output), used);\n'
               '}\n')
           PY
       - name: Compile against the actual ESP32 framework (no upload)
