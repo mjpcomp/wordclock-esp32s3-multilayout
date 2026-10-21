@@ -2,6 +2,10 @@
 
 #include "WordClock.h" // sendMQTTUpdate()
 #include <Arduino.h>
+#if defined(ESP32)
+#include "BrightnessScheduleProtocol.h"
+#include "BrightnessScheduleTransport.h"
+#endif
 
 const char favicon[] PROGMEM = {
     0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
@@ -95,6 +99,36 @@ bool parseColor(uint8_t *payload, size_t length) {
     return true;
 }
 
+#if defined(ESP32)
+// Brightness schedule transport integration; one serialized event-loop context.
+bool invokeBrightnessSchedule(const uint8_t *data, size_t size, char *reply,
+                              size_t capacity, size_t &used, void *) {
+    static brightnessScheduleStorage::NvsBackend backend;
+    static brightnessScheduleStorage::Store store(backend);
+    return brightnessScheduleProtocol::handle(store, data, size, reply, capacity, used);
+}
+
+bool sendBrightnessScheduleReply(uint8_t client, const char *data, size_t size, void *) {
+    return webSocket.sendTXT(client, data, size);
+}
+
+bool routeBrightnessSchedule(uint8_t client, WStype_t type, uint8_t *data, size_t size) {
+    namespace transport = brightnessScheduleTransport;
+    static_assert(transport::kReplyBytes == brightnessScheduleProtocol::MIN_OUTPUT, "reply budget mismatch");
+    static_assert(transport::kMaxTextBytes == brightnessScheduleProtocol::kMaxInput, "input budget mismatch");
+    transport::Frame frame = transport::Frame::Other;
+    if (type == WStype_TEXT) frame = transport::Frame::Text;
+    else if (type == WStype_FRAGMENT_TEXT_START || type == WStype_FRAGMENT_BIN_START ||
+             type == WStype_FRAGMENT || type == WStype_FRAGMENT_FIN) frame = transport::Frame::Fragment;
+    static char reply[transport::kReplyBytes];
+    const transport::Result result = transport::dispatch(frame, client, data, size, reply, sizeof(reply),
+                                                        invokeBrightnessSchedule, sendBrightnessScheduleReply, nullptr);
+    if (result == transport::Result::ReplyFailed)
+        Serial.printf("[%u] Scheduler reply not delivered; reload required\n", static_cast<unsigned>(client));
+    return result != transport::Result::PassThrough;
+}
+#endif
+
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -106,9 +140,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
         statusAccessPoint = 0;
     }
 
+#if defined(ESP32)
+    if (routeBrightnessSchedule(num, type, payload, length)) return;
+#endif
     payload = (payload == NULL) ? (uint8_t *)"" : payload;
-    Serial.printf("Client-Nr.: [%u]  WStype: %u payload: %s\n", num, type,
-                  payload);
+    Serial.printf("Client-Nr.: [%u] WStype: %u bytes: %u\n", static_cast<unsigned>(num),
+                  static_cast<unsigned>(type), static_cast<unsigned>(length));
 
     switch (type) {
     case WStype_DISCONNECTED: {
@@ -117,12 +154,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
     }
     case WStype_CONNECTED: {
         IPAddress ip = webSocket.remoteIP(num);
-        Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0],
-                      ip[1], ip[2], ip[3], payload);
+        Serial.printf("[%u] Connected from %d.%d.%d.%d\n", num, ip[0],
+                      ip[1], ip[2], ip[3]);
         break;
     }
     case WStype_TEXT: {
-        Serial.printf("[%u] get Text: %s\n", length, payload);
+        Serial.printf("[%u] Text bytes: %u\n", static_cast<unsigned>(num), static_cast<unsigned>(length));
 
         if (length < 3) {
             Serial.println("WebSocket command ignored - incomplete payload");
