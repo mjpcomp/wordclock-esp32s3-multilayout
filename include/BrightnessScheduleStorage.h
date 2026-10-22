@@ -83,16 +83,32 @@ public:
     // False means the outcome may be uncertain, not proof that flash is unchanged.
     virtual bool write(const uint8_t *data, size_t size) = 0;
 };
+// Observer callbacks run synchronously after a public operation; do not reenter Store.
+using Observer = void (*)(Result, const Record *, void *);
 // Use from one serialized sketch/event-loop context; revision checks are not a mutex.
 class Store {
     Backend &backend;
+    Observer observer_;
+    void *context_;
+    void notify(Result result, const Record &out) {
+        if (observer_) observer_(result, result == Result::Ok ? &out : nullptr, context_);
+    }
+    Result loadRaw(Record &out) {
+        uint8_t data[MAX_BYTES] = {};
+        size_t size = 0;
+        const ReadResult read = backend.read(data, sizeof(data), size);
+        if (read == ReadResult::Missing) return Result::Missing;
+        if (read == ReadResult::Invalid) return Result::ResetRequired;
+        if (read != ReadResult::Ok) return Result::ReadFailed;
+        return decode(data, size, out);
+    }
     Result persist(const Record &candidate, Record &out) {
         uint8_t expected[MAX_BYTES] = {};
         size_t expectedSize = 0;
         if (!encode(candidate, expected, sizeof(expected), expectedSize)) return Result::InvalidInput;
         if (!backend.write(expected, expectedSize)) return Result::WriteUncertain;
         Record readback = {};
-        if (load(readback) != Result::Ok) return Result::ReadbackUncertain;
+        if (loadRaw(readback) != Result::Ok) return Result::ReadbackUncertain;
         uint8_t actual[MAX_BYTES] = {};
         size_t actualSize = 0;
         if (!encode(readback, actual, sizeof(actual), actualSize) || actualSize != expectedSize ||
@@ -104,7 +120,7 @@ class Store {
                    bool explicitReset, Record &out) {
         if (!brightnessSchedule::valid(schedule)) return Result::InvalidInput;
         Record current = {};
-        const Result loaded = load(current);
+        const Result loaded = loadRaw(current);
         if (loaded == Result::ReadFailed) return loaded;
         if (loaded == Result::ResetRequired && !explicitReset) return loaded;
         const uint32_t revision = loaded == Result::Ok ? current.revision : 0;
@@ -116,24 +132,25 @@ class Store {
         return persist(candidate, out);
     }
 public:
-    explicit Store(Backend &value) : backend(value) {}
+    explicit Store(Backend &value, Observer observer = nullptr, void *context = nullptr)
+        : backend(value), observer_(observer), context_(context) {}
     Result load(Record &out) {
-        uint8_t data[MAX_BYTES] = {};
-        size_t size = 0;
-        const ReadResult read = backend.read(data, sizeof(data), size);
-        if (read == ReadResult::Missing) return Result::Missing;
-        if (read == ReadResult::Invalid) return Result::ResetRequired;
-        if (read != ReadResult::Ok) return Result::ReadFailed;
-        return decode(data, size, out);
+        const Result result = loadRaw(out);
+        notify(result, out);
+        return result;
     }
     Result save(uint32_t expectedRevision, const brightnessSchedule::Schedule &schedule, Record &out) {
-        return replace(expectedRevision, schedule, false, out);
+        const Result result = replace(expectedRevision, schedule, false, out);
+        notify(result, out);
+        return result;
     }
     // Explicit caller action only: no boot/read path invokes this automatically.
     Result reset(uint32_t expectedRevision, Record &out) {
         brightnessSchedule::Schedule fresh = {};
         fresh.defaultTenths = 1000;
-        return replace(expectedRevision, fresh, true, out);
+        const Result result = replace(expectedRevision, fresh, true, out);
+        notify(result, out);
+        return result;
     }
 };
 #if defined(ESP32)

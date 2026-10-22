@@ -5,8 +5,12 @@ on:
     paths:
       - include/BrightnessSchedule.h
       - include/BrightnessScheduleRuntimeModel.h
+      - include/BrightnessScheduleStorage.h
+      - include/BrightnessScheduleRuntimeOwner.h
       - tests/brightness_schedule_runtime_model_test.cpp
       - tests/test_brightness_schedule_runtime_model.py
+      - tests/test_brightness_schedule_runtime_owner.py
+      - tests/test_brightness_schedule_storage.py
       - .github/workflows/brightness-runtime-model-tests.yml
 permissions:
   contents: read
@@ -18,8 +22,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Run dormant runtime model host tests
-        run: python3 tests/test_brightness_schedule_runtime_model.py
+      - name: Run model, original storage and owner regression suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_runtime_model.py
+          python3 tests/test_brightness_schedule_storage.py
+          python3 tests/test_brightness_schedule_runtime_owner.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -38,20 +47,23 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Add never-called compile check (no runtime wiring)
+      - name: Add never-called model and owner compile check (no application wiring)
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           Path('src/BrightnessRuntimeModelCompileCheck.cpp').write_text(
-              '#include "BrightnessScheduleRuntimeModel.h"\n'
+              '#include "BrightnessScheduleRuntimeOwner.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
               ' brightnessScheduleRuntimeModel::Model model;\n'
               ' (void)model.sample(0,false,false,true);\n'
               ' brightnessScheduleRuntimeModel::Frame<4> frame;\n'
               ' (void)frame.configure(4); (void)frame.output(0,10000);\n'
+              ' auto &owner = brightnessScheduleRuntimeOwner::applicationRuntime();\n'
+              ' (void)owner.begin();\n'
+              ' (void)owner.serviceFromClock(0,brightnessScheduleRuntimeOwner::systemLocalTime,nullptr,false,true);\n'
               '}\n')
           PY
       - name: Compile both policy paths without upload
