@@ -7,6 +7,9 @@ on:
       - include/BrightnessScheduleRuntimeModel.h
       - include/BrightnessScheduleStorage.h
       - include/BrightnessScheduleRuntimeOwner.h
+      - src/WordClock.cpp
+      - tests/brightness_schedule_application_binding_test.cpp
+      - tests/test_brightness_schedule_application_binding.py
       - tests/brightness_schedule_runtime_model_test.cpp
       - tests/test_brightness_schedule_runtime_model.py
       - tests/test_brightness_schedule_runtime_owner.py
@@ -31,6 +34,7 @@ jobs:
           python3 tests/test_brightness_schedule_storage.py
           python3 tests/test_brightness_schedule_runtime_owner.py
           python3 tests/test_brightness_schedule_offline_edges.py
+          python3 tests/test_brightness_schedule_application_binding.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -49,6 +53,14 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
+      - name: Stage reviewed state-only application and check isolation contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_application_binding.py --stage-application
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
       - name: Add never-called model and owner compile check (no application wiring)
         shell: bash
         run: |
