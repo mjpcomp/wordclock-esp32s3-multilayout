@@ -5,6 +5,7 @@
 #if defined(ESP32)
 #include "BrightnessScheduleProtocol.h"
 #include "BrightnessScheduleTransport.h"
+#include "BrightnessScheduleRuntimeOwner.h"
 #endif
 
 const char favicon[] PROGMEM = {
@@ -103,8 +104,7 @@ bool parseColor(uint8_t *payload, size_t length) {
 // Brightness schedule transport integration; one serialized event-loop context.
 bool invokeBrightnessSchedule(const uint8_t *data, size_t size, char *reply,
                               size_t capacity, size_t &used, void *) {
-    static brightnessScheduleStorage::NvsBackend backend;
-    static brightnessScheduleStorage::Store store(backend);
+    auto &store = brightnessScheduleRuntimeOwner::applicationRuntime().store();
     return brightnessScheduleProtocol::handle(store, data, size, reply, capacity, used);
 }
 
@@ -624,3 +624,4 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
 
     sendMQTTUpdate();
 }
+
