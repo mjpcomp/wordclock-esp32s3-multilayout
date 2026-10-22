@@ -36,6 +36,9 @@ ClockType *usedClockType = nullptr;
 #include "LedStripInterface.h"
 #include "NeoPixelBusLedStripAdapter.h"
 #include "PrefixStatusRuntime.h"
+#if defined(ESP32)
+#include "BrightnessScheduleRuntimeOwner.h"
+#endif
 
 WiFiClient client;
 
@@ -717,6 +720,10 @@ void setup() {
     //-------------------------------------
     // Setup Done
     //-------------------------------------
+#if defined(ESP32)
+    // Read-only startup load; faults are retained, never automatically reset.
+    (void)brightnessScheduleRuntimeOwner::applicationRuntime().begin();
+#endif
     parametersChanged = true;
 }
 
@@ -778,6 +785,12 @@ void loop() {
     // Clockwork
     //------------------------------------------------
     clockWork.loop(tm);
+#if defined(ESP32)
+    // State only: control changes above are applied before sampling real time.
+    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(
+        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,
+        G.autoBrightEnabled == 1, led.getState());
+#endif
     prefixStatusRuntime::service();
     onboardDiagnosticApplication::service();
 }
