@@ -10,6 +10,7 @@ on:
       - tests/brightness_schedule_runtime_model_test.cpp
       - tests/test_brightness_schedule_runtime_model.py
       - tests/test_brightness_schedule_runtime_owner.py
+      - tests/test_brightness_schedule_offline_edges.py
       - tests/test_brightness_schedule_storage.py
       - .github/workflows/brightness-runtime-model-tests.yml
 permissions:
@@ -29,6 +30,7 @@ jobs:
           python3 tests/test_brightness_schedule_runtime_model.py
           python3 tests/test_brightness_schedule_storage.py
           python3 tests/test_brightness_schedule_runtime_owner.py
+          python3 tests/test_brightness_schedule_offline_edges.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
