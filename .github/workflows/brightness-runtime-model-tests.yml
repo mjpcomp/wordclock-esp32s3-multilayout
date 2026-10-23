@@ -7,6 +7,9 @@ on:
       - include/BrightnessScheduleRuntimeModel.h
       - include/BrightnessScheduleStorage.h
       - include/BrightnessScheduleRuntimeOwner.h
+      - include/BrightnessScheduleOutputBuffer.h
+      - tests/brightness_schedule_output_buffer_test.cpp
+      - tests/test_brightness_schedule_output_buffer.py
       - src/WordClock.cpp
       - tests/brightness_schedule_application_binding_test.cpp
       - tests/test_brightness_schedule_application_binding.py
@@ -35,6 +38,7 @@ jobs:
           python3 tests/test_brightness_schedule_runtime_owner.py
           python3 tests/test_brightness_schedule_offline_edges.py
           python3 tests/test_brightness_schedule_application_binding.py
+          python3 tests/test_brightness_schedule_output_buffer.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -69,12 +73,16 @@ jobs:
           from pathlib import Path
           Path('src/BrightnessRuntimeModelCompileCheck.cpp').write_text(
               '#include "BrightnessScheduleRuntimeOwner.h"\n'
+              '#include "BrightnessScheduleOutputBuffer.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
               ' brightnessScheduleRuntimeModel::Model model;\n'
               ' (void)model.sample(0,false,false,true);\n'
               ' brightnessScheduleRuntimeModel::Frame<4> frame;\n'
               ' (void)frame.configure(4); (void)frame.output(0,10000);\n'
+              ' struct Sink { void writePixel(size_t,brightnessScheduleOutput::Pixel) {} void show() {} };\n'
+              ' Sink sink; brightnessScheduleOutput::Buffer<4> output;\n'
+              ' (void)output.configure(4); (void)output.setGain(10000); (void)output.flush(sink);\n'
               ' auto &owner = brightnessScheduleRuntimeOwner::applicationRuntime();\n'
               ' (void)owner.begin();\n'
               ' (void)owner.serviceFromClock(0,brightnessScheduleRuntimeOwner::systemLocalTime,nullptr,false,true);\n'
