@@ -14,7 +14,18 @@ BOOT = '#if defined(ESP32)\n    // Read-only startup load; faults are retained, 
 SERVICE = '#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n'
 PATCHES = [('#include "PrefixStatusRuntime.h"\n', '#include "PrefixStatusRuntime.h"\n#if defined(ESP32)\n#include "BrightnessScheduleRuntimeOwner.h"\n#endif\n'), ('    // Setup Done\n    //-------------------------------------\n    parametersChanged = true;', '    // Setup Done\n    //-------------------------------------\n#if defined(ESP32)\n    // Read-only startup load; faults are retained, never automatically reset.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().begin();\n#endif\n    parametersChanged = true;'), ('    clockWork.loop(tm);\n', '    clockWork.loop(tm);\n#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n')]
 
+# Accept only the exact reviewed retirement delta; retain the original hashes.
+RENDERER_BASE = '#include "OnboardDiagnosticApplication.hpp"\n\nvoid deleteActiveLedStrip() {\n    prefixStatusRuntime::resetDisplay();\n    onboardDiagnosticApplication::resetFrames();\n    delete activeLedStrip;\n    activeLedStrip = nullptr;\n}\n'
+RENDERER_BOUND = '#include "OnboardDiagnosticApplication.hpp"\n#include "BrightnessScheduleRendererBinding.h"\n\nvoid deleteActiveLedStrip() {\n    prefixStatusRuntime::resetDisplay();\n    onboardDiagnosticApplication::resetFrames();\n#if WORDCLOCK_ENABLE_RENDERER_CACHE\n    (void)brightnessScheduleBinding::application().retire(activeLedStrip);\n#endif\n    delete activeLedStrip;\n    activeLedStrip = nullptr;\n}\n'
+
 def prepared(text):
+    if RENDERER_BOUND in text:
+        if text.count(RENDERER_BOUND) != 1:
+            raise SystemExit("Unexpected renderer retirement count")
+        canonical = text.replace(RENDERER_BOUND, RENDERER_BASE, 1)
+        if prepared(canonical) != canonical:
+            raise SystemExit("Renderer retirement requires the verified application binding")
+        return text  # Preserve the promoted hook; do not write the older baseline.
     digest = hashlib.sha256(text.encode()).hexdigest()
     if digest == BASE_SHA:
         for old, new in PATCHES:
@@ -34,6 +45,34 @@ def prepared(text):
     assert loop.index(SERVICE) < loop.index("prefixStatusRuntime::service();") < loop.index("onboardDiagnosticApplication::service();")
     return text
 
+def verify_baselines(text):
+    canonical = text.replace(RENDERER_BOUND, RENDERER_BASE, 1)
+    assert prepared(canonical) == canonical
+    assert canonical.count(RENDERER_BASE) == 1
+    promoted = canonical.replace(RENDERER_BASE, RENDERER_BOUND, 1)
+    assert prepared(promoted) == promoted
+    unbound = canonical
+    for block in (INCLUDE, BOOT, SERVICE):
+        assert unbound.count(block) == 1
+        unbound = unbound.replace(block, "", 1)
+    assert hashlib.sha256(unbound.encode()).hexdigest() == BASE_SHA
+    assert prepared(unbound) == canonical
+    faults = (
+        promoted.replace("#if WORDCLOCK_ENABLE_RENDERER_CACHE", "#if WRONG_RENDERER_GATE", 1),
+        promoted.replace("    (void)brightnessScheduleBinding::application().retire(activeLedStrip);", "", 1),
+        promoted.replace("    delete activeLedStrip;", "    delete activeLedStrip; // unexpected change", 1),
+        promoted.replace("constexpr uint16_t EEPROM_SIZE = 512;", "constexpr uint16_t EEPROM_SIZE = 513;", 1),
+        promoted + '#include "BrightnessScheduleRendererBinding.h"\n',
+    )
+    for altered in faults:
+        assert altered != promoted
+        try:
+            prepared(altered)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("Unreviewed source drift accepted")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage-application", action="store_true")
@@ -41,6 +80,7 @@ def main():
     path = ROOT / "src/WordClock.cpp"
     current = path.read_text()
     candidate = prepared(current)
+    verify_baselines(candidate)
     cpp = (ROOT / "tests/brightness_schedule_application_binding_test.cpp").read_text()
     assert cpp.count("/*BOOT*/") == cpp.count("/*SERVICE*/") == 1
     cpp = cpp.replace("/*BOOT*/", BOOT).replace("/*SERVICE*/", SERVICE)
