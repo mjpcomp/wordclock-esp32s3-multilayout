@@ -9,6 +9,9 @@ on:
       - include/BrightnessScheduleRuntimeOwner.h
       - include/BrightnessScheduleOutputBuffer.h
       - include/BrightnessScheduleStripSink.h
+      - include/BrightnessScheduleRendererCache.h
+      - tests/brightness_schedule_renderer_cache_test.cpp
+      - tests/test_brightness_schedule_renderer_cache.py
       - include/LedStripInterface.h
       - include/NeoPixelBusLedStripAdapter.h
       - include/VirtualLedStripAdapter.h
@@ -47,6 +50,7 @@ jobs:
           python3 tests/test_brightness_schedule_application_binding.py
           python3 tests/test_brightness_schedule_output_buffer.py
           python3 tests/test_brightness_schedule_strip_sink.py
+          python3 tests/test_brightness_schedule_renderer_cache.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -83,6 +87,7 @@ jobs:
               '#include "BrightnessScheduleRuntimeOwner.h"\n'
               '#include "BrightnessScheduleOutputBuffer.h"\n'
               '#include "BrightnessScheduleStripSink.h"\n'
+              '#include "BrightnessScheduleRendererCache.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
               ' brightnessScheduleRuntimeModel::Model model;\n'
@@ -99,6 +104,13 @@ jobs:
               'void brightnessStripSinkCompileCheck(LedStripInterface &strip) {\n'
               ' brightnessScheduleOutput::StripSink sink(strip);\n'
               ' sink.writePixel(0,brightnessScheduleOutput::Pixel{1,2,3,4}); sink.show();\n'
+              '}\n'
+              'void brightnessRendererCacheCompileCheck(LedStripInterface &strip) {\n'
+              ' brightnessScheduleRenderer::Cache<4> cache;\n'
+              ' (void)cache.configure(4,brightnessScheduleRenderer::PixelMode::PhysicalRgbw);\n'
+              ' (void)cache.capture(0,RgbwColor(201,103,51,127)); (void)cache.read(0);\n'
+              ' brightnessScheduleOutput::StripSink sink(strip);\n'
+              ' (void)cache.setGain(5000); cache.show(sink);\n'
               '}\n')
           PY
       - name: Compile both policy paths without upload
