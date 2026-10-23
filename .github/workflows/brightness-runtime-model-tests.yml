@@ -10,6 +10,9 @@ on:
       - include/BrightnessScheduleOutputBuffer.h
       - include/BrightnessScheduleStripSink.h
       - include/BrightnessScheduleRendererCache.h
+      - tests/brightness_schedule_real_colors_test.cpp
+      - tests/test_brightness_schedule_real_colors.py
+      - platformio.ini
       - include/BrightnessScheduleRendererBinding.h
       - include/ClockWorkLedFactory.hpp
       - docs/patches/brightness-renderer-binding.patch
@@ -140,3 +143,8 @@ jobs:
           .ci-venv/bin/python -m pip install platformio==6.1.18
           .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
           .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
+      - name: Run real resolved-library color tests without hardware
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
