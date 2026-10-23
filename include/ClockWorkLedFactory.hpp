@@ -56,4 +56,8 @@ void ClockWork::initLedStrip(uint8_t num) {
     }
 #endif
 #endif
+#if defined(WORDCLOCK_ENABLE_RENDERER_CACHE) && WORDCLOCK_ENABLE_RENDERER_CACHE
+    if (!brightnessScheduleBinding::application().attach(activeLedStrip, ledCount, num == Grbw))
+        Serial.println("Renderer cache unavailable; retaining full-gain legacy routing");
+#endif
 }
