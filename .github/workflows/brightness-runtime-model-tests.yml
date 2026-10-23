@@ -10,6 +10,10 @@ on:
       - include/BrightnessScheduleOutputBuffer.h
       - include/BrightnessScheduleStripSink.h
       - include/BrightnessScheduleRendererCache.h
+      - include/BrightnessScheduleRendererBinding.h
+      - include/ClockWorkLedFactory.hpp
+      - docs/patches/brightness-renderer-binding.patch
+      - tests/test_brightness_schedule_renderer_binding.py
       - tests/brightness_schedule_renderer_cache_test.cpp
       - tests/test_brightness_schedule_renderer_cache.py
       - include/LedStripInterface.h
@@ -58,6 +62,7 @@ jobs:
           python3 tests/test_brightness_schedule_strip_sink.py
           python3 tests/test_brightness_schedule_renderer_cache.py
           python3 tests/test_brightness_schedule_renderer_integration.py
+          python3 tests/test_brightness_schedule_renderer_binding.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -66,9 +71,11 @@ jobs:
       fail-fast: false
       matrix:
         environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+        renderer_cache: ['0', '1']
     env:
       PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
       BUILD_ENV: ${{ matrix.environment }}
+      RENDERER_CACHE: ${{ matrix.renderer_cache }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -120,6 +127,11 @@ jobs:
               ' (void)cache.setGain(5000); cache.show(sink);\n'
               '}\n')
           PY
+      - name: Stage full-gain renderer binding candidate in disposable checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_renderer_binding.py --stage-binding --gate "$RENDERER_CACHE"
       - name: Compile both policy paths without upload
         shell: bash
         run: |
