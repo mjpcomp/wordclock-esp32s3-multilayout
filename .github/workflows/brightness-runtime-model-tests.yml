@@ -21,6 +21,12 @@ on:
       - tests/brightness_schedule_output_buffer_test.cpp
       - tests/test_brightness_schedule_output_buffer.py
       - src/WordClock.cpp
+      - src/Led.cpp
+      - include/TransitionTypes/Transition.hpp
+      - include/WordClockTypes/ClockType.hpp
+      - include/WordClockTypes/EN10x11.hpp
+      - tests/brightness_schedule_renderer_integration_test.cpp
+      - tests/test_brightness_schedule_renderer_integration.py
       - tests/brightness_schedule_application_binding_test.cpp
       - tests/test_brightness_schedule_application_binding.py
       - tests/brightness_schedule_runtime_model_test.cpp
@@ -51,6 +57,7 @@ jobs:
           python3 tests/test_brightness_schedule_output_buffer.py
           python3 tests/test_brightness_schedule_strip_sink.py
           python3 tests/test_brightness_schedule_renderer_cache.py
+          python3 tests/test_brightness_schedule_renderer_integration.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
