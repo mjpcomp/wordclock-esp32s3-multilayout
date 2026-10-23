@@ -8,6 +8,13 @@ on:
       - include/BrightnessScheduleStorage.h
       - include/BrightnessScheduleRuntimeOwner.h
       - include/BrightnessScheduleOutputBuffer.h
+      - include/BrightnessScheduleStripSink.h
+      - include/LedStripInterface.h
+      - include/NeoPixelBusLedStripAdapter.h
+      - include/VirtualLedStripAdapter.h
+      - include/LedStatusPrefix.h
+      - tests/brightness_schedule_strip_sink_test.cpp
+      - tests/test_brightness_schedule_strip_sink.py
       - tests/brightness_schedule_output_buffer_test.cpp
       - tests/test_brightness_schedule_output_buffer.py
       - src/WordClock.cpp
@@ -39,6 +46,7 @@ jobs:
           python3 tests/test_brightness_schedule_offline_edges.py
           python3 tests/test_brightness_schedule_application_binding.py
           python3 tests/test_brightness_schedule_output_buffer.py
+          python3 tests/test_brightness_schedule_strip_sink.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -74,6 +82,7 @@ jobs:
           Path('src/BrightnessRuntimeModelCompileCheck.cpp').write_text(
               '#include "BrightnessScheduleRuntimeOwner.h"\n'
               '#include "BrightnessScheduleOutputBuffer.h"\n'
+              '#include "BrightnessScheduleStripSink.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
               ' brightnessScheduleRuntimeModel::Model model;\n'
@@ -86,6 +95,10 @@ jobs:
               ' auto &owner = brightnessScheduleRuntimeOwner::applicationRuntime();\n'
               ' (void)owner.begin();\n'
               ' (void)owner.serviceFromClock(0,brightnessScheduleRuntimeOwner::systemLocalTime,nullptr,false,true);\n'
+              '}\n'
+              'void brightnessStripSinkCompileCheck(LedStripInterface &strip) {\n'
+              ' brightnessScheduleOutput::StripSink sink(strip);\n'
+              ' sink.writePixel(0,brightnessScheduleOutput::Pixel{1,2,3,4}); sink.show();\n'
               '}\n')
           PY
       - name: Compile both policy paths without upload
