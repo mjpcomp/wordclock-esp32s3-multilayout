@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "Font.h"
 #include "LedStripInterface.h"
+#include "BrightnessScheduleRendererBinding.h"
 #include "NeoMultiFeature.hpp"
 #include "Symbols.h"
 #include "WordClockState.h"
@@ -241,9 +242,24 @@ void Led::setState(const bool newState) {
 
 void Led::setPixel(uint16_t ledIndex, HsbColor color) {
     if (G.Colortype == Grbw) {
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+        if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
+            (void)brightnessScheduleBinding::application().capture(
+                ledIndex, convertRgbToRgbw(RgbColor(color), G.wType));
+            return;
+        }
+#endif
         activeLedStrip->setRgbwPixel(
             ledIndex, convertRgbToRgbw(RgbColor(color), G.wType));
     } else {
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+        if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
+            const RgbColor rgb(color);
+            (void)brightnessScheduleBinding::application().capture(
+                ledIndex, RgbwColor(rgb.R, rgb.G, rgb.B, 0));
+            return;
+        }
+#endif
         activeLedStrip->setRgbPixel(ledIndex, color);
     }
 }
@@ -450,7 +466,13 @@ void Led::set(WordclockChanges changed) {
 // Pixel get Functions
 //------------------------------------------------------------------------------
 
-RgbColor Led::getPixel(uint16_t i) { return activeLedStrip->getPixel(i); }
+RgbColor Led::getPixel(uint16_t i) {
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+    if (brightnessScheduleBinding::application().ready(activeLedStrip))
+        return brightnessScheduleBinding::application().read(i);
+#endif
+    return activeLedStrip->getPixel(i);
+}
 
 //------------------------------------------------------------------------------
 
@@ -477,7 +499,15 @@ void Led::clearPixel(uint8_t row, uint8_t col) {
 
 //------------------------------------------------------------------------------
 
-void Led::clearPixel(uint16_t i) { activeLedStrip->clearPixel(i); }
+void Led::clearPixel(uint16_t i) {
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+    if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
+        (void)brightnessScheduleBinding::application().clear(i);
+        return;
+    }
+#endif
+    activeLedStrip->clearPixel(i);
+}
 
 //------------------------------------------------------------------------------
 
@@ -560,7 +590,7 @@ void Led::showNumbers(const char d1, const char d2) {
         usedFontSize = smallSizeNumbers;
         usedFontWidth = pgm_read_byte(&(fontWidth[usedFontSize]));
         usedFontHeight = pgm_read_byte(&(fontHeight[usedFontSize]));
-        // convert char to int due to differt definition in Font.h
+        // convert char to int due differt definition in Font.h
         unsigned_d1 -= 48;
         unsigned_d2 -= 48;
     }
@@ -732,4 +762,12 @@ void Led::showDigitalClock(const char min1, const char min0, const char h1,
 
 //------------------------------------------------------------------------------
 
-void Led::show() { activeLedStrip->show(); }
+void Led::show() {
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+    if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
+        brightnessScheduleBinding::application().show();
+        return;
+    }
+#endif
+    activeLedStrip->show();
+}
