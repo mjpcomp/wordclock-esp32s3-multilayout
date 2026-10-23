@@ -87,10 +87,14 @@ void ensureTimezone();
 LedStripInterface *activeLedStrip = nullptr;
 
 #include "OnboardDiagnosticApplication.hpp"
+#include "BrightnessScheduleRendererBinding.h"
 
 void deleteActiveLedStrip() {
     prefixStatusRuntime::resetDisplay();
     onboardDiagnosticApplication::resetFrames();
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+    (void)brightnessScheduleBinding::application().retire(activeLedStrip);
+#endif
     delete activeLedStrip;
     activeLedStrip = nullptr;
 }
