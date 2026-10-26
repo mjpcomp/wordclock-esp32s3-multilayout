@@ -35,6 +35,29 @@ int main() {
             assert(sink.pixel.b==scaled(native.B,gain));
             assert(sink.pixel.w==scaled(native.W,gain));
         }
+        const RgbwColor staged(17,33,65,mode==PixelMode::Rgb ? 0 : 129);
+        const RgbColor stagedRead=mode==PixelMode::PhysicalRgbw ? RgbColor(staged)
+            : RgbColor(staged.R,staged.G,staged.B);
+        assert(cache.capture(0,staged));
+        same(cache.read(0),stagedRead);
+        cache.invalidateOutput(); assert(cache.repaint(sink));
+        for (uint16_t gain : {5000,0,10000}) {
+            cache.setGain(gain); assert(cache.repaint(sink));
+            same(cache.read(0),stagedRead);
+            assert(sink.pixel.r==scaled(native.R,gain));
+            assert(sink.pixel.g==scaled(native.G,gain));
+            assert(sink.pixel.b==scaled(native.B,gain));
+            assert(sink.pixel.w==scaled(native.W,gain));
+            assert(!cache.repaint(sink));
+        }
+        cache.show(sink); // The renderer now commits the staged frame.
+        assert(sink.pixel.r==staged.R && sink.pixel.g==staged.G);
+        assert(sink.pixel.b==staged.B && sink.pixel.w==staged.W);
+        cache.setGain(5000); assert(cache.repaint(sink));
+        assert(sink.pixel.r==scaled(staged.R,5000));
+        assert(sink.pixel.g==scaled(staged.G,5000));
+        assert(sink.pixel.b==scaled(staged.B,5000));
+        assert(sink.pixel.w==scaled(staged.W,5000));
         assert(cache.clear(0)); same(cache.read(0),RgbColor(0)); cache.show(sink);
         assert(!(sink.pixel.r||sink.pixel.g||sink.pixel.b||sink.pixel.w));
         ++cases;

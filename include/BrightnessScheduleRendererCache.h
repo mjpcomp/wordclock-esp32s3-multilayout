@@ -13,11 +13,18 @@ enum class PixelMode { Rgb, VirtualRgbw, PhysicalRgbw };
 template<size_t Capacity> class Cache {
     brightnessScheduleOutput::Buffer<Capacity> buffer_;
     PixelMode mode_ = PixelMode::Rgb;
+    brightnessScheduleRuntimeModel::Frame<Capacity> presented_;
+    uint16_t presentedGain_ = 0;
+    bool havePresented_ = false, presentedInvalid_ = false;
 public:
     // Resets logical pixels/gain. Does NOT retire/clear any previous backend.
     bool configure(size_t count, PixelMode mode) {
         mode_ = mode;
-        return buffer_.configure(count);
+        havePresented_ = presentedInvalid_ = false;
+        presentedGain_ = 0;
+        const bool ok = buffer_.configure(count);
+        (void)presented_.configure(ok ? count : 0);
+        return ok;
     }
     size_t count() const { return buffer_.count(); }
     bool pending() const { return buffer_.pending(); }
@@ -39,11 +46,31 @@ public:
     bool clear(size_t index) { return buffer_.clear(index); }
     void clearAll() { buffer_.clearAll(); }
     bool setGain(uint16_t gain) { return buffer_.setGain(gain); }
-    void invalidateOutput() { buffer_.invalidateOutput(); }
+    void invalidateOutput() {
+        buffer_.invalidateOutput();
+        if (havePresented_) presentedInvalid_ = true;
+    }
     // Software submission only, never hardware acknowledgement.
-    template<class Sink> bool flush(Sink &sink) { return buffer_.flush(sink); }
+    // flush() explicitly submits staging and updates presentation history.
+    template<class Sink> bool flush(Sink &sink) {
+        if (!buffer_.flush(sink)) return false;
+        for (size_t i = 0; i < count(); ++i) presented_.set(i, logical(i));
+        presentedGain_ = gain();
+        havePresented_ = true;
+        presentedInvalid_ = false;
+        return true;
+    }
+    // Gain-only loop repaint: never submit an unshown staged target.
+    template<class Sink> bool repaint(Sink &sink) {
+        if (!havePresented_ || (!presentedInvalid_ && presentedGain_ == gain())) return false;
+        for (size_t i = 0; i < count(); ++i) sink.writePixel(i, presented_.output(i, gain()));
+        sink.show();
+        presentedGain_ = gain();
+        presentedInvalid_ = false;
+        return true;
+    }
     // An explicit renderer show remains a show, including prefix-only changes.
-    // Gain-only polling should use flush(), not this unconditional show boundary.
+    // Gain-only loop polling uses repaint(); flush() still submits staged pixels.
     template<class Sink> void show(Sink &sink) {
         if (!flush(sink)) sink.show();
     }

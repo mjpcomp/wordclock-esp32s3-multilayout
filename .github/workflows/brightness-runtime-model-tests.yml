@@ -106,6 +106,7 @@ jobs:
               '#include "BrightnessScheduleStripSink.h"\n'
               '#include "BrightnessScheduleRendererCache.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
+              'static_assert(sizeof(brightnessScheduleRenderer::Cache<1200>)<=10000,"renderer cache budget");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
               ' brightnessScheduleRuntimeModel::Model model;\n'
               ' (void)model.sample(0,false,false,true);\n'
@@ -128,6 +129,7 @@ jobs:
               ' (void)cache.capture(0,RgbwColor(201,103,51,127)); (void)cache.read(0);\n'
               ' brightnessScheduleOutput::StripSink sink(strip);\n'
               ' (void)cache.setGain(5000); cache.show(sink);\n'
+              ' (void)cache.setGain(2500); (void)cache.repaint(sink);\n'
               '}\n')
           PY
       - name: Stage full-gain renderer binding candidate in disposable checkout
