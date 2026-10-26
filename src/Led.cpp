@@ -19,6 +19,9 @@ extern ClockType *usedClockType;
 extern Transition *transition;
 extern Led led;
 extern LedStripInterface *activeLedStrip;
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+bool brightnessScheduleSyncOutput();
+#endif
 
 namespace {
 const uint8_t whiteAdjR[3] = {255, 255, 255};
@@ -161,12 +164,18 @@ uint8_t Led::getCurrentManualBrightnessSetting() {
 //------------------------------------------------------------------------------
 
 HsbColor Led::getColorbyPositionWithAppliedBrightness(ColorPosition position) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    const bool scheduledOutput = brightnessScheduleSyncOutput();
+#endif
     HsbColor color = G.color[position];
 
     if (G.autoBrightEnabled == 1) {
         color.B = setBrightnessAuto(color.B);
     } else {
-        color.B *= getCurrentManualBrightnessSetting() / 100.f;
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+        if (!scheduledOutput)
+#endif
+            color.B *= getCurrentManualBrightnessSetting() / 100.f;
     }
     return color;
 }
@@ -241,6 +250,10 @@ void Led::setState(const bool newState) {
 //------------------------------------------------------------------------------
 
 void Led::setPixel(uint16_t ledIndex, HsbColor color) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;
+#endif
     if (G.Colortype == Grbw) {
 #if WORDCLOCK_ENABLE_RENDERER_CACHE
         if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
@@ -467,6 +480,10 @@ void Led::set(WordclockChanges changed) {
 //------------------------------------------------------------------------------
 
 RgbColor Led::getPixel(uint16_t i) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return RgbColor(0);
+#endif
 #if WORDCLOCK_ENABLE_RENDERER_CACHE
     if (brightnessScheduleBinding::application().ready(activeLedStrip))
         return brightnessScheduleBinding::application().read(i);
@@ -500,6 +517,10 @@ void Led::clearPixel(uint8_t row, uint8_t col) {
 //------------------------------------------------------------------------------
 
 void Led::clearPixel(uint16_t i) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;
+#endif
 #if WORDCLOCK_ENABLE_RENDERER_CACHE
     if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
         (void)brightnessScheduleBinding::application().clear(i);
@@ -763,6 +784,10 @@ void Led::showDigitalClock(const char min1, const char min0, const char h1,
 //------------------------------------------------------------------------------
 
 void Led::show() {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;
+#endif
 #if WORDCLOCK_ENABLE_RENDERER_CACHE
     if (brightnessScheduleBinding::application().ready(activeLedStrip)) {
         brightnessScheduleBinding::application().show();
