@@ -89,6 +89,35 @@ LedStripInterface *activeLedStrip = nullptr;
 #include "OnboardDiagnosticApplication.hpp"
 #include "BrightnessScheduleRendererBinding.h"
 
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+// Serialized control/render boundary; never called from a timer or ISR.
+bool brightnessScheduleSyncOutput() {
+    auto &owner = brightnessScheduleRuntimeOwner::applicationRuntime();
+    const bool initialized = owner.initialized();
+    const bool automatic = G.autoBrightEnabled == 1;
+    if (initialized) {
+        (void)owner.serviceFromClock(
+            millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,
+            automatic, led.getState());
+    }
+    const auto &decision = owner.current();
+    const uint8_t policy = !initialized ? 3 : automatic ? 1 : decision.scheduled ? 2 : 0;
+    auto &binding = brightnessScheduleBinding::application();
+    static uint8_t lastPolicy = UINT8_MAX;
+    if (binding.ready(activeLedStrip)) {
+        if (lastPolicy != policy) {
+            binding.discardFrame();
+            if (transition) transition->resetBrightnessPolicy();
+            parametersChanged = true;
+            if (G.prog == COMMAND_IDLE) G.prog = COMMAND_MODE_WORD_CLOCK;
+        }
+        (void)binding.adoptGain(decision.gain);
+        lastPolicy = policy;
+    }
+    return !automatic && decision.scheduled;
+}
+#endif
+
 void deleteActiveLedStrip() {
     prefixStatusRuntime::resetDisplay();
     onboardDiagnosticApplication::resetFrames();
@@ -794,6 +823,11 @@ void loop() {
     (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(
         millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,
         G.autoBrightEnabled == 1, led.getState());
+#endif
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (brightnessScheduleBinding::application().ready(activeLedStrip))
+        (void)brightnessScheduleBinding::application().repaint();
 #endif
     prefixStatusRuntime::service();
     onboardDiagnosticApplication::service();
