@@ -510,6 +510,10 @@ void Transition::analyzeColors(RgbfColor **dest, RgbfColor **source,
 // Overwrite the LEDs with internal matrix
 
 void Transition::copy2Stripe(RgbfColor **source) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (brightnessPolicyPending_) return;
+#endif
     for (uint8_t row = 0; row < maxRows; row++) {
         for (uint8_t col = 0; col < maxCols; col++) {
             led.setPixel(
@@ -1185,6 +1189,18 @@ bool Transition::hasMinuteChanged() {
 
 bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,
                                            uint8_t minute) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (brightnessPolicyPending_) {
+        saveMatrix();
+        copyMatrix(work, act);
+        copyMatrix(old, act);
+        phase = 0;
+        matrixChanged = false;
+        brightnessPolicyPending_ = false;
+        return true;
+    }
+#endif
     if (transitionType == NO_TRANSITION) {
         if (changesInWordMatrix != WordclockChanges::Parameters &&
             hasMinuteChanged()) {
@@ -1214,6 +1230,21 @@ bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,
 
 //------------------------------------------------------------------------------
 
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+void Transition::resetBrightnessPolicy() {
+    fillMatrix(old, RgbfColor(0));
+    fillMatrix(act, RgbfColor(0));
+    fillMatrix(work, RgbfColor(0));
+    foreground = RgbfColor(0);
+    background = RgbfColor(0);
+    foregroundMinute = RgbColor(0);
+    phase = 0;
+    nextActionTime = 0;
+    matrixChanged = false;
+    brightnessPolicyPending_ = true;
+}
+#endif
+
 void Transition::init() { saveMatrix(); }
 
 //------------------------------------------------------------------------------
@@ -1221,6 +1252,10 @@ void Transition::init() { saveMatrix(); }
 //------------------------------------------------------------------------------
 
 void Transition::loop(struct tm &tm) {
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    (void)brightnessScheduleSyncOutput();
+    if (brightnessPolicyPending_) return;
+#endif
     static bool specialEvent;
 
     if (maxRows != usedClockType->rowsWordMatrix() ||
