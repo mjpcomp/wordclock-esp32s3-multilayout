@@ -17,6 +17,7 @@ on:
       - include/ClockWorkLedFactory.hpp
       - docs/patches/brightness-renderer-binding.patch
       - tests/test_brightness_schedule_renderer_binding.py
+      - tests/test_brightness_schedule_gain_bridge.py
       - tests/brightness_schedule_renderer_cache_test.cpp
       - tests/test_brightness_schedule_renderer_cache.py
       - include/LedStripInterface.h
@@ -66,6 +67,7 @@ jobs:
           python3 tests/test_brightness_schedule_renderer_cache.py
           python3 tests/test_brightness_schedule_renderer_integration.py
           python3 tests/test_brightness_schedule_renderer_binding.py
+          python3 tests/test_brightness_schedule_gain_bridge.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -75,10 +77,15 @@ jobs:
       matrix:
         environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
         renderer_cache: ['0', '1']
+        schedule_output: ['0', '1']
+        exclude:
+          - renderer_cache: '0'
+            schedule_output: '1'
     env:
       PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
       BUILD_ENV: ${{ matrix.environment }}
       RENDERER_CACHE: ${{ matrix.renderer_cache }}
+      SCHEDULE_OUTPUT: ${{ matrix.schedule_output }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -105,6 +112,7 @@ jobs:
               '#include "BrightnessScheduleOutputBuffer.h"\n'
               '#include "BrightnessScheduleStripSink.h"\n'
               '#include "BrightnessScheduleRendererCache.h"\n'
+              '#include "BrightnessScheduleRendererBinding.h"\n'
               'static_assert(sizeof(brightnessScheduleRuntimeModel::Pixel)==4,"pixel size");\n'
               'static_assert(sizeof(brightnessScheduleRenderer::Cache<1200>)<=10000,"renderer cache budget");\n'
               'void brightnessRuntimeModelCompileCheck() {\n'
@@ -130,13 +138,27 @@ jobs:
               ' brightnessScheduleOutput::StripSink sink(strip);\n'
               ' (void)cache.setGain(5000); cache.show(sink);\n'
               ' (void)cache.setGain(2500); (void)cache.repaint(sink);\n'
+              '#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n'
+              ' auto &binding = brightnessScheduleBinding::application();\n'
+              ' (void)binding.adoptGain(5000); (void)binding.repaint();\n'
+              '#endif\n'
               '}\n')
           PY
-      - name: Stage full-gain renderer binding candidate in disposable checkout
+      - name: Stage gated renderer binding candidate in disposable checkout
         shell: bash
         run: |
           set -euo pipefail
           python3 tests/test_brightness_schedule_renderer_binding.py --stage-binding --gate "$RENDERER_CACHE"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          path = Path('include/BrightnessScheduleRendererBinding.h')
+          text = path.read_text()
+          old = '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT 0'
+          if text.count(old) != 1:
+              raise SystemExit('Schedule output default gate drift')
+          path.write_text(text.replace(old, '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT ' + os.environ['SCHEDULE_OUTPUT'], 1))
+          PY
       - name: Compile both policy paths without upload
         shell: bash
         run: |
