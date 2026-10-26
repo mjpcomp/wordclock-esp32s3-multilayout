@@ -18,6 +18,9 @@ on:
       - docs/patches/brightness-renderer-binding.patch
       - tests/test_brightness_schedule_renderer_binding.py
       - tests/test_brightness_schedule_gain_bridge.py
+      - docs/patches/brightness-schedule-output.json
+      - tests/test_brightness_schedule_output_candidate.py
+      - include/TransitionTypes/Transition.h
       - tests/brightness_schedule_renderer_cache_test.cpp
       - tests/test_brightness_schedule_renderer_cache.py
       - include/LedStripInterface.h
@@ -68,6 +71,7 @@ jobs:
           python3 tests/test_brightness_schedule_renderer_integration.py
           python3 tests/test_brightness_schedule_renderer_binding.py
           python3 tests/test_brightness_schedule_gain_bridge.py
+          python3 tests/test_brightness_schedule_output_candidate.py
   native-smoke:
     needs: host-tests
     runs-on: ubuntu-24.04
@@ -159,6 +163,11 @@ jobs:
               raise SystemExit('Schedule output default gate drift')
           path.write_text(text.replace(old, '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT ' + os.environ['SCHEDULE_OUTPUT'], 1))
           PY
+      - name: Stage remaining validated application output edits during promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_output_candidate.py --stage-output
       - name: Compile both policy paths without upload
         shell: bash
         run: |

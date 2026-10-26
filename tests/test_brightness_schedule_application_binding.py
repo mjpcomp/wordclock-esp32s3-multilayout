@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Review/stage exact state-only startup binding and compile extracted call sites."""
+"""Verify state-only startup binding while preserving exact reviewed output hooks."""
 from pathlib import Path
 import argparse
 import hashlib
+import json
+import runpy
 import shutil
 import subprocess
 import tempfile
@@ -13,19 +15,29 @@ INCLUDE = '#if defined(ESP32)\n#include "BrightnessScheduleRuntimeOwner.h"\n#end
 BOOT = '#if defined(ESP32)\n    // Read-only startup load; faults are retained, never automatically reset.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().begin();\n#endif\n'
 SERVICE = '#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n'
 PATCHES = [('#include "PrefixStatusRuntime.h"\n', '#include "PrefixStatusRuntime.h"\n#if defined(ESP32)\n#include "BrightnessScheduleRuntimeOwner.h"\n#endif\n'), ('    // Setup Done\n    //-------------------------------------\n    parametersChanged = true;', '    // Setup Done\n    //-------------------------------------\n#if defined(ESP32)\n    // Read-only startup load; faults are retained, never automatically reset.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().begin();\n#endif\n    parametersChanged = true;'), ('    clockWork.loop(tm);\n', '    clockWork.loop(tm);\n#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n')]
-
-# Accept only the exact reviewed retirement delta; retain the original hashes.
 RENDERER_BASE = '#include "OnboardDiagnosticApplication.hpp"\n\nvoid deleteActiveLedStrip() {\n    prefixStatusRuntime::resetDisplay();\n    onboardDiagnosticApplication::resetFrames();\n    delete activeLedStrip;\n    activeLedStrip = nullptr;\n}\n'
 RENDERER_BOUND = '#include "OnboardDiagnosticApplication.hpp"\n#include "BrightnessScheduleRendererBinding.h"\n\nvoid deleteActiveLedStrip() {\n    prefixStatusRuntime::resetDisplay();\n    onboardDiagnosticApplication::resetFrames();\n#if WORDCLOCK_ENABLE_RENDERER_CACHE\n    (void)brightnessScheduleBinding::application().retire(activeLedStrip);\n#endif\n    delete activeLedStrip;\n    activeLedStrip = nullptr;\n}\n'
 
+def output_rules():
+    return json.loads((ROOT / "docs/patches/brightness-schedule-output.json").read_text())["replacements"]
+
+def output_canonical(text):
+    normalize = runpy.run_path(str(ROOT / "tests/test_brightness_schedule_output_candidate.py"))["normalize_promoted"]
+    return normalize(text, "src/WordClock.cpp", output_rules())
+
 def prepared(text):
+    canonical_output = output_canonical(text)
+    if canonical_output != text:
+        if prepared(canonical_output) != canonical_output:
+            raise SystemExit("Output promotion requires the verified application binding")
+        return text  # Preserve installed output code; never write its older baseline.
     if RENDERER_BOUND in text:
         if text.count(RENDERER_BOUND) != 1:
             raise SystemExit("Unexpected renderer retirement count")
         canonical = text.replace(RENDERER_BOUND, RENDERER_BASE, 1)
         if prepared(canonical) != canonical:
             raise SystemExit("Renderer retirement requires the verified application binding")
-        return text  # Preserve the promoted hook; do not write the older baseline.
+        return text
     digest = hashlib.sha256(text.encode()).hexdigest()
     if digest == BASE_SHA:
         for old, new in PATCHES:
@@ -46,6 +58,7 @@ def prepared(text):
     return text
 
 def verify_baselines(text):
+    text = output_canonical(text)
     canonical = text.replace(RENDERER_BOUND, RENDERER_BASE, 1)
     assert prepared(canonical) == canonical
     assert canonical.count(RENDERER_BASE) == 1
@@ -73,6 +86,32 @@ def verify_baselines(text):
         else:
             raise AssertionError("Unreviewed source drift accepted")
 
+def verify_output_promotions(text):
+    canonical = output_canonical(text)
+    promoted = canonical
+    group = [item for item in output_rules() if item["path"] == "src/WordClock.cpp"]
+    if len(group) != 2: raise ValueError("WordClock promotion group drift")
+    for item in group:
+        if promoted.count(item["old"]) != 1: raise ValueError("Output promotion anchor drift")
+        promoted = promoted.replace(item["old"], item["new"], 1)
+    assert prepared(canonical) == canonical
+    assert prepared(promoted) == promoted
+    assert output_canonical(promoted) == canonical
+    faults = (
+        promoted.replace("owner.current()", "owner.unreviewedCurrent()", 1),
+        promoted.replace("constexpr uint16_t EEPROM_SIZE = 512;", "constexpr uint16_t EEPROM_SIZE = 513;", 1),
+        canonical.replace(group[0]["old"], group[0]["new"], 1),
+        promoted + group[0]["new"],
+    )
+    for altered in faults:
+        assert altered != promoted and altered != canonical
+        try:
+            prepared(altered)
+        except (ValueError, SystemExit):
+            pass
+        else:
+            raise AssertionError("Unreviewed output promotion accepted")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage-application", action="store_true")
@@ -81,6 +120,7 @@ def main():
     current = path.read_text()
     candidate = prepared(current)
     verify_baselines(candidate)
+    verify_output_promotions(candidate)
     cpp = (ROOT / "tests/brightness_schedule_application_binding_test.cpp").read_text()
     assert cpp.count("/*BOOT*/") == cpp.count("/*SERVICE*/") == 1
     cpp = cpp.replace("/*BOOT*/", BOOT).replace("/*SERVICE*/", SERVICE)
@@ -99,7 +139,7 @@ def main():
     if args.stage_application and current != candidate:
         path.write_text(candidate)
         print("Staged reviewed application in build workspace only")
-    print("PASS: state-only application source contract and call-site host test")
+    print("PASS: state-only source contract, exact output promotions and call-site host test")
 
 if __name__ == "__main__":
     main()
