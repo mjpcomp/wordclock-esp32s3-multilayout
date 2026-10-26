@@ -1,0 +1,191 @@
+name: Promote reviewed Transition implementation
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths: [.github/workflows/promote-transition-implementation.yml]
+permissions:
+  contents: read
+concurrency:
+  group: transition-implementation-promotion
+  cancel-in-progress: false
+jobs:
+  promote:
+    if: github.repository == 'mjpcomp/wordclock-esp32s3-multilayout' && github.ref == 'refs/heads/feature/optional-status-prefix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      commit: ${{ steps.publish.outputs.commit }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Apply only the pinned implementation promotion
+        id: prepare
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import os
+          import subprocess
+
+          assert os.environ['GITHUB_REPOSITORY'] == 'mjpcomp/wordclock-esp32s3-multilayout'
+          assert os.environ['GITHUB_REF'] == 'refs/heads/feature/optional-status-prefix'
+          target = 'include/TransitionTypes/Transition.hpp'
+          base_ref = '3e8c07e686ba5e537da63ece789aa9bbe0c7c886'
+          header_ref = 'e846d55b1d5620379c8df4f297a13637e5580fe0'
+          header = 'include/TransitionTypes/Transition.h'
+          assert Path(header).read_bytes() == subprocess.check_output(['git', 'show', header_ref + ':' + header]), 'Reviewed declarations required'
+          base = subprocess.check_output(['git', 'show', base_ref + ':' + target])
+          edits = [
+              (b'void Transition::copy2Stripe(RgbfColor **source) {\n', b'void Transition::copy2Stripe(RgbfColor **source) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) return;\n#endif\n'),
+              (b'void Transition::loop(struct tm &tm) {\n', b'void Transition::loop(struct tm &tm) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) return;\n#endif\n'),
+              (b'void Transition::init() { saveMatrix(); }\n', b'#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\nvoid Transition::resetBrightnessPolicy() {\n    fillMatrix(old, RgbfColor(0));\n    fillMatrix(act, RgbfColor(0));\n    fillMatrix(work, RgbfColor(0));\n    foreground = RgbfColor(0);\n    background = RgbfColor(0);\n    foregroundMinute = RgbColor(0);\n    phase = 0;\n    nextActionTime = 0;\n    matrixChanged = false;\n    brightnessPolicyPending_ = true;\n}\n#endif\n\nvoid Transition::init() { saveMatrix(); }\n'),
+              (b'bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,\n                                           uint8_t minute) {\n', b'bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,\n                                           uint8_t minute) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) {\n        saveMatrix();\n        copyMatrix(work, act);\n        copyMatrix(old, act);\n        phase = 0;\n        matrixChanged = false;\n        brightnessPolicyPending_ = false;\n        return true;\n    }\n#endif\n'),
+          ]
+          rules = json.loads(Path('docs/patches/brightness-schedule-output.json').read_text())['replacements']
+          assert [(r['old'].encode(), r['new'].encode()) for r in rules if r['path'] == target] == edits
+          expected = base
+          for old, new in edits:
+              assert expected.count(old) == 1
+              expected = expected.replace(old, new, 1)
+          assert bytes([0]) not in expected
+          assert expected.count(b'\n') - base.count(b'\n') == 35
+          binding = Path('include/BrightnessScheduleRendererBinding.h').read_bytes()
+          for gate in [b'RENDERER_CACHE', b'SCHEDULE_OUTPUT']:
+              assert binding.count(b'#define WORDCLOCK_ENABLE_' + gate + b' 0') == 1
+          current = Path(target).read_bytes()
+          assert current in (base, expected), 'Unreviewed implementation changes; refusing to overwrite'
+          assert not subprocess.check_output(['git', 'diff', '--name-only'])
+          assert not subprocess.check_output(['git', 'diff', '--cached', '--name-only'])
+          if current != expected:
+              Path(target).write_bytes(expected)
+          subprocess.run(['git', 'diff', '--check', '--', target], check=True)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('source_sha256=' + hashlib.sha256(expected).hexdigest() + '\n')
+          PY
+      - name: Validate implementation promotion before publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in runtime_model storage runtime_owner offline_edges application_binding output_buffer strip_sink renderer_cache renderer_integration renderer_binding gain_bridge; do
+            python3 "tests/test_brightness_schedule_${suite}.py"
+          done
+          python3 tests/test_brightness_schedule_output_candidate.py
+      - name: Publish only the reviewed implementation, without force push
+        id: publish
+        env:
+          EXPECTED_SOURCE_SHA: ${{ steps.prepare.outputs.source_sha256 }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import hashlib
+          import os
+          import subprocess
+
+          token = os.environ.pop('GH_TOKEN')
+          assert os.environ['GITHUB_REPOSITORY'] == 'mjpcomp/wordclock-esp32s3-multilayout'
+          assert os.environ['GITHUB_REF'] == 'refs/heads/feature/optional-status-prefix'
+          target = 'include/TransitionTypes/Transition.hpp'
+          assert hashlib.sha256(Path(target).read_bytes()).hexdigest() == os.environ['EXPECTED_SOURCE_SHA']
+          assert not subprocess.check_output(['git', 'diff', '--cached', '--name-only'])
+          changed = subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines()
+          assert changed in ([], [target]), 'Unexpected file changes; refusing to publish'
+          if changed:
+              stats = subprocess.check_output(['git', 'diff', '--numstat', '--', target], text=True).split()
+              assert stats == ['35', '0', target], 'Expected only thirty-five added lines'
+              subprocess.run(['git', 'diff', '--check', '--', target], check=True)
+              subprocess.run(['git', 'add', '--', target], check=True)
+              staged = subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines()
+              assert staged == [target]
+              subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], check=True)
+              subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], check=True)
+              subprocess.run(['git', 'commit', '-m', 'feat: promote gated transition policy reset'], check=True)
+              env = dict(os.environ)
+              auth = base64.b64encode(('x-access-token:' + token).encode()).decode()
+              env.update(GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+                         GIT_CONFIG_VALUE_0='AUTHORIZATION: basic ' + auth)
+              subprocess.run(['git', 'push', 'origin', 'HEAD:refs/heads/feature/optional-status-prefix'], env=env, check=True)
+          sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          assert len(sha) == 40 and all(c in '0123456789abcdef' for c in sha)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('commit=' + sha + '\n')
+          PY
+  native-validation:
+    needs: promote
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+        renderer_cache: ['0', '1']
+        schedule_output: ['0', '1']
+        exclude:
+          - renderer_cache: '0'
+            schedule_output: '1'
+    env:
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+      BUILD_ENV: ${{ matrix.environment }}
+      RENDERER_CACHE: ${{ matrix.renderer_cache }}
+      SCHEDULE_OUTPUT: ${{ matrix.schedule_output }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.promote.outputs.commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Check published-source application and isolation contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_application_binding.py --stage-application
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+      - name: Stage gates and remaining validated candidate edits only in this checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_renderer_binding.py --stage-binding --gate "$RENDERER_CACHE"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          path = Path('include/BrightnessScheduleRendererBinding.h')
+          text = path.read_text()
+          old = '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT 0'
+          assert text.count(old) == 1
+          path.write_text(text.replace(old, '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT ' + os.environ['SCHEDULE_OUTPUT'], 1))
+          PY
+          python3 tests/test_brightness_schedule_output_candidate.py --stage-output
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('src/TransitionImplementationPromotionBudget.cpp').write_text(
+              '#include "BrightnessScheduleRendererCache.h"\n'
+              'static_assert(sizeof(brightnessScheduleRenderer::Cache<1200>)<=10000,"renderer cache budget");\n')
+          PY
+      - name: Compile published source with remaining candidate, without upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
+      - name: Check resolved-library colors without hardware
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
