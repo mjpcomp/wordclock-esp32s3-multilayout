@@ -1,0 +1,86 @@
+{
+  "base_commit": "7b3310e428db5f69f635c6874ad4d7417f814ab9",
+  "purpose": "Disposable-checkout application integration candidate; no production gate activation.",
+  "replacements": [
+    {
+      "path": "include/TransitionTypes/Transition.h",
+      "old": "#pragma once\n",
+      "new": "#pragma once\n#include \"BrightnessScheduleRendererBinding.h\"\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.h",
+      "old": "    bool matrixChanged = false;\n",
+      "new": "    bool matrixChanged = false;\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    bool brightnessPolicyPending_ = false;\n#endif\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.h",
+      "old": "    void resize(uint8_t rows, uint8_t cols);\n",
+      "new": "    void resize(uint8_t rows, uint8_t cols);\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    void resetBrightnessPolicy();\n#endif\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.hpp",
+      "old": "void Transition::copy2Stripe(RgbfColor **source) {\n",
+      "new": "void Transition::copy2Stripe(RgbfColor **source) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) return;\n#endif\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.hpp",
+      "old": "void Transition::loop(struct tm &tm) {\n",
+      "new": "void Transition::loop(struct tm &tm) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) return;\n#endif\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.hpp",
+      "old": "void Transition::init() { saveMatrix(); }\n",
+      "new": "#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\nvoid Transition::resetBrightnessPolicy() {\n    fillMatrix(old, RgbfColor(0));\n    fillMatrix(act, RgbfColor(0));\n    fillMatrix(work, RgbfColor(0));\n    foreground = RgbfColor(0);\n    background = RgbfColor(0);\n    foregroundMinute = RgbColor(0);\n    phase = 0;\n    nextActionTime = 0;\n    matrixChanged = false;\n    brightnessPolicyPending_ = true;\n}\n#endif\n\nvoid Transition::init() { saveMatrix(); }\n"
+    },
+    {
+      "path": "include/TransitionTypes/Transition.hpp",
+      "old": "bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,\n                                           uint8_t minute) {\n",
+      "new": "bool Transition::isOverwrittenByTransition(WordclockChanges changesInWordMatrix,\n                                           uint8_t minute) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessPolicyPending_) {\n        saveMatrix();\n        copyMatrix(work, act);\n        copyMatrix(old, act);\n        phase = 0;\n        matrixChanged = false;\n        brightnessPolicyPending_ = false;\n        return true;\n    }\n#endif\n"
+    },
+    {
+      "path": "include/BrightnessScheduleRendererBinding.h",
+      "old": "    // Gain-only polling never presents an unshown staged transition target.\n",
+      "new": "    // Discard bytes prepared under the previous brightness policy.\n    void discardFrame() {\n        if (!strip_) return;\n        cache_.clearAll();\n        brightnessScheduleOutput::StripSink sink(*strip_);\n        cache_.show(sink);\n    }\n    // Gain-only polling never presents an unshown staged transition target.\n"
+    },
+    {
+      "path": "src/WordClock.cpp",
+      "old": "#include \"BrightnessScheduleRendererBinding.h\"\n",
+      "new": "#include \"BrightnessScheduleRendererBinding.h\"\n\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n// Serialized control/render boundary; never called from a timer or ISR.\nbool brightnessScheduleSyncOutput() {\n    auto &owner = brightnessScheduleRuntimeOwner::applicationRuntime();\n    const bool initialized = owner.initialized();\n    const bool automatic = G.autoBrightEnabled == 1;\n    if (initialized) {\n        (void)owner.serviceFromClock(\n            millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n            automatic, led.getState());\n    }\n    const auto &decision = owner.current();\n    const uint8_t policy = !initialized ? 3 : automatic ? 1 : decision.scheduled ? 2 : 0;\n    auto &binding = brightnessScheduleBinding::application();\n    static uint8_t lastPolicy = UINT8_MAX;\n    if (binding.ready(activeLedStrip)) {\n        if (lastPolicy != policy) {\n            binding.discardFrame();\n            if (transition) transition->resetBrightnessPolicy();\n            parametersChanged = true;\n            if (G.prog == COMMAND_IDLE) G.prog = COMMAND_MODE_WORD_CLOCK;\n        }\n        (void)binding.adoptGain(decision.gain);\n        lastPolicy = policy;\n    }\n    return !automatic && decision.scheduled;\n}\n#endif\n"
+    },
+    {
+      "path": "src/WordClock.cpp",
+      "old": "#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n",
+      "new": "#if defined(ESP32)\n    // State only: control changes above are applied before sampling real time.\n    (void)brightnessScheduleRuntimeOwner::applicationRuntime().serviceFromClock(\n        millis(), brightnessScheduleRuntimeOwner::systemLocalTime, nullptr,\n        G.autoBrightEnabled == 1, led.getState());\n#endif\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (brightnessScheduleBinding::application().ready(activeLedStrip))\n        (void)brightnessScheduleBinding::application().repaint();\n#endif\n"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "extern LedStripInterface *activeLedStrip;\n",
+      "new": "extern LedStripInterface *activeLedStrip;\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\nbool brightnessScheduleSyncOutput();\n#endif\n"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "HsbColor Led::getColorbyPositionWithAppliedBrightness(ColorPosition position) {\n    HsbColor color = G.color[position];\n\n    if (G.autoBrightEnabled == 1) {\n        color.B = setBrightnessAuto(color.B);\n    } else {\n        color.B *= getCurrentManualBrightnessSetting() / 100.f;\n    }\n    return color;\n}",
+      "new": "HsbColor Led::getColorbyPositionWithAppliedBrightness(ColorPosition position) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    const bool scheduledOutput = brightnessScheduleSyncOutput();\n#endif\n    HsbColor color = G.color[position];\n\n    if (G.autoBrightEnabled == 1) {\n        color.B = setBrightnessAuto(color.B);\n    } else {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n        if (!scheduledOutput)\n#endif\n            color.B *= getCurrentManualBrightnessSetting() / 100.f;\n    }\n    return color;\n}"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "void Led::setPixel(uint16_t ledIndex, HsbColor color) {\n",
+      "new": "void Led::setPixel(uint16_t ledIndex, HsbColor color) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;\n#endif\n"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "RgbColor Led::getPixel(uint16_t i) {\n",
+      "new": "RgbColor Led::getPixel(uint16_t i) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return RgbColor(0);\n#endif\n"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "void Led::clearPixel(uint16_t i) {\n",
+      "new": "void Led::clearPixel(uint16_t i) {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;\n#endif\n"
+    },
+    {
+      "path": "src/Led.cpp",
+      "old": "void Led::show() {\n",
+      "new": "void Led::show() {\n#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT\n    (void)brightnessScheduleSyncOutput();\n    if (!brightnessScheduleBinding::application().ready(activeLedStrip)) return;\n#endif\n"
+    }
+  ]
+}

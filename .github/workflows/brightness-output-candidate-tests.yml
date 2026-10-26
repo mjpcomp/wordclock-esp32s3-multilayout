@@ -1,0 +1,104 @@
+name: Schedule output integration candidate
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - docs/patches/brightness-schedule-output.json
+      - tests/test_brightness_schedule_output_candidate.py
+      - .github/workflows/brightness-output-candidate-tests.yml
+      - include/BrightnessSchedule*.h
+      - include/TransitionTypes/Transition.h
+      - include/TransitionTypes/Transition.hpp
+      - include/ClockWorkLedFactory.hpp
+      - src/Led.cpp
+      - src/WordClock.cpp
+permissions:
+  contents: read
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Preserve baseline suites and check candidate without staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in runtime_model storage runtime_owner offline_edges application_binding output_buffer strip_sink renderer_cache renderer_integration renderer_binding gain_bridge; do
+            python3 "tests/test_brightness_schedule_${suite}.py"
+          done
+          python3 tests/test_brightness_schedule_output_candidate.py
+  native-candidate:
+    needs: host-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+        renderer_cache: ['0', '1']
+        schedule_output: ['0', '1']
+        exclude:
+          - renderer_cache: '0'
+            schedule_output: '1'
+    env:
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+      BUILD_ENV: ${{ matrix.environment }}
+      RENDERER_CACHE: ${{ matrix.renderer_cache }}
+      SCHEDULE_OUTPUT: ${{ matrix.schedule_output }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Check baseline application and isolation contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_application_binding.py --stage-application
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+      - name: Stage reviewed renderer gates in disposable checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_renderer_binding.py --stage-binding --gate "$RENDERER_CACHE"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          path = Path('include/BrightnessScheduleRendererBinding.h')
+          text = path.read_text()
+          old = '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT 0'
+          if text.count(old) != 1:
+              raise SystemExit('Schedule output default gate drift')
+          path.write_text(text.replace(old, '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT ' + os.environ['SCHEDULE_OUTPUT'], 1))
+          PY
+      - name: Stage transition-safe application integration candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_output_candidate.py --stage-output
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('src/BrightnessOutputCandidateBudget.cpp').write_text(
+              '#include "BrightnessScheduleRendererCache.h"\n'
+              'static_assert(sizeof(brightnessScheduleRenderer::Cache<1200>)<=10000,"renderer cache budget");\n')
+          PY
+      - name: Compile full candidate without upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
+      - name: Validate resolved-library colors without hardware
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
