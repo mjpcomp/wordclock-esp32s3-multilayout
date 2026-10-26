@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage a counted integration candidate only in a disposable checkout.
+"""Stage the reviewed candidate or recognize whole-file source promotions.
 Host regression extracts actual candidate transition methods; color/geometry,
 allocation, runtime handoff and unrelated transition branches are test seams.
 The existing suites and six native builds remain required validation.
@@ -13,6 +13,13 @@ import subprocess
 import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = "docs/patches/brightness-schedule-output.json"
+MARKERS = {
+    "src/Led.cpp": "brightnessScheduleSyncOutput()",
+    "src/WordClock.cpp": "bool brightnessScheduleSyncOutput()",
+    "include/BrightnessScheduleRendererBinding.h": "void discardFrame()",
+    "include/TransitionTypes/Transition.h": "brightnessPolicyPending_",
+    "include/TransitionTypes/Transition.hpp": "void Transition::resetBrightnessPolicy()",
+}
 
 def extract(text, signature):
     matches = list(re.finditer(r"^" + signature + r"\s*\{", text, re.M))
@@ -45,14 +52,23 @@ def disabled_projection(text):
     if stack: raise ValueError("unbalanced preprocessor blocks")
     return output
 
-def prepare(root):
-    manifest = json.loads((root / MANIFEST).read_text())
-    replacements = manifest["replacements"]
+def normalize_promoted(text, path, replacements):
+    group = [item for item in replacements if item["path"] == path]
+    if path not in MARKERS or not group:
+        raise ValueError("unexpected promotion path: " + path)
+    counts = [text.count(item["new"]) for item in group]
+    if any(counts) or MARKERS[path] in text:
+        if any(count != 1 for count in counts):
+            raise ValueError("partial, duplicate or edited promotion: " + path)
+        for item in reversed(group):
+            text = text.replace(item["new"], item["old"], 1)
+    return text
+
+def prepare_sources(current, replacements):
     names = {item["path"] for item in replacements}
-    allowed = {"src/Led.cpp", "src/WordClock.cpp", "include/BrightnessScheduleRendererBinding.h",
-               "include/TransitionTypes/Transition.h", "include/TransitionTypes/Transition.hpp"}
-    if names != allowed: raise ValueError("candidate scope drift")
-    before = {name: (root / name).read_text() for name in names}
+    if names != set(MARKERS) or set(current) != names:
+        raise ValueError("candidate scope drift")
+    before = {name: normalize_promoted(current[name], name, replacements) for name in names}
     after = dict(before)
     for item in replacements:
         name, old, new = item["path"], item["old"], item["new"]
@@ -70,6 +86,58 @@ def prepare(root):
         if disabled_projection(candidate) != disabled_projection(before[name]):
             raise ValueError("schedule-off source projection changed: " + name)
     return after
+
+def load_sources(root):
+    replacements = json.loads((root / MANIFEST).read_text())["replacements"]
+    names = {item["path"] for item in replacements}
+    if names != set(MARKERS): raise ValueError("candidate scope drift")
+    return {name: (root / name).read_text() for name in names}, replacements
+
+def prepare(root):
+    current, replacements = load_sources(root)
+    return prepare_sources(current, replacements)
+
+def verify_promotions(root):
+    current, replacements = load_sources(root)
+    base = {name: normalize_promoted(text, name, replacements) for name, text in current.items()}
+    full = prepare_sources(current, replacements)
+    names = sorted(base)
+    for mask in range(1 << len(names)):
+        partial = {name: full[name] if mask & (1 << i) else base[name]
+                   for i, name in enumerate(names)}
+        snapshot = dict(partial)
+        assert prepare_sources(partial, replacements) == full
+        assert partial == snapshot
+        assert {name: normalize_promoted(text, name, replacements)
+                for name, text in partial.items()} == base
+    assert prepare_sources(full, replacements) == full
+    faults = []
+    drift = dict(base)
+    drift["src/Led.cpp"] = drift["src/Led.cpp"].replace("void Led::show()", "void Led::driftedShow()", 1)
+    faults.append(drift)
+    partial_file = dict(base)
+    item = next(item for item in replacements if item["path"] == "src/Led.cpp")
+    partial_file[item["path"]] = partial_file[item["path"]].replace(item["old"], item["new"], 1)
+    faults.append(partial_file)
+    edited = dict(full)
+    path = "include/BrightnessScheduleRendererBinding.h"
+    edited[path] = edited[path].replace("cache_.clearAll();", "cache_.clear(0);", 1)
+    faults.append(edited)
+    duplicate = dict(full)
+    item = next(item for item in replacements if item["path"] == "src/WordClock.cpp")
+    duplicate[item["path"]] += item["new"]
+    faults.append(duplicate)
+    for fault in faults:
+        assert fault != base and fault != full
+        snapshot = dict(fault)
+        try:
+            prepare_sources(fault, replacements)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("unreviewed promotion state accepted")
+        assert fault == snapshot
+    return full
 
 def regression(candidate):
     compiler = shutil.which("g++")
@@ -96,13 +164,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage-output", action="store_true")
     args = parser.parse_args()
-    candidate = prepare(ROOT)
+    candidate = verify_promotions(ROOT)
     regression(candidate)
     if args.stage_output:
-        for name, content in candidate.items(): (ROOT / name).write_text(content)
+        for name, content in candidate.items():
+            path = ROOT / name
+            if path.read_text() != content: path.write_text(content)
         subprocess.run(["git", "diff", "--check"], cwd=ROOT, check=True)
         print("Staged application-output candidate in disposable checkout; gates unchanged")
-    print("PASS: counted source staging, schedule-off projection, extracted transition reset/hold regression")
+    print("PASS: 32 file-promotion states, drift rejection, schedule-off projection, transition regression")
 
 CPP = r'''#include <cassert>
 #include <cstdint>
