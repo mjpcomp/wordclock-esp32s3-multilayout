@@ -52,6 +52,13 @@ public:
     // Serialized loop-owned handoff only; no clock/storage access or submission.
     // Pass current().gain after evaluation, not the service "changed" result.
     bool adoptGain(uint16_t gain) { return strip_ && cache_.setGain(gain); }
+    // Discard bytes prepared under the previous brightness policy.
+    void discardFrame() {
+        if (!strip_) return;
+        cache_.clearAll();
+        brightnessScheduleOutput::StripSink sink(*strip_);
+        cache_.show(sink);
+    }
     // Gain-only polling never presents an unshown staged transition target.
     bool repaint() {
         if (!strip_) return false;
