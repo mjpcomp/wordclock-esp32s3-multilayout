@@ -1,4 +1,5 @@
 #pragma once
+#include "BrightnessScheduleRendererBinding.h"
 
 #include "Font.h"
 #include "Symbols.h"
@@ -124,6 +125,9 @@ public:
 protected:
     uint16_t phase = 0;
     bool matrixChanged = false;
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    bool brightnessPolicyPending_ = false;
+#endif
     uint32_t transitionDelay = 100;
     Transition_t transitionType = NO_TRANSITION;
     uint32_t nextActionTime = 0;
@@ -208,6 +212,9 @@ public:
     // Adapt the buffers to a new front matrix geometry (clock type change).
     //------------------------------------------------------------------------------
     void resize(uint8_t rows, uint8_t cols);
+#if WORDCLOCK_ENABLE_SCHEDULE_OUTPUT
+    void resetBrightnessPolicy();
+#endif
 
     //------------------------------------------------------------------------------
     // Loop Helper Functions
