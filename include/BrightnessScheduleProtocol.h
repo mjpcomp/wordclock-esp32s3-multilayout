@@ -1,5 +1,6 @@
 #pragma once
 #include "BrightnessScheduleStorage.h"
+#include "BrightnessScheduleCapabilities.h"
 #include <ArduinoJson.h>
 #include <stddef.h>
 #include <string.h>
@@ -10,7 +11,7 @@ namespace schedule = brightnessSchedule;
 constexpr size_t kMaxInput = 2048;
 constexpr size_t MIN_OUTPUT = 2048;
 constexpr size_t REQUEST_CAPACITY = JSON_OBJECT_SIZE(7) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + kMaxInput + 128;
-constexpr size_t RESPONSE_CAPACITY = JSON_OBJECT_SIZE(10) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + 512;
+constexpr size_t RESPONSE_CAPACITY = JSON_OBJECT_SIZE(10) + JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(16) + 16 * JSON_OBJECT_SIZE(3) + 512;
 static_assert(schedule::MAX_EVENTS == 16, "Review protocol budgets when capacity changes");
 enum class Action { Get, Save, Reset };
 struct Request {
@@ -190,6 +191,7 @@ inline bool handle(storage::Store &store, const uint8_t *input, size_t length,
   if (reply.capacity() < RESPONSE_CAPACITY) return false;
   reply["command"] = "brightness-schedule";
   reply["schema"] = 1;
+  brightnessScheduleCapabilities::appendTo(reply);
   if (!valid) {
     if (correlation[0]) reply["requestId"] = correlation; else reply["requestId"] = nullptr;
     reply["status"] = "invalid-request";
