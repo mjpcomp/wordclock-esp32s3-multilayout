@@ -26,13 +26,14 @@ def main():
                              "-DEXPECT_CACHE=" + str(cache), "-DEXPECT_OUTPUT=" + str(output)]
                     if macro:
                         flags.append("-DMAX_INPUT=255")
-                    subprocess.run([compiler, "-std=c++11", "-Wall", "-Wextra", "-Werror"] + flags +
-                                   ["-I", str(args.json_include), "-I", str(ROOT / "include"),
-                                    str(ROOT / "tests/brightness_schedule_capabilities_test.cpp"),
-                                    "-o", str(binary)], check=True)
-                    subprocess.run([str(binary)], check=True)
+                    for source in ("brightness_schedule_capabilities_test.cpp",
+                                   "brightness_schedule_protocol_test.cpp"):
+                        subprocess.run([compiler, "-std=c++11", "-Wall", "-Wextra", "-Werror"] + flags +
+                                       ["-I", str(args.json_include), "-I", str(ROOT / "include"),
+                                        str(ROOT / "tests" / source), "-o", str(binary)], check=True)
+                        subprocess.run([str(binary)], check=True)
                     count += 1
-    print("PASS: " + str(count) + " real-JSON capability serializer cases; no device tests")
+    print("PASS: " + str(count) + " flag/macro combinations; serializer and protocol suites; no device tests")
 
 if __name__ == "__main__":
     main()

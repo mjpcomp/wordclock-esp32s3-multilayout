@@ -23,6 +23,17 @@ static std::string call(Store &store,const std::string &request) {
  char output[proto::MIN_OUTPUT];size_t size=0;
  assert(proto::handle(store,reinterpret_cast<const uint8_t *>(request.data()),request.size(),output,sizeof(output),size));
  assert(size<sizeof(output)&&output[size]==0);
+ // Inspect actual handle() output: never append capabilities in this test.
+ DynamicJsonDocument reply(proto::RESPONSE_CAPACITY);
+ assert(!deserializeJson(reply,static_cast<const char *>(output),size));
+ JsonObjectConst facts=reply["capabilities"].as<JsonObjectConst>();
+ assert(!facts.isNull()&&facts.size()==4);
+ assert(facts["schema"].is<unsigned>()&&facts["schema"]==1);
+ assert(facts["configurationProtocol"].is<bool>()&&facts["configurationProtocol"].as<bool>());
+ assert(facts["rendererCacheCompiled"].is<bool>());
+ assert(facts["scheduleOutputCompiled"].is<bool>());
+ assert(facts["rendererCacheCompiled"].as<bool>()==brightnessScheduleCapabilities::RENDERER_CACHE_COMPILED);
+ assert(facts["scheduleOutputCompiled"].as<bool>()==brightnessScheduleCapabilities::SCHEDULE_OUTPUT_COMPILED);
  return std::string(output,size);
 }
 static std::string status(Store &store,const std::string &request) {
