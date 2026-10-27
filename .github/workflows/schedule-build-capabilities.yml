@@ -1,0 +1,84 @@
+# Serializer helper gate. Protocol hook is separate; no device upload/publication.
+name: Schedule build capabilities
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - include/BrightnessScheduleCapabilities.h
+      - include/BrightnessScheduleProtocol.h
+      - include/BrightnessScheduleStorage.h
+      - include/BrightnessSchedule.h
+      - tests/brightness_schedule_capabilities_test.cpp
+      - tests/test_brightness_schedule_capabilities.py
+      - tests/brightness_schedule_protocol_test.cpp
+      - tests/test_brightness_schedule_protocol.py
+      - .github/workflows/schedule-build-capabilities.yml
+  pull_request:
+    paths:
+      - include/BrightnessScheduleCapabilities.h
+      - include/BrightnessScheduleProtocol.h
+      - include/BrightnessScheduleStorage.h
+      - include/BrightnessSchedule.h
+      - tests/brightness_schedule_capabilities_test.cpp
+      - tests/test_brightness_schedule_capabilities.py
+      - tests/brightness_schedule_protocol_test.cpp
+      - tests/test_brightness_schedule_protocol.py
+      - .github/workflows/schedule-build-capabilities.yml
+permissions:
+  contents: read
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: 0b03321ed33fa6965114424fbb023260120c856b
+          path: .ci-deps/ArduinoJson
+          persist-credentials: false
+      - run: python3 tests/test_brightness_schedule_capabilities.py
+      - run: python3 tests/test_brightness_schedule_protocol.py
+  native:
+    needs: host
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+    env:
+      BUILD_ENV: ${{ matrix.environment }}
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Add compile-only capability serializer probe; never called
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('src/ScheduleCapabilitiesCompileCheck.cpp').write_text(
+              '#include "BrightnessScheduleProtocol.h"\n'
+              '#include "BrightnessScheduleCapabilities.h"\n'
+              'static_assert(brightnessScheduleCapabilities::SCHEMA == 1, "schema");\n'
+              'void scheduleCapabilitiesCompileCheck() {\n'
+              '  DynamicJsonDocument reply(brightnessScheduleProtocol::RESPONSE_CAPACITY + JSON_OBJECT_SIZE(4));\n'
+              '  brightnessScheduleCapabilities::appendTo(reply);\n'
+              '}\n')
+          PY
+      - name: Compile isolated application; no upload target
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
