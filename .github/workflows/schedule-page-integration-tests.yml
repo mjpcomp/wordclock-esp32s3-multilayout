@@ -1,0 +1,42 @@
+# Browser-module integration only. No live-page wiring, firmware or device upload.
+name: Schedule page integration
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/schedule-*.js
+      - tests/schedule-*.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-page-integration-tests.yml
+  pull_request:
+    paths:
+      - webpage/schedule-*.js
+      - tests/schedule-*.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-page-integration-tests.yml
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Lint all scheduler browser modules with existing rules
+        run: npx --no-install eslint webpage/schedule-model.js webpage/schedule-client.js webpage/schedule-timeline-adapter.js webpage/schedule-timeline-view.js webpage/schedule-page-controller.js
+      - run: node tests/schedule-model.test.cjs
+      - run: node tests/schedule-client.test.cjs
+      - run: node tests/schedule-timeline-adapter.test.cjs
+      - run: node tests/schedule-timeline-view.test.cjs
+      - name: Run real JS model-client-adapter-controller composition with simulated transport
+        run: node tests/schedule-page-integration.test.cjs
