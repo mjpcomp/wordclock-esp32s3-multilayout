@@ -1,0 +1,75 @@
+name: Board-only schedule test artifacts - not flash-ready
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - .github/workflows/schedule-board-test-artifacts.yml
+      - tools/prepare_schedule_test_build.py
+      - docs/schedule-board-test.md
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [control, schedule-enabled]
+    env:
+      BUILD_ENV: YD_ESP32S3_N16R8_BOARD_ONLY
+      VARIANT: ${{ matrix.variant }}
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Check source and isolation before applying the build-only overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+          for suite in runtime_model storage runtime_owner offline_edges application_binding output_buffer strip_sink renderer_cache renderer_integration renderer_binding gain_bridge output_candidate; do
+            python3 "tests/test_brightness_schedule_${suite}.py"
+          done
+      - name: Configure board-only control or schedule-enabled candidate without changing source gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/prepare_schedule_test_build.py configure "$VARIANT"
+          mkdir -p "build-evidence/$BUILD_ENV"
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+      - name: Compile real application and regenerate web assets - no device upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('ClockType.gen.h', 'version.gen.h', 'WebPageContent.gen.inc'):
+              (Path('include') / name).unlink(missing_ok=True)
+          PY
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb 2>&1 | tee "build-evidence/$BUILD_ENV/compiledb.log"
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -v > "build-evidence/$BUILD_ENV/build.log" 2>&1 || { tail -n 120 "build-evidence/$BUILD_ENV/build.log"; exit 1; }
+          tail -n 25 "build-evidence/$BUILD_ENV/build.log"
+          python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
+      - name: Capture provenance and verify actual compiler isolation and feature gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
+          python3 tools/prepare_schedule_test_build.py verify "$VARIANT"
+      - name: Preserve successful candidate artifacts and evidence for seven days
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: board-only-schedule-${{ matrix.variant }}-${{ github.sha }}
+          path: build-evidence/YD_ESP32S3_N16R8_BOARD_ONLY/
+          if-no-files-found: error
+          retention-days: 7
