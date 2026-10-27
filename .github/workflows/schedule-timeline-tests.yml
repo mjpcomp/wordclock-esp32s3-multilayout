@@ -1,0 +1,42 @@
+# Shared-model timeline gate. No page wiring, firmware build or device upload.
+name: Schedule timeline adapter
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-timeline-adapter.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-timeline-adapter.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-timeline-tests.yml
+  pull_request:
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-timeline-adapter.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-timeline-adapter.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-timeline-tests.yml
+permissions:
+  contents: read
+jobs:
+  timeline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Lint using unchanged project rules
+        run: npx --no-install eslint webpage/schedule-model.js webpage/schedule-timeline-adapter.js
+      - run: node tests/schedule-model.test.cjs
+      - run: node tests/schedule-timeline-adapter.test.cjs
