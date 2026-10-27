@@ -1,0 +1,45 @@
+# Configuration client gate only: no firmware build, upload or device access.
+name: Schedule client foundation
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-client.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-client.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-client-foundation.yml
+  pull_request:
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-client.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-client.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-client-foundation.yml
+permissions:
+  contents: read
+jobs:
+  client:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Install locked lint dependencies without package scripts
+        run: npm ci --ignore-scripts
+      - name: Lint both modules using existing project rules
+        run: npx --no-install eslint webpage/schedule-model.js webpage/schedule-client.js
+      - name: Run committed model regressions
+        run: node tests/schedule-model.test.cjs
+      - name: Run client with the committed model
+        run: node tests/schedule-client.test.cjs
