@@ -1,0 +1,48 @@
+# SVG renderer gate: fake-DOM tests, not browser interaction or hardware validation.
+name: Schedule timeline view
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-timeline-adapter.js
+      - webpage/schedule-timeline-view.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-timeline-adapter.test.cjs
+      - tests/schedule-timeline-view.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-timeline-view-tests.yml
+  pull_request:
+    paths:
+      - webpage/schedule-model.js
+      - webpage/schedule-timeline-adapter.js
+      - webpage/schedule-timeline-view.js
+      - tests/schedule-model.test.cjs
+      - tests/schedule-timeline-adapter.test.cjs
+      - tests/schedule-timeline-view.test.cjs
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/schedule-timeline-view-tests.yml
+permissions:
+  contents: read
+jobs:
+  view:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Lint all three modules with existing project rules
+        run: npx --no-install eslint webpage/schedule-model.js webpage/schedule-timeline-adapter.js webpage/schedule-timeline-view.js
+      - run: node tests/schedule-model.test.cjs
+      - run: node tests/schedule-timeline-adapter.test.cjs
+      - name: Run renderer lifecycle tests with fake SVG DOM
+        run: node tests/schedule-timeline-view.test.cjs
