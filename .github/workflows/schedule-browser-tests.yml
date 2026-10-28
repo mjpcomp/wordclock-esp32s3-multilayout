@@ -1,0 +1,45 @@
+# Real Chromium/DOM, simulated firmware peer. No device connection or upload.
+name: Scheduler browser smoke tests
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/**
+      - Gruntfile.js
+      - package.json
+      - package-lock.json
+      - tools/schedule_live/check.py
+      - tests/schedule-live-browser.test.cjs
+      - .github/workflows/schedule-browser-tests.yml
+  pull_request:
+    paths:
+      - webpage/**
+      - Gruntfile.js
+      - package.json
+      - package-lock.json
+      - tools/schedule_live/check.py
+      - tests/schedule-live-browser.test.cjs
+      - .github/workflows/schedule-browser-tests.yml
+permissions:
+  contents: read
+jobs:
+  chromium:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install grunt build
+      - run: python3 tools/schedule_live/check.py --built
+      - name: Install isolated, exact browser-test tooling; leave project manifests alone
+        run: npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
+      - run: .ci-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise generated page with Chromium and a fully mocked WebSocket peer
+        env:
+          NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
+        run: node tests/schedule-live-browser.test.cjs
