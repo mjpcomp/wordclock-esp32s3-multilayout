@@ -330,6 +330,42 @@
                         <!-- Specific Brightness-automatic End-->
                     </form>
                     </div>
+                <!-- Scheduler configuration candidate: legacy controls stay intact. -->
+                <div class="box" id="schedule-editor">
+                    <h2>Daily schedule — configuration editor</h2>
+                    <p>This editor stores a schedule. It does not switch brightness mode or enable schedule output. Keep using the existing controls until output has been explicitly validated.</p>
+                    <p data-schedule="status" role="status" aria-live="polite">Waiting for scheduler configuration support.</p>
+                    <p data-schedule="capabilities">Hardware readiness is not verified.</p>
+                    <svg class="schedule-chart" data-schedule="timeline" role="group" aria-label="Daily schedule timeline" style="display:block;width:100%;height:auto;min-height:12rem"></svg>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group"><label for="schedule-changes">Scheduled changes</label><select id="schedule-changes" data-schedule="changes" disabled><option value="-1">Select a change</option></select></div>
+                        <div class="pure-control-group"><label for="schedule-all-day">All-day level (%)</label><input id="schedule-all-day" data-schedule="all-day" type="number" min="0" max="100" step="0.1" disabled></div>
+                        <p>An empty changes list uses the all-day level. Zero means display output off, not controller or Wi-Fi shutdown.</p>
+                        <div class="pure-control-group"><label for="schedule-start">Change / fade starts</label><input id="schedule-start" data-schedule="start" type="time" step="60" required disabled></div>
+                        <div class="pure-control-group"><label for="schedule-end">Target reached at</label><input id="schedule-end" data-schedule="end" type="time" step="60" required disabled></div>
+                        <p>An earlier target-reached time means tomorrow. Targets hold until the next change, including across midnight.</p>
+                        <div class="pure-control-group"><label for="schedule-curve">Transition</label><select id="schedule-curve" data-schedule="curve" disabled><option value="instant">Instant</option><option value="linear">Fade</option></select></div>
+                        <div class="pure-control-group"><label for="schedule-target">Target level (%)</label><input id="schedule-target" data-schedule="target" type="number" min="0" max="100" step="0.1" required disabled></div>
+                        <div class="pure-control-group"><label for="schedule-level-range">Target level</label><input id="schedule-level-range" data-schedule="level-range" type="range" min="0" max="1000" step="1" disabled></div>
+                        <p>Apply stages the selected change locally; Save writes the draft. Add creates an instant change which you can then select and adjust.</p>
+                        <div class="pure-controls">
+                            <button type="button" class="pure-button" data-schedule="add" disabled>Add instant change</button>
+                            <button type="button" class="pure-button" data-schedule="apply" disabled>Apply to draft</button>
+                            <button type="button" class="pure-button" data-schedule="remove" disabled>Remove selected</button>
+                        </div>
+                        <div class="pure-controls">
+                            <button type="button" class="pure-button" data-schedule="save" disabled>Save schedule</button>
+                            <button type="button" class="pure-button" data-schedule="reload" disabled>Reload</button>
+                            <button type="button" class="pure-button" data-schedule="discard" disabled>Discard local changes</button>
+                            <button type="button" class="pure-button" data-schedule="reset" disabled>Reset this schedule…</button>
+                        </div>
+                        <p>After reconnecting or an uncertain save, reload and explicitly choose which version to keep. No automatic save retry occurs.</p>
+                        <div class="pure-controls">
+                            <button type="button" class="pure-button" data-schedule="use-remote" disabled>Use device version</button>
+                            <button type="button" class="pure-button" data-schedule="keep-draft" disabled>Keep local draft</button>
+                        </div>
+                    </form>
+                </div>
                 </section>
 
             <section class="pure-u-24-24 section section-functions">
@@ -1001,6 +1037,14 @@
 <script src="./i18next.min.js"></script>
 <script src="./i18nextBrowserLanguageDetector.min.js"></script>
 <script src="./iro.min.js"></script>
+<script src="./schedule-model.js"></script>
+<script src="./schedule-client.js"></script>
+<script src="./schedule-timeline-adapter.js"></script>
+<script src="./schedule-timeline-view.js"></script>
+<script src="./schedule-capabilities.js"></script>
+<script src="./schedule-page-controller.js"></script>
+<script src="./schedule-page-binding.js"></script>
+<script src="./schedule-socket-bridge.js"></script>
 <script src="./script.js"></script>
 <script src="./language/en.js"></script>
 <script src="./language/de.js"></script>
