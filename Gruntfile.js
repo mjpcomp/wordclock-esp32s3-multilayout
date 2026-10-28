@@ -21,6 +21,7 @@ module.exports = function(grunt) {
 			files: [
 				"Gruntfile.js",
 				"<%= settings.srcDirectory %>/script.js",
+				"<%= settings.srcDirectory %>/schedule-*.js",
 				"<%= settings.srcDirectory %>/i18n.js",
 				"<%= settings.srcDirectory %>/language/*.js"
 			]
