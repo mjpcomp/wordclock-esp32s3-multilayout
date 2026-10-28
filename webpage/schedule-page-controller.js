@@ -49,8 +49,7 @@
 	function emit(reason) { options.onState(snapshot(), reason || "state"); }
 	function action(run, reason) {
 		check(!destroyed, "Controller destroyed");
-		try { run(); errorText = ""; }
-		catch (error) { errorText = error.message || "Editor operation failed"; emit(); return false; }
+		try { run(); errorText = ""; } catch (error) { errorText = error.message || "Editor operation failed"; emit(); return false; }
 		emit(reason);
 		return true;
 	}
@@ -84,8 +83,7 @@
 		// UI callbacks are kept outside the transport catch boundary. A UI error
 		// must not be misreported as uncertain device delivery.
 		let delivery;
-		try { delivery = options.send(JSON.stringify(requestValue), generation); }
-		catch (error) { delivery = false; errorText = error.message ? "Transport send failed; delivery uncertain." : "Delivery uncertain."; }
+		try { delivery = options.send(JSON.stringify(requestValue), generation); } catch (error) { delivery = false; errorText = error.message ? "Transport send failed; delivery uncertain." : "Delivery uncertain."; }
 		if (delivery === false && pendingMatches(generation, identifier)) {
 			cancelDeadline();
 			client.timeout(generation, identifier);
@@ -97,8 +95,7 @@
 	function requestAction(name, confirmed) {
 		check(!destroyed, "Controller destroyed");
 		errorText = "";
-		try { return request(name, confirmed); }
-		catch (error) { errorText = error.message || "Request rejected"; emit(); return false; }
+		try { return request(name, confirmed); } catch (error) { errorText = error.message || "Request rejected"; emit(); return false; }
 	}
 	return Object.freeze({
 		/** Call from existing socket onopen; no new socket or mutation is created. */
@@ -121,8 +118,7 @@
 		receive: function(generation, input) {
 			if (destroyed || generation !== token) return false;
 			let reply;
-			try { reply = typeof input === "string" ? JSON.parse(input) : input; }
-			catch (error) { if (error instanceof SyntaxError) return false; throw error; }
+			try { reply = typeof input === "string" ? JSON.parse(input) : input; } catch (error) { if (error instanceof SyntaxError) return false; throw error; }
 			if (!reply || reply.command !== "brightness-schedule") return false;
 			const consumed = client.receive(generation, reply);
 			if (!consumed) return false;

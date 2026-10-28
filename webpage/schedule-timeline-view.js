@@ -56,11 +56,11 @@
 			while (layer.firstChild) layer.removeChild(layer.firstChild);
 			for (let level = 0; level <= 1000; level += 250) {
 				node("line", { x1: 65, y1: positionY(level), x2: 945, y2: positionY(level), stroke: "#e2e9f0" });
-				node("text", { x: 55, y: positionY(level) + 4, "text-anchor": "end", "font-size": 12, fill: "#60758b" }, level / 10 + "%");
+				node("text", { "x": 55, "y": positionY(level) + 4, "text-anchor": "end", "font-size": 12, fill: "#60758b" }, level / 10 + "%");
 			}
 			const step = right - left > 500 ? 180 : 30;
 			for (let minute = Math.ceil(left / step) * step; minute <= right; minute += step) {
-				node("text", { x: positionX(minute), y: 280, "text-anchor": "middle", "font-size": 12, fill: "#60758b" }, clock(minute));
+				node("text", { "x": positionX(minute), "y": 280, "text-anchor": "middle", "font-size": 12, fill: "#60758b" }, clock(minute));
 			}
 			geometry.lines.forEach(function(line) {
 				const attributes = { x1: positionX(line.start), y1: positionY(line.fromTenths), x2: positionX(line.end), y2: positionY(line.toTenths), "data-index": line.eventIndex };
@@ -71,8 +71,8 @@
 				const horizontal = positionX(handle.minute);
 				const vertical = positionY(handle.targetTenths);
 				const attributes = { "data-index": handle.eventIndex, "data-kind": handle.kind, tabindex: 0, role: "button", "aria-label": handle.kind + " " + clock(handle.minute) + ", " + handle.targetTenths / 10 + "%. Select for exact editing.", stroke: "#226da8", "stroke-width": 2, fill: handle.eventIndex === selection ? "#287bc1" : "white" };
-				if (handle.kind === "start") node("path", Object.assign({}, attributes, { d: "M " + horizontal + " " + (vertical - 7) + " L " + (horizontal + 7) + " " + vertical + " L " + horizontal + " " + (vertical + 7) + " L " + (horizontal - 7) + " " + vertical + " Z" }));
-				else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, r: 8 }));
+				if (handle.kind === "start") node("path", Object.assign({}, attributes, { "d": "M " + horizontal + " " + (vertical - 7) + " L " + (horizontal + 7) + " " + vertical + " L " + horizontal + " " + (vertical + 7) + " L " + (horizontal - 7) + " " + vertical + " Z" }));
+				else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, "r": 8 }));
 			});
 		}
 		function release(pointerId) {
@@ -119,7 +119,7 @@
 			if (!drag || event.pointerId !== drag.pointerId) return;
 			try {
 				const point = svg.createSVGPoint();
-				point.x = event.clientX; point.y = event.clientY;
+				point["x"] = event.clientX; point["y"] = event.clientY;
 				const local = point.matrixTransform(svg.getScreenCTM().inverse());
 				const minute = Math.round(Math.max(left, Math.min(right, left + (local.x - 65) * (right - left) / 880)));
 				const target = Math.round(Math.max(0, Math.min(1000, (255 - local.y) * 1000 / 230)));
