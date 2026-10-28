@@ -14,6 +14,7 @@
  * without calling SVG render(), which would cancel pointerdown/drag setup.
  * onState must not throw; it receives detached data. Page owns translations and
  * field presentation. destroy cancels the deadline and invalidates its callbacks.
+ * Optional readCapabilities(reply) must not throw; build facts are informational.
  */
 (function(root, factory) {
 	"use strict";
@@ -25,6 +26,8 @@
 	const client = options.client;
 	const model = options.model;
 	const adapter = options.adapter;
+	const readCapabilities = options.readCapabilities;
+	if (readCapabilities !== undefined && typeof readCapabilities !== "function") throw new Error("Capability reader must be a function");
 	const timeoutMs = options.timeoutMs === undefined ? 8000 : options.timeoutMs;
 	if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60000) throw new Error("Deadline must be 1..60000 milliseconds");
 	let token = null;
@@ -33,6 +36,8 @@
 	let view = [0, 1440];
 	let errorText = "";
 	let destroyed = false;
+	function unavailableCapabilities(state) { return { metadataState: state, configurationProtocol: false, rendererCacheCompiled: false, scheduleOutputCompiled: false }; }
+	let capabilities = unavailableCapabilities("missing");
 	function check(condition, message) { if (!condition) throw new Error(message); }
 	function cancelDeadline() {
 		const old = deadline;
@@ -44,7 +49,7 @@
 		const count = state.draft ? state.draft.events.length : 0;
 		if (selected >= count) selected = count - 1;
 		const mutation = state.pending && state.pending.action !== "get";
-		return Object.assign({}, state, { selected: selected, view: view.slice(), errorText: errorText, destroyed: destroyed, canEdit: !destroyed && Boolean(state.draft) && !mutation, canSave: !destroyed && state.connected && !state.pending && !state.needsReload && !state.resetRequired && Boolean(state.draft), canDiscard: !destroyed && !state.pending && !state.needsReload && Boolean(state.saved) && state.saved.revision > 0 && state.dirty });
+		return Object.assign({}, state, { capabilities: Object.assign({}, capabilities), selected: selected, view: view.slice(), errorText: errorText, destroyed: destroyed, canEdit: !destroyed && Boolean(state.draft) && !mutation, canSave: !destroyed && state.connected && !state.pending && !state.needsReload && !state.resetRequired && Boolean(state.draft), canDiscard: !destroyed && !state.pending && !state.needsReload && Boolean(state.saved) && state.saved.revision > 0 && state.dirty });
 	}
 	function emit(reason) { options.onState(snapshot(), reason || "state"); }
 	function action(run, reason) {
@@ -102,6 +107,7 @@
 		open: function() {
 			check(!destroyed, "Controller destroyed");
 			cancelDeadline();
+			capabilities = unavailableCapabilities("missing");
 			token = client.connect();
 			requestAction("get");
 			return token;
@@ -110,6 +116,7 @@
 		close: function(generation) {
 			if (destroyed || generation !== token) return false;
 			cancelDeadline();
+			capabilities = unavailableCapabilities("missing");
 			client.disconnect(generation);
 			emit();
 			return true;
@@ -122,6 +129,8 @@
 			if (!reply || reply.command !== "brightness-schedule") return false;
 			const consumed = client.receive(generation, reply);
 			if (!consumed) return false;
+			const status = client.snapshot().status;
+			capabilities = status === "invalid-reply" || status === "outcome-unknown" ? unavailableCapabilities("invalid") : readCapabilities ? readCapabilities(reply) : unavailableCapabilities("missing");
 			cancelDeadline();
 			errorText = "";
 			emit();
@@ -184,6 +193,7 @@
 		destroy: function() {
 			if (destroyed) return;
 			cancelDeadline();
+			capabilities = unavailableCapabilities("missing");
 			if (token !== null) client.disconnect(token);
 			destroyed = true;
 		}

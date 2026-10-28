@@ -39,5 +39,6 @@ jobs:
       - run: node tests/schedule-timeline-adapter.test.cjs
       - run: node tests/schedule-timeline-view.test.cjs
       - run: node tests/schedule-capabilities.test.cjs
+      - run: node tests/schedule-controller-capabilities.test.cjs
       - name: Run real JS model-client-adapter-controller composition with simulated transport
         run: node tests/schedule-page-integration.test.cjs
