@@ -1,4 +1,4 @@
-name: Board-only schedule test artifacts - not flash-ready
+name: Board-only scheduler UI control candidate - not flash-ready
 on:
   push:
     branches: [feature/optional-status-prefix]
@@ -12,13 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        variant: [control, schedule-enabled]
     env:
       BUILD_ENV: YD_ESP32S3_N16R8_BOARD_ONLY
-      VARIANT: ${{ matrix.variant }}
+      VARIANT: control
+      BROWSER_VALIDATED_SHA: dc83031a20ead6fced45931bee7e6639a064de4c
       PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -29,7 +26,14 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Check source and isolation before applying the build-only overlay
+      - name: Prove application sources equal the browser-validated checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$BROWSER_VALIDATED_SHA"
+          test "$(git diff --name-only "$BROWSER_VALIDATED_SHA" HEAD)" = ".github/workflows/schedule-board-test-artifacts.yml"
+          python3 tools/schedule_live/check.py
+      - name: Preserve all existing source, isolation and runtime preflight checks
         shell: bash
         run: |
           set -euo pipefail
@@ -39,7 +43,7 @@ jobs:
           for suite in runtime_model storage runtime_owner offline_edges application_binding output_buffer strip_sink renderer_cache renderer_integration renderer_binding gain_bridge output_candidate; do
             python3 "tests/test_brightness_schedule_${suite}.py"
           done
-      - name: Configure board-only control or schedule-enabled candidate without changing source gates
+      - name: Configure control-only overlay; preserve frozen runtime/isolation guards
         shell: bash
         run: |
           set -euo pipefail
@@ -47,7 +51,7 @@ jobs:
           mkdir -p "build-evidence/$BUILD_ENV"
           python3 -m venv .ci-venv
           .ci-venv/bin/python -m pip install platformio==6.1.18
-      - name: Compile real application and regenerate web assets - no device upload
+      - name: Regenerate embedded page and compile real application; no upload
         shell: bash
         run: |
           set -euo pipefail
@@ -60,16 +64,65 @@ jobs:
           .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -v > "build-evidence/$BUILD_ENV/build.log" 2>&1 || { tail -n 120 "build-evidence/$BUILD_ENV/build.log"; exit 1; }
           tail -n 25 "build-evidence/$BUILD_ENV/build.log"
           python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
-      - name: Capture provenance and verify actual compiler isolation and feature gates
+          python3 tools/schedule_live/check.py --built
+      - name: Verify actual compiled flags, binaries and source provenance
         shell: bash
         run: |
           set -euo pipefail
           .ci-venv/bin/python tools/capture_isolated_build.py "$BUILD_ENV"
           python3 tools/prepare_schedule_test_build.py verify "$VARIANT"
-      - name: Preserve successful candidate artifacts and evidence for seven days
+      - name: Record UI checkpoint and explicit not-flash-ready status
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import os
+          import subprocess
+          
+          build = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          validated = os.environ["BROWSER_VALIDATED_SHA"]
+          assert build == os.environ["GITHUB_SHA"]
+          changed = subprocess.check_output(["git", "diff", "--name-only", validated, build], text=True).splitlines()
+          assert changed == [".github/workflows/schedule-board-test-artifacts.yml"]
+          dest = Path("build-evidence") / os.environ["BUILD_ENV"]
+          manifest = json.loads((dest / "manifest.json").read_text())
+          schedule = json.loads((dest / "schedule-test.json").read_text())
+          assert manifest["commit"] == build and manifest["test_mode"] == 1
+          assert manifest["flash_ready"] is False and schedule["flash_ready"] is False
+          assert schedule["build_commit"] == build and schedule["variant"] == "control"
+          assert schedule["compiled_project_defines"]["WORDCLOCK_ENABLE_RENDERER_CACHE"] == "0"
+          assert schedule["compiled_project_defines"]["WORDCLOCK_ENABLE_SCHEDULE_OUTPUT"] == "0"
+          assets = ["webpage/index.html", "webpage/script.js", ".pio/build/webpage/index.html.gz", "include/WebPageContent.gen.inc"]
+          report = {
+              "build_commit": build,
+              "workflow_trigger_commit": os.environ["GITHUB_SHA"],
+              "browser_validation_checkpoint": validated,
+              "browser_ci_evidence": "user-reported green for the pinned checkpoint",
+              "committed_differences_from_browser_checkpoint": changed,
+              "environment": os.environ["BUILD_ENV"],
+              "variant": "control",
+              "renderer_cache": 0,
+              "schedule_output": 0,
+              "web_asset_sha256": {name: hashlib.sha256(Path(name).read_bytes()).hexdigest() for name in assets},
+              "intended_device_test": "isolated board-only web/configuration/NVS test",
+              "device_upload_target_invoked": False,
+              "hardware_test_performed": False,
+              "firmware_layout_and_recovery_review": "pending",
+              "flash_ready": False,
+          }
+          (dest / "ui-control-candidate.json").write_text(json.dumps(report, indent=2) + "\n")
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as summary:
+              summary.write("## BOARD_ONLY UI control candidate — not flash-ready\n\n")
+              summary.write("Build commit: `" + build + "`\n\nBrowser checkpoint: `" + validated + "`\n\n")
+              summary.write("Control gates 0/0; virtual strip, no RTC or external inputs, existing GPIO48 diagnostics. No upload. Review binaries, image layout, settings and rollback before separate flash approval.\n")
+          PY
+      - name: Preserve successful control candidate and evidence for seven days
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: board-only-schedule-${{ matrix.variant }}-${{ github.sha }}
+          name: board-only-schedule-ui-control-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: build-evidence/YD_ESP32S3_N16R8_BOARD_ONLY/
           if-no-files-found: error
           retention-days: 7
