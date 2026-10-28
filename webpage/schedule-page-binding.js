@@ -59,10 +59,12 @@
 				while (fields.changes.firstChild) fields.changes.removeChild(fields.changes.firstChild);
 				const placeholder = root.ownerDocument.createElement("option");
 				placeholder.value = "-1"; placeholder.disabled = true; placeholder.textContent = text("select", "Select a change"); fields.changes.appendChild(placeholder);
-				if (draft) draft.events.forEach(function(event, index) {
-					const item = root.ownerDocument.createElement("option");
-					item.value = String(index); item.textContent = model.formatTime(event.minute) + " → " + event.targetTenths / 10 + "% (" + event.fadeMinutes + " min)"; fields.changes.appendChild(item);
-				});
+				if (draft) {
+					draft.events.forEach(function(event, index) {
+						const item = root.ownerDocument.createElement("option");
+						item.value = String(index); item.textContent = model.formatTime(event.minute) + " → " + event.targetTenths / 10 + "% (" + event.fadeMinutes + " min)"; fields.changes.appendChild(item);
+					});
+				}
 			}
 			fields.changes.value = String(state.selected);
 			if (selected) {
@@ -112,11 +114,18 @@
 		["use-remote", "keep-draft"].forEach(function(choice) { listen(choice, "click", function() { const state = controller.snapshot(); if (state.connected && !state.pending && state.remote) controller.reconcile(choice); }); });
 		mounted.add(root);
 		render(controller.snapshot());
-		return Object.freeze({ open: controller.open, close: controller.close, receive: controller.receive, snapshot: controller.snapshot, refresh: function() { render(controller.snapshot()); }, destroy: function() {
-			if (destroyed) return;
-			destroyed = true;
-			listeners.forEach(function(entry) { entry[0].removeEventListener(entry[1], entry[2]); });
-			view.destroy(); controller.destroy(); mounted.delete(root);
-		} });
+		return Object.freeze({
+			open: controller.open,
+			close: controller.close,
+			receive: controller.receive,
+			snapshot: controller.snapshot,
+			refresh: function() { render(controller.snapshot()); },
+			destroy: function() {
+				if (destroyed) return;
+				destroyed = true;
+				listeners.forEach(function(entry) { entry[0].removeEventListener(entry[1], entry[2]); });
+				view.destroy(); controller.destroy(); mounted.delete(root);
+			}
+		});
 	};
 }));
