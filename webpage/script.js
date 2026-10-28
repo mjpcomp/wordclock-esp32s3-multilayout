@@ -38,6 +38,34 @@ const iro = window.iro; // require("@jaames/iro");
 // minified.js dependency removed
 let debugMessageReconfigured = " change requested.";
 let websocket;
+
+let scheduleBridge = null;
+function initSchedulePage() {
+	const root = document.getElementById("schedule-editor");
+	if (!root) return;
+	scheduleBridge = window.createWordclockScheduleSocketBridge(function(send) {
+		const model = window.WordclockScheduleModel;
+		return window.createWordclockSchedulePage(root, {
+			createController: window.createWordclockScheduleController,
+			createTimelineView: window.createWordclockTimelineView,
+			controllerOptions: {
+				model: model,
+				adapter: window.createWordclockTimelineAdapter(model),
+				client: window.createWordclockScheduleClient(model),
+				readCapabilities: window.readWordclockScheduleCapabilities,
+				send: send,
+				setTimeout: function(callback, delay) { return window.setTimeout(callback, delay); },
+				clearTimeout: function(handle) { window.clearTimeout(handle); }
+			},
+			confirmReset: function() { return window.confirm(connectionText("schedule.confirm-reset", "Reset ONLY the stored schedule? This does not reset Wi-Fi or other settings.")); },
+			text: function(key, fallback) { return connectionText("schedule." + key, fallback); }
+		});
+	});
+	if (typeof i18next !== "undefined" && typeof i18next.on === "function") {
+		i18next.on("languageChanged", function() { if (scheduleBridge) scheduleBridge.refresh(); });
+	}
+}
+
 let ipEsp = "ws://192.168.4.1";
 let debug = true;
 let command = 1;
@@ -324,10 +352,13 @@ function handleConnectionButton() {
 }
 
 function initWebsocket() {
-	websocket = new WebSocket(ipEsp);
+	const socket = new WebSocket(ipEsp);
+	websocket = socket;
+	if (scheduleBridge) scheduleBridge.attach(socket);
 	refreshConnectionText();
 
-	websocket.onopen = function(event) {
+	socket.onopen = function(event) {
+		if (socket !== websocket) return;
 
 		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "1"; });
 		refreshConnectionText();
@@ -342,7 +373,8 @@ function initWebsocket() {
 		sendCmd(CMD.REQ_CONFIG_VALUES);
 	};
 
-	websocket.onclose = function(event) {
+	socket.onclose = function(event) {
+		if (socket !== websocket) return;
 
 		document.querySelectorAll(".status-button").forEach(btn => { btn.value = "0"; });
 		refreshConnectionText();
@@ -355,11 +387,15 @@ function initWebsocket() {
 		debugMessage(`WebSocket disconnected (code ${event.code}).`, event);
 	};
 
-	websocket.onmessage = function(event) {
+	socket.onmessage = function(event) {
+		if (socket !== websocket) return;
 
 		const modeColorForm = document.getElementById("mode-color-form");
 
-		let data = JSON.parse(event.data);
+		if (typeof event.data !== "string") return;
+		let data;
+		try { data = JSON.parse(event.data); } catch (error) { if (error instanceof SyntaxError) return; throw error; }
+		if (!data || data.command === "brightness-schedule") return;
 
 		debugMessage(`WebSocket response arrived (command ${data.command}).`, data);
 
@@ -558,7 +594,8 @@ function initWebsocket() {
 				break;
 		}
 	};
-	websocket.onerror = function(event) {
+	socket.onerror = function(event) {
+		if (socket !== websocket) return;
 		debugMessage("WebSocket connection failed.", event);
 	};
 }
@@ -752,6 +789,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	createColorPicker();
 	setSliders();
 	setElementsForFunctionsMenu();
+	initSchedulePage();
 	initWebsocket();
 	setColors();
 
