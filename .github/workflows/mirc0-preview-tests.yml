@@ -1,0 +1,37 @@
+# Standalone foundation gate. No live-page integration or board upload.
+name: Mirc0 physical preview foundation
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/mirc0-preview.js
+      - tests/mirc0-preview.test.cjs
+      - tests/test_mirc0_preview.py
+      - tests/test_mirc0_preview_reference.py
+      - tests/fixtures/mirc0-physical-face.json
+      - tests/test_mirc0_layout.cpp
+      - include/WordClockTypes/EN10x11.mirc0.hpp
+      - include/WordClockTypes/ClockType.hpp
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+      - .github/workflows/mirc0-preview-tests.yml
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install eslint webpage/mirc0-preview.js
+      - run: python3 tests/test_mirc0_preview_reference.py
+      - run: node tests/mirc0-preview.test.cjs
+      - name: Compare all sample masks with the compiled host adapter
+        run: python3 tests/test_mirc0_preview.py
