@@ -10,6 +10,10 @@ on:
       - package-lock.json
       - tools/schedule_live/check.py
       - tests/schedule-live-browser.test.cjs
+      - tests/webpage-layout.test.cjs
+      - tests/test_mirc0_preview_reference.py
+      - tests/fixtures/mirc0-physical-face.json
+      - include/WordClockTypes/EN10x11.mirc0.hpp
       - .github/workflows/schedule-browser-tests.yml
   pull_request:
     paths:
@@ -19,6 +23,10 @@ on:
       - package-lock.json
       - tools/schedule_live/check.py
       - tests/schedule-live-browser.test.cjs
+      - tests/webpage-layout.test.cjs
+      - tests/test_mirc0_preview_reference.py
+      - tests/fixtures/mirc0-physical-face.json
+      - include/WordClockTypes/EN10x11.mirc0.hpp
       - .github/workflows/schedule-browser-tests.yml
 permissions:
   contents: read
@@ -33,13 +41,26 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
+      - run: python3 tests/test_mirc0_preview_reference.py
       - run: npm ci --ignore-scripts
       - run: npx --no-install grunt build
       - run: python3 tools/schedule_live/check.py --built
       - name: Install isolated, exact browser-test tooling; leave project manifests alone
         run: npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
       - run: .ci-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Measure responsive layout with a simulated peer; no device connection
+        env:
+          NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
+        run: node tests/webpage-layout.test.cjs
       - name: Exercise generated page with Chromium and a fully mocked WebSocket peer
         env:
           NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
         run: node tests/schedule-live-browser.test.cjs
+      - name: Preserve layout measurements and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: layout-evidence-${{ github.sha }}
+          path: layout-evidence/
+          if-no-files-found: warn
+          retention-days: 14
