@@ -5,7 +5,9 @@ on:
     branches: [feature/optional-status-prefix]
     paths:
       - webpage/mirc0-preview.js
+      - webpage/mirc0-preview-page.js
       - tests/mirc0-preview.test.cjs
+      - tests/mirc0-preview-page.test.cjs
       - tests/test_mirc0_preview.py
       - tests/test_mirc0_preview_reference.py
       - tests/fixtures/mirc0-physical-face.json
@@ -30,8 +32,9 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci --ignore-scripts
-      - run: npx --no-install eslint webpage/mirc0-preview.js
+      - run: npx --no-install eslint webpage/mirc0-preview.js webpage/mirc0-preview-page.js
       - run: python3 tests/test_mirc0_preview_reference.py
       - run: node tests/mirc0-preview.test.cjs
+      - run: node tests/mirc0-preview-page.test.cjs
       - name: Compare all sample masks with the compiled host adapter
         run: python3 tests/test_mirc0_preview.py
