@@ -66,7 +66,7 @@ CHANGES = [
     ('"x": 55, "y": positionY(level)', '"x": dimensions.plotLeft - 10, "y": positionY(level)'),
     ('const step = right - left > 500 ? 180 : 30;', 'const step = tickStep();'),
     ('"y": 280, "text-anchor": "middle"', '"y": dimensions.labelY, "text-anchor": "middle"'),
-    ('else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, "r": 8 }));', 'else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, "r": 8 }));\n\t\t\t\tnode("circle", { "cx": horizontal, "cy": vertical, "r": 22, "data-index": handle.eventIndex, "data-hit-kind": handle.kind, "aria-hidden": "true", fill: "transparent", stroke: "none" });'),
+    ('geometry.handles.forEach(function(handle) {', 'geometry.handles.forEach(function(handle) {\n\t\t\t\t// Keep touch areas below every visible handle, including later events.\n\t\t\t\tnode("circle", { "cx": positionX(handle.minute), "cy": positionY(handle.targetTenths), "r": 22, "data-index": handle.eventIndex, "data-hit-kind": handle.kind, "aria-hidden": "true", fill: "transparent", stroke: "none" });\n\t\t\t});\n\t\t\tgeometry.handles.forEach(function(handle) {'),
     ('kind: target.getAttribute("data-kind")', 'kind: target.getAttribute("data-kind") || target.getAttribute("data-hit-kind")'),
     ('svg.style.touchAction = "none";', 'svg.style.touchAction = "none";' + INIT),
     ('(local.x - 65) * (right - left) / 880', '(local.x - dimensions.plotLeft) * (right - left) / dimensions.plotWidth'),

@@ -47,6 +47,7 @@ jobs:
         run: |
           node tests/schedule-timeline-view.test.cjs
           node tests/schedule-timeline-responsive.test.cjs
+          node tests/schedule-timeline-responsive-hit-order.test.cjs
       - run: npm ci --ignore-scripts
       - run: npx --no-install grunt build
       - name: Reuse isolated browser tooling without changing project dependencies
