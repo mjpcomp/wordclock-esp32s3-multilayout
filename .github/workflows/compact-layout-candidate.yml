@@ -5,6 +5,7 @@ on:
     branches: [feature/optional-status-prefix]
     paths:
       - tools/prepare_compact_layout.py
+      - tools/refine_compact_layout_mobile.py
       - .github/workflows/compact-layout-candidate.yml
 permissions:
   contents: read
@@ -19,10 +20,13 @@ jobs:
           fetch-depth: 0
       - name: Require the reviewed browser-source checkpoint
         run: git diff --exit-code 7a44bbd93c4ee6364ed1721377fcf66ea2c626ef HEAD -- webpage Gruntfile.js package.json package-lock.json tests/webpage-layout.test.cjs tests/schedule-live-browser.test.cjs
+      - name: Preserve the validated first-candidate generator
+        run: git diff --exit-code 104c0f45c14755fff33f032e117ebfd178406519 HEAD -- tools/prepare_compact_layout.py
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
       - run: python3 tools/prepare_compact_layout.py
+      - run: python3 tools/refine_compact_layout_mobile.py
       - run: python3 tests/test_mirc0_preview_reference.py
       - run: npm ci --ignore-scripts
       - run: npx --no-install grunt build
@@ -35,7 +39,7 @@ jobs:
         run: |
           node tests/webpage-layout.test.cjs
           node tests/schedule-live-browser.test.cjs
-      - name: Check measured overflow and density against the inspected baseline
+      - name: Check measured overflow and desktop/mobile density
         run: |
           python3 - <<'PY'
           import json
@@ -48,7 +52,9 @@ jobs:
           assert records['1024/visible']['color']['height'] < 675.5625, 'Desktop Colors panel did not shrink'
           assert records['1440/visible']['editor']['height'] < 1239.6875, 'Desktop editor did not shrink'
           assert records['320/visible']['main']['height'] < 3385.59375, 'Narrow page did not shrink'
-          print('PASS: candidate measured smaller with no page overflow; virtual peer only')
+          assert records['320/visible']['editor']['height'] < 1838.578125, '320px editor regressed against baseline'
+          assert records['480/visible']['editor']['height'] < 1524.046875, '480px editor regressed against baseline'
+          print('PASS: desktop/mobile candidate smaller with no page overflow; virtual peer only')
           PY
       - name: Preserve candidate source, diff, measurements and screenshots
         if: always()
