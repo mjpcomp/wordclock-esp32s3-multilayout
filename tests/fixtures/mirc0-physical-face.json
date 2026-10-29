@@ -1,0 +1,26 @@
+{
+  "layout_id": 36,
+  "creator": "Mirc0.",
+  "rows": [
+    "ITKISMOWIFI",
+    "ACQUARTERDG",
+    "TWENTYFIVEL",
+    "HALFBTENFTO",
+    "PASTAELNINE",
+    "ONESIXTHREE",
+    "FOURFIVETWO",
+    "EIGHTELEVEN",
+    "SEVENTWELVE",
+    "TENSEOCLOCK"
+  ],
+  "minute_dots": {
+    "logical_indices": [
+      110,
+      111,
+      112,
+      113
+    ],
+    "placement": "centered horizontal row below the letter matrix"
+  },
+  "reference": "User-supplied physical-face photograph, 2026-10-29; EN10x11.mirc0.hpp. Colours are not fixed by this fixture."
+}
