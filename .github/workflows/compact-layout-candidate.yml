@@ -1,4 +1,4 @@
-# Applies a guarded CSS patch only inside CI; never commits or flashes it.
+# Candidate changes remain inside CI; never commit or flash generated output.
 name: Compact layout candidate (no source promotion)
 on:
   push:
@@ -6,6 +6,8 @@ on:
     paths:
       - tools/prepare_compact_layout.py
       - tools/refine_compact_layout_mobile.py
+      - tools/prepare_responsive_timeline.py
+      - tests/schedule-timeline-responsive*.cjs
       - .github/workflows/compact-layout-candidate.yml
 permissions:
   contents: read
@@ -19,27 +21,45 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: Require the reviewed browser-source checkpoint
-        run: git diff --exit-code 7a44bbd93c4ee6364ed1721377fcf66ea2c626ef HEAD -- webpage Gruntfile.js package.json package-lock.json tests/webpage-layout.test.cjs tests/schedule-live-browser.test.cjs
-      - name: Preserve the validated first-candidate generator
-        run: git diff --exit-code 104c0f45c14755fff33f032e117ebfd178406519 HEAD -- tools/prepare_compact_layout.py
+        run: git diff --exit-code 7a44bbd93c4ee6364ed1721377fcf66ea2c626ef HEAD -- webpage Gruntfile.js package.json package-lock.json tests/webpage-layout.test.cjs tests/schedule-live-browser.test.cjs tests/schedule-timeline-view.test.cjs
+      - name: Preserve the validated density generators
+        run: git diff --exit-code f2d56f95c10786d8114de428a20cb67b014f00af HEAD -- tools/prepare_compact_layout.py tools/refine_compact_layout_mobile.py
+      - name: Preserve the approved lifecycle regression
+        run: git diff --exit-code d319191a362502fb24f141d9500c1c0092f647ec HEAD -- tests/schedule-timeline-responsive.test.cjs
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
       - run: python3 tools/prepare_compact_layout.py
       - run: python3 tools/refine_compact_layout_mobile.py
+      - name: Prove the new regression rejects the fixed-size renderer
+        run: |
+          node - <<'JS'
+          const assert=require('node:assert/strict');
+          const fs=require('node:fs');
+          const {spawnSync}=require('node:child_process');
+          const result=spawnSync(process.execPath,['tests/schedule-timeline-responsive.test.cjs'],{encoding:'utf8'});
+          fs.writeFileSync('compact-layout-evidence/fixed-renderer-expected-failure.log',(result.stdout||'')+(result.stderr||''));
+          assert.ok(result.status!==0 && (result.stderr||'').includes('0 0 282 224'),'Old renderer did not fail the expected geometry assertion');
+          JS
+      - run: python3 tools/prepare_responsive_timeline.py
       - run: python3 tests/test_mirc0_preview_reference.py
+      - name: Existing and responsive SVG lifecycle fixtures
+        run: |
+          node tests/schedule-timeline-view.test.cjs
+          node tests/schedule-timeline-responsive.test.cjs
       - run: npm ci --ignore-scripts
       - run: npx --no-install grunt build
       - name: Reuse isolated browser tooling without changing project dependencies
         run: npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
       - run: .ci-browser/node_modules/.bin/playwright install --with-deps chromium
-      - name: Measure the candidate and exercise existing scheduler interactions
+      - name: Measure layout, scheduler behavior and real SVG readability
         env:
           NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
         run: |
           node tests/webpage-layout.test.cjs
           node tests/schedule-live-browser.test.cjs
-      - name: Check measured overflow and desktop/mobile density
+          node tests/schedule-timeline-responsive-browser.test.cjs
+      - name: Retain desktop/mobile density and overflow gates
         run: |
           python3 - <<'PY'
           import json
@@ -49,14 +69,14 @@ jobs:
           assert report['status'] == 'PASS_DIAGNOSTICS_ONLY'
           assert len(records) == 45
           assert all(row['documentScroll'] <= row['documentClient'] for row in records.values()), 'Horizontal overflow remains'
-          assert records['1024/visible']['color']['height'] < 675.5625, 'Desktop Colors panel did not shrink'
-          assert records['1440/visible']['editor']['height'] < 1239.6875, 'Desktop editor did not shrink'
-          assert records['320/visible']['main']['height'] < 3385.59375, 'Narrow page did not shrink'
-          assert records['320/visible']['editor']['height'] < 1838.578125, '320px editor regressed against baseline'
-          assert records['480/visible']['editor']['height'] < 1524.046875, '480px editor regressed against baseline'
-          print('PASS: desktop/mobile candidate smaller with no page overflow; virtual peer only')
+          assert records['1024/visible']['color']['height'] < 675.5625
+          assert records['1440/visible']['editor']['height'] < 1239.6875
+          assert records['320/visible']['main']['height'] < 3385.59375
+          assert records['320/visible']['editor']['height'] < 1838.578125
+          assert records['480/visible']['editor']['height'] < 1524.046875
+          print('PASS: density and overflow gates retained; simulated peer only')
           PY
-      - name: Preserve candidate source, diff, measurements and screenshots
+      - name: Preserve candidate sources and browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
