@@ -66,7 +66,7 @@ CHANGES = [
     ('"x": 55, "y": positionY(level)', '"x": dimensions.plotLeft - 10, "y": positionY(level)'),
     ('const step = right - left > 500 ? 180 : 30;', 'const step = tickStep();'),
     ('"y": 280, "text-anchor": "middle"', '"y": dimensions.labelY, "text-anchor": "middle"'),
-    ('else node("circle", Object.assign({}, attributes, { "cx": horizontal, "cy": vertical, "r": 8 }));', 'else node("circle", Object.assign({}, attributes, { "cx": horizontal, "cy": vertical, "r": 8 }));\n\t\t\t\tnode("circle", { "cx": horizontal, "cy": vertical, "r": 22, "data-index": handle.eventIndex, "data-hit-kind": handle.kind, "aria-hidden": "true", fill: "transparent", stroke: "none" });'),
+    ('else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, "r": 8 }));', 'else node("circle", Object.assign({}, attributes, { cx: horizontal, cy: vertical, "r": 8 }));\n\t\t\t\tnode("circle", { "cx": horizontal, "cy": vertical, "r": 22, "data-index": handle.eventIndex, "data-hit-kind": handle.kind, "aria-hidden": "true", fill: "transparent", stroke: "none" });'),
     ('kind: target.getAttribute("data-kind")', 'kind: target.getAttribute("data-kind") || target.getAttribute("data-hit-kind")'),
     ('svg.style.touchAction = "none";', 'svg.style.touchAction = "none";' + INIT),
     ('(local.x - 65) * (right - left) / 880', '(local.x - dimensions.plotLeft) * (right - left) / dimensions.plotWidth'),
