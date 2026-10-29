@@ -7,7 +7,9 @@ on:
       - tools/prepare_compact_layout.py
       - tools/refine_compact_layout_mobile.py
       - tools/prepare_responsive_timeline.py
+      - tools/prepare_schedule_action_states.py
       - tests/schedule-timeline-responsive*.cjs
+      - tests/schedule-action-states-browser.test.cjs
       - .github/workflows/compact-layout-candidate.yml
 permissions:
   contents: read
@@ -21,7 +23,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: Require the reviewed browser-source checkpoint
-        run: git diff --exit-code 7a44bbd93c4ee6364ed1721377fcf66ea2c626ef HEAD -- webpage Gruntfile.js package.json package-lock.json tests/webpage-layout.test.cjs tests/schedule-live-browser.test.cjs tests/schedule-timeline-view.test.cjs
+        run: git diff --exit-code 7a44bbd93c4ee6364ed1721377fcf66ea2c626ef HEAD -- webpage Gruntfile.js package.json package-lock.json tests/webpage-layout.test.cjs tests/schedule-live-browser.test.cjs tests/schedule-timeline-view.test.cjs tests/schedule-page-binding.test.cjs
       - name: Preserve the validated density generators
         run: git diff --exit-code f2d56f95c10786d8114de428a20cb67b014f00af HEAD -- tools/prepare_compact_layout.py tools/refine_compact_layout_mobile.py
       - name: Preserve the approved lifecycle regression
@@ -42,9 +44,11 @@ jobs:
           assert.ok(result.status!==0 && (result.stderr||'').includes('0 0 282 224'),'Old renderer did not fail the expected geometry assertion');
           JS
       - run: python3 tools/prepare_responsive_timeline.py
+      - run: python3 tools/prepare_schedule_action_states.py
       - run: python3 tests/test_mirc0_preview_reference.py
-      - name: Existing and responsive SVG lifecycle fixtures
+      - name: Existing binding and SVG lifecycle fixtures
         run: |
+          node tests/schedule-page-binding.test.cjs
           node tests/schedule-timeline-view.test.cjs
           node tests/schedule-timeline-responsive.test.cjs
           node tests/schedule-timeline-responsive-hit-order.test.cjs
@@ -53,13 +57,14 @@ jobs:
       - name: Reuse isolated browser tooling without changing project dependencies
         run: npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
       - run: .ci-browser/node_modules/.bin/playwright install --with-deps chromium
-      - name: Measure layout, scheduler behavior and real SVG readability
+      - name: Measure layout, scheduler behavior, SVG readability and action states
         env:
           NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
         run: |
           node tests/webpage-layout.test.cjs
           node tests/schedule-live-browser.test.cjs
           node tests/schedule-timeline-responsive-browser.test.cjs
+          node tests/schedule-action-states-browser.test.cjs
       - name: Retain desktop/mobile density and overflow gates
         run: |
           python3 - <<'PY'
