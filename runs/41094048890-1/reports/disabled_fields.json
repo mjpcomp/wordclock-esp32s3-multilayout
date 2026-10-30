@@ -1,0 +1,530 @@
+{
+  "scope": "Chromium disabled-field styling with simulated read-only peers; not hardware evidence",
+  "measurements": [
+    {
+      "width": 320,
+      "phase": "loaded",
+      "fields": [
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "phase": "selected-instant",
+      "fields": [
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:30",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "phase": "legacy",
+      "fields": [
+        {
+          "name": "changes",
+          "type": "select-one",
+          "value": "-1",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "start",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "curve",
+          "type": "select-one",
+          "value": "instant",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "phase": "loading",
+      "fields": [
+        {
+          "name": "changes",
+          "type": "select-one",
+          "value": "-1",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "start",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "curve",
+          "type": "select-one",
+          "value": "instant",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "value": "100",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "phase": "loaded",
+      "fields": [
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "phase": "selected-instant",
+      "fields": [
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:30",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "phase": "legacy",
+      "fields": [
+        {
+          "name": "changes",
+          "type": "select-one",
+          "value": "-1",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "start",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "curve",
+          "type": "select-one",
+          "value": "instant",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "value": "37",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "phase": "loading",
+      "fields": [
+        {
+          "name": "changes",
+          "type": "select-one",
+          "value": "-1",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "all-day",
+          "type": "number",
+          "value": "",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "start",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "end",
+          "type": "time",
+          "value": "07:00",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 40.796875,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "curve",
+          "type": "select-one",
+          "value": "instant",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "value": "100",
+          "disabled": true,
+          "color": "rgb(82, 97, 113)",
+          "textFill": "rgb(82, 97, 113)",
+          "background": "rgb(228, 234, 240)",
+          "opacity": "1",
+          "height": 44,
+          "contrast": 5.239090882333304
+        }
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "width": 320,
+      "mode": "loaded",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    },
+    {
+      "width": 320,
+      "mode": "legacy",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    },
+    {
+      "width": 320,
+      "mode": "loading",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    },
+    {
+      "width": 1440,
+      "mode": "loaded",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    },
+    {
+      "width": 1440,
+      "mode": "legacy",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    },
+    {
+      "width": 1440,
+      "mode": "loading",
+      "requests": [
+        {
+          "command": "brightness-schedule",
+          "schema": 1,
+          "requestId": "g1r1",
+          "action": "get"
+        }
+      ],
+      "errors": [],
+      "blocked": [],
+      "peerErrors": []
+    }
+  ],
+  "status": "PASS"
+}
