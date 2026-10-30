@@ -53,8 +53,12 @@ async function main(){
   await page.waitForFunction(()=>document.querySelector("#mirc0-preview-panel [data-led-index='0']").getAttribute("fill").toLowerCase()==="#000080");
   assert.equal(await page.locator("#mirc0-preview-panel [data-led-index='2']").getAttribute("fill"),"#003300");assert.equal(report.intentionalLegacyColourWrites.length,0);
   await page.locator("#colorwheel-background").evaluate(e=>e.click());assert.equal(report.intentionalLegacyColourWrites.length,0);
-  const wheel=page.locator("#color-picker svg").first();await wheel.scrollIntoViewIfNeeded();const box=await wheel.boundingBox();assert.ok(box&&box.width>0);
-  await page.mouse.click(box.x+box.width*0.75,box.y+box.height*0.35);await until(()=>report.intentionalLegacyColourWrites.length>0);
+  const wheel=page.locator("#color-picker .IroWheel");await wheel.scrollIntoViewIfNeeded();const box=await wheel.boundingBox();assert.ok(box&&box.width>=200&&box.height>=200);
+  const position={x:box.width*0.75,y:box.height*0.35};
+  report.wheelTarget=await wheel.evaluate((e,p)=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+p.x,r.top+p.y);return {tag:e.tagName,width:r.width,height:r.height,hitTag:hit?hit.tagName:null,hitClass:hit?hit.getAttribute("class"):null,withinWheel:Boolean(hit&&e.contains(hit))};},position);
+  assert.equal(report.wheelTarget.tag,"DIV");assert.equal(report.wheelTarget.withinWheel,true);
+  await wheel.click({position});await until(()=>report.intentionalLegacyColourWrites.length>0);
+  await page.waitForFunction(()=>document.querySelector("#mirc0-preview-panel [data-led-index='2']").getAttribute("fill")!=="#003300");
   assert.equal(report.intentionalLegacyColourWrites.length,1);assert.ok(report.intentionalLegacyColourWrites[0].startsWith("001001"));
   socket.send(JSON.stringify({...configuration(),clockTypeDef:4}));await page.locator("#mirc0-preview-panel").waitFor({state:"hidden"});
   assert.equal(await page.locator(".box-color").evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(" ").length),2);
