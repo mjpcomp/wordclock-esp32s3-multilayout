@@ -54,6 +54,10 @@ CSS = """
     height: auto;
 }
 
+#mirc0-preview-panel text[data-lit='false'][fill='#000000'] {
+    fill: #59636f;
+}
+
 #mirc0-preview-panel .mirc0-preview-controls {
     display: flex;
     flex-wrap: wrap;
@@ -148,9 +152,14 @@ def main():
         "Gruntfile.js": replace_once(original["Gruntfile.js"].decode("utf-8"), grunt_anchor, grunt_anchor + '\n\t\t\t\t"<%= settings.srcDirectory %>/mirc0-*.js",')
     }
     evidence = ROOT / "compact-layout-evidence"
-    manifest = {"scope": "CI preview integration only; local samples, not device telemetry or flash-ready output", "preview_checkpoint": PREVIEW, "files": {}}
+    manifest = {"scope": "CI preview integration only; local samples, not device telemetry or flash-ready output", "preview_checkpoint": PREVIEW, "unlit_black_text_guide": "#59636f", "files": {}}
     for name in ["webpage/mirc0-preview.js", "webpage/mirc0-preview-page.js"]:
-        result[name] = original[name].decode("utf-8")
+        content = original[name].decode("utf-8")
+        if name.endswith("mirc0-preview-page.js"):
+            content = replace_once(content,
+                                   "Local sample only; not device time or output telemetry. Colour controls keep their existing device behaviour.",
+                                   "Local sample only; not device time or output telemetry. Grey unlit letters are a guide for black backgrounds. Colour controls keep their existing device behaviour.")
+        result[name] = content
     for name, content in result.items():
         (ROOT / name).write_text(content, encoding="utf-8")
         artifact = "preview-" + Path(name).name

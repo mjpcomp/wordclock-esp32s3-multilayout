@@ -11,13 +11,18 @@ async function measure(page,width,report){
  const data=await page.evaluate(()=>{
   const panel=document.querySelector("#mirc0-preview-panel"),svg=panel.querySelector("svg");
   const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
-  const matrix=svg.getScreenCTM();return {panel:rect(panel),svg:rect(svg),letters:Array.from(svg.querySelectorAll("text")).map(e=>({letter:e.textContent,fontPx:parseFloat(getComputedStyle(e).fontSize)*Math.hypot(matrix.c,matrix.d),...rect(e)})),
+  const matrix=svg.getScreenCTM();return {panel:rect(panel),svg:rect(svg),letters:Array.from(svg.querySelectorAll("text")).map(e=>({letter:e.textContent,lit:e.getAttribute("data-lit")==="true",fillAttribute:e.getAttribute("fill"),computedFill:getComputedStyle(e).fill,fontPx:parseFloat(getComputedStyle(e).fontSize)*Math.hypot(matrix.c,matrix.d),...rect(e)})),
    dots:Array.from(svg.querySelectorAll("circle")).map(rect),labels:Array.from(panel.querySelectorAll("label")).map(rect),
    overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};
  });
  assert.equal(data.overflow,false);assert.equal(data.letters.length,110);assert.equal(data.dots.length,4);
  assert.equal(data.letters.map(t=>t.letter).join(""),reference.rows.join(""));
  for(const t of data.letters){assert.ok(t.fontPx>=12);assert.ok(t.left>=data.svg.left-1&&t.right<=data.svg.right+1);assert.ok(t.top>=data.svg.top-1&&t.bottom<=data.svg.bottom+1);}
+ assert.ok(data.letters.some(t=>!t.lit&&t.fillAttribute==="#000000"));
+ for(const t of data.letters){const rgb="rgb("+t.fillAttribute.slice(1).match(/../g).map(h=>parseInt(h,16)).join(", ")+")";assert.equal(t.computedFill,!t.lit&&t.fillAttribute==="#000000"?"rgb(89, 99, 111)":rgb);}
+ assert.equal(await page.locator("#mirc0-preview-panel rect").getAttribute("fill"),"#10151b");
+ assert.equal(await page.locator("#mirc0-preview-panel rect").evaluate(e=>getComputedStyle(e).fill),"rgb(16, 21, 27)");
+ assert.ok((await page.locator("#mirc0-preview-panel [data-mirc0='note']").textContent()).includes("Grey unlit letters"));
  assert.ok(data.labels.every(r=>r.height>=43.8));assert.ok(data.dots.every(d=>d.top>Math.max(...data.letters.map(t=>t.bottom))));
  const center=data.dots.reduce((sum,d)=>sum+(d.left+d.right)/2,0)/4;assert.ok(Math.abs(center-(data.svg.left+data.svg.right)/2)<1);
  assert.deepEqual(await lit(page),preview.mask(8,50));report.measurements.push({width,...data});
@@ -51,6 +56,8 @@ async function main(){
   await page.locator("#mirc0-sample-prefix").check();assert.equal(report.intentionalLegacyColourWrites.length,0);assert.equal(peer.requests.length,requests);
   socket.send(JSON.stringify({command:"set",prog:1,hsb00:240,hsb01:100,hsb02:50,hsb10:120,hsb11:100,hsb12:20,effectBri:2,effectSpeed:5,hasSpecialWordHappyBirthday:false,bitmapSymbol:7,hasSecondsFrame:false,colortype:1}));
   await page.waitForFunction(()=>document.querySelector("#mirc0-preview-panel [data-led-index='0']").getAttribute("fill").toLowerCase()==="#000080");
+  assert.equal(await page.locator("#mirc0-preview-panel [data-led-index='2']").evaluate(e=>getComputedStyle(e).fill),"rgb(0, 51, 0)");
+  assert.equal(await page.locator("#mirc0-preview-panel [data-led-index='0']").evaluate(e=>getComputedStyle(e).fill),"rgb(0, 0, 128)");
   assert.equal(await page.locator("#mirc0-preview-panel [data-led-index='2']").getAttribute("fill"),"#003300");assert.equal(report.intentionalLegacyColourWrites.length,0);
   await page.locator("#colorwheel-background").evaluate(e=>e.click());assert.equal(report.intentionalLegacyColourWrites.length,0);
   const wheel=page.locator("#color-picker .IroWheel");await wheel.scrollIntoViewIfNeeded();const box=await wheel.boundingBox();assert.ok(box&&box.width>=200&&box.height>=200);
