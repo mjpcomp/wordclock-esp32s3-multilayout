@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "source_sha": "b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8",
+  "run_id": "41094048890",
+  "attempt": "1",
+  "status": "PASS",
+  "review_path": "runs/41094048890-1/review.json",
+  "review_commit": "63d44b5992d484b8e0271d883ebead8e762ba7f7",
+  "run_url": "https://github.com/mjpcomp/wordclock-esp32s3-multilayout/actions/runs/41094048890",
+  "artifact_name": "compact-layout-candidate-b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8-41094048890-1",
+  "file_commits": {
+    "review.json": "63d44b5992d484b8e0271d883ebead8e762ba7f7",
+    "preview-source.json": "053e28a5a41ec1e91d421e23c86a58a440b8d33d",
+    "reports/layout.json": "accf658e1827fd3e1cbb4a058f35a78f63d594c4",
+    "reports/timeline.json": "ed6c8f486a648126158ea58e653bd17f25c58068",
+    "reports/actions.json": "d2e2a12cf0d80148c829940e632bd0c1d7cd17fe",
+    "reports/preview.json": "cc98d87c3b5fa95b2ecd3a67d29cd70750813247",
+    "reports/disabled_fields.json": "2c1072fd7fdcb244f230db7905eb66466a7b7c65",
+    "reports/baseline-layout.json": "5a8dba1a724500f5ffd4cfa1fa179d41981711ba",
+    "timeline-source.json": "06923cb3f5926e5bbbf9870c9128db608f32ab1a",
+    "action-state-source.json": "3c8946f67769e1564a30a0b96f39e7a38e5410c0"
+  },
+  "manifest_path": "runs/41094048890-1/preview-source.json",
+  "manifest_commit": "053e28a5a41ec1e91d421e23c86a58a440b8d33d"
+}
