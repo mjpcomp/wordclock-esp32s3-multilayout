@@ -9,9 +9,11 @@ on:
       - tools/prepare_responsive_timeline.py
       - tools/prepare_schedule_action_states.py
       - tools/prepare_mirc0_preview_page.py
+      - tools/refine_disabled_schedule_fields.py
       - tests/schedule-timeline-responsive*.cjs
       - tests/schedule-action-states-browser.test.cjs
       - tests/mirc0-preview-browser.test.cjs
+      - tests/schedule-disabled-fields-browser.test.cjs
       - .github/workflows/compact-layout-candidate.yml
 permissions:
   contents: read
@@ -92,6 +94,7 @@ jobs:
       - name: Preserve baseline measurements separately
         run: cp layout-evidence/layout-report.json compact-layout-evidence/baseline-layout-report.json
       - run: python3 tools/prepare_mirc0_preview_page.py
+      - run: python3 tools/refine_disabled_schedule_fields.py
       - run: npx --no-install grunt build
       - name: Validate generated page with preview, including unchanged scheduler assertions
         env:
@@ -102,6 +105,7 @@ jobs:
           node tests/schedule-timeline-responsive-browser.test.cjs
           node tests/schedule-action-states-browser.test.cjs
           node tests/mirc0-preview-browser.test.cjs
+          node tests/schedule-disabled-fields-browser.test.cjs
       - name: Require no final-page overflow after intentional preview content addition
         run: |
           python3 - <<'PY'
