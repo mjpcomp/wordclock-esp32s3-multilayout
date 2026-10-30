@@ -1,0 +1,2296 @@
+{
+  "scope": "real Chromium with simulated peer; not hardware evidence",
+  "measurements": [
+    {
+      "viewport": 320,
+      "bounds": {
+        "left": 19,
+        "right": 301,
+        "top": 2270.828125,
+        "bottom": 2494.828125,
+        "width": 282,
+        "height": 224
+      },
+      "texts": [
+        {
+          "text": "0%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 39.65625,
+          "right": 57.330078125,
+          "top": 2433.828125,
+          "bottom": 2447.828125,
+          "width": 17.673828125,
+          "height": 14
+        },
+        {
+          "text": "25%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 2397.328125,
+          "bottom": 2411.328125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "50%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 2360.828125,
+          "bottom": 2374.828125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "75%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 2324.328125,
+          "bottom": 2338.328125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "100%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 26.296875,
+          "right": 57.318359375,
+          "top": 2287.828125,
+          "bottom": 2301.828125,
+          "width": 31.021484375,
+          "height": 14
+        },
+        {
+          "text": "00:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 51.984375,
+          "right": 82.33984375,
+          "top": 2473.828125,
+          "bottom": 2487.828125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "12:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 148.984375,
+          "right": 179.33984375,
+          "top": 2473.828125,
+          "bottom": 2487.828125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "00:00 +1d",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 234.140625,
+          "right": 287.859375,
+          "top": 2473.828125,
+          "bottom": 2487.828125,
+          "width": 53.71875,
+          "height": 14
+        }
+      ],
+      "targets": [
+        {
+          "left": 119.625,
+          "right": 135.625,
+          "top": 2396.328125,
+          "bottom": 2412.328125,
+          "width": 16,
+          "height": 16
+        },
+        {
+          "left": 61.02083206176758,
+          "right": 77.02082824707031,
+          "top": 2323.328125,
+          "bottom": 2339.328125,
+          "width": 15.999996185302734,
+          "height": 16
+        }
+      ],
+      "form": {
+        "height": "1071.61px",
+        "rows": "67.9844px 48.7969px 69.5625px 72.7812px 72.7812px 69.5625px 67.9844px 48.7969px 44px 92.75px 148.781px 98.3906px 92.75px",
+        "rowGap": "6.4px",
+        "alignContent": "normal",
+        "children": [
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 2494.828125,
+            "bottom": 2562.8125,
+            "width": 282,
+            "height": 67.984375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 2569.203125,
+            "bottom": 2618,
+            "width": 282,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 301,
+            "top": 2624.390625,
+            "bottom": 2693.953125,
+            "width": 282,
+            "height": 69.5625,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 2700.34375,
+            "bottom": 2773.125,
+            "width": 282,
+            "height": 72.78125,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 2779.515625,
+            "bottom": 2852.296875,
+            "width": 282,
+            "height": 72.78125,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 301,
+            "top": 2858.6875,
+            "bottom": 2928.25,
+            "width": 282,
+            "height": 69.5625,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 2934.640625,
+            "bottom": 3002.625,
+            "width": 282,
+            "height": 67.984375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 3009.015625,
+            "bottom": 3057.8125,
+            "width": 282,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 3064.203125,
+            "bottom": 3108.203125,
+            "width": 282,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 301,
+            "top": 3114.59375,
+            "bottom": 3207.34375,
+            "width": 282,
+            "height": 92.75,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 3217.734375,
+            "bottom": 3362.515625,
+            "width": 282,
+            "height": 144.78125,
+            "buttons": [
+              {
+                "text": "Add instant change",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 193.1875,
+                "top": 3217.734375,
+                "bottom": 3261.734375,
+                "width": 174.1875,
+                "height": 44
+              },
+              {
+                "text": "Apply to draft",
+                "disabled": true,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 150.46875,
+                "top": 3268.125,
+                "bottom": 3312.125,
+                "width": 131.46875,
+                "height": 44
+              },
+              {
+                "text": "Remove selected",
+                "disabled": true,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 179.8125,
+                "top": 3318.515625,
+                "bottom": 3362.515625,
+                "width": 160.8125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 301,
+            "top": 3372.90625,
+            "bottom": 3467.296875,
+            "width": 282,
+            "height": 94.390625,
+            "buttons": [
+              {
+                "text": "Save schedule",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 161.15625,
+                "top": 3372.90625,
+                "bottom": 3416.90625,
+                "width": 142.15625,
+                "height": 44
+              },
+              {
+                "text": "Reload",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 167.546875,
+                "right": 255.4375,
+                "top": 3372.90625,
+                "bottom": 3416.90625,
+                "width": 87.890625,
+                "height": 44
+              },
+              {
+                "text": "Discard local changes",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Reset this schedule\u2026",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 211.828125,
+                "top": 3423.296875,
+                "bottom": 3467.296875,
+                "width": 192.828125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 301,
+            "top": 3473.6875,
+            "bottom": 3566.4375,
+            "width": 282,
+            "height": 92.75,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "none",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "buttons": [
+              {
+                "text": "Use device version",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Keep local draft",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 480,
+      "bounds": {
+        "left": 19,
+        "right": 461,
+        "top": 583.96875,
+        "bottom": 807.96875,
+        "width": 442,
+        "height": 224
+      },
+      "texts": [
+        {
+          "text": "0%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 39.65625,
+          "right": 57.330078125,
+          "top": 746.96875,
+          "bottom": 760.96875,
+          "width": 17.673828125,
+          "height": 14
+        },
+        {
+          "text": "25%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 710.46875,
+          "bottom": 724.46875,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "50%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 673.96875,
+          "bottom": 687.96875,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "75%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 32.96875,
+          "right": 57.31640625,
+          "top": 637.46875,
+          "bottom": 651.46875,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "100%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 26.296875,
+          "right": 57.318359375,
+          "top": 600.96875,
+          "bottom": 614.96875,
+          "width": 31.021484375,
+          "height": 14
+        },
+        {
+          "text": "00:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 51.984375,
+          "right": 82.33984375,
+          "top": 786.96875,
+          "bottom": 800.96875,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "06:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 140.484375,
+          "right": 170.83984375,
+          "top": 786.96875,
+          "bottom": 800.96875,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "12:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 228.984375,
+          "right": 259.33984375,
+          "top": 786.96875,
+          "bottom": 800.96875,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "18:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 317.484375,
+          "right": 347.83984375,
+          "top": 786.96875,
+          "bottom": 800.96875,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "00:00 +1d",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 394.140625,
+          "right": 447.859375,
+          "top": 786.96875,
+          "bottom": 800.96875,
+          "width": 53.71875,
+          "height": 14
+        }
+      ],
+      "targets": [
+        {
+          "left": 169.625,
+          "right": 185.625,
+          "top": 689.4667358398438,
+          "bottom": 705.4667358398438,
+          "width": 16,
+          "height": 16
+        },
+        {
+          "left": 62.6875,
+          "right": 78.6875,
+          "top": 636.46875,
+          "bottom": 652.46875,
+          "width": 16,
+          "height": 16
+        }
+      ],
+      "form": {
+        "height": "880.5px",
+        "rows": "67.9844px 48.7969px 46.375px 48.7969px 48.7969px 46.375px 67.9844px 48.7969px 44px 69.5625px 98.3906px 98.3906px 69.5625px",
+        "rowGap": "6.4px",
+        "alignContent": "normal",
+        "children": [
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 807.96875,
+            "bottom": 875.953125,
+            "width": 442,
+            "height": 67.984375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 882.34375,
+            "bottom": 931.140625,
+            "width": 442,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 461,
+            "top": 937.53125,
+            "bottom": 983.90625,
+            "width": 442,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 990.296875,
+            "bottom": 1039.09375,
+            "width": 442,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1045.484375,
+            "bottom": 1094.28125,
+            "width": 442,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 461,
+            "top": 1100.671875,
+            "bottom": 1147.046875,
+            "width": 442,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1153.4375,
+            "bottom": 1221.421875,
+            "width": 442,
+            "height": 67.984375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1227.8125,
+            "bottom": 1276.609375,
+            "width": 442,
+            "height": 48.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1283,
+            "bottom": 1327,
+            "width": 442,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 461,
+            "top": 1333.390625,
+            "bottom": 1402.953125,
+            "width": 442,
+            "height": 69.5625,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1413.34375,
+            "bottom": 1507.734375,
+            "width": 442,
+            "height": 94.390625,
+            "buttons": [
+              {
+                "text": "Add instant change",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 193.1875,
+                "top": 1413.34375,
+                "bottom": 1457.34375,
+                "width": 174.1875,
+                "height": 44
+              },
+              {
+                "text": "Apply to draft",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 199.578125,
+                "right": 331.046875,
+                "top": 1413.34375,
+                "bottom": 1457.34375,
+                "width": 131.46875,
+                "height": 44
+              },
+              {
+                "text": "Remove selected",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 179.8125,
+                "top": 1463.734375,
+                "bottom": 1507.734375,
+                "width": 160.8125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 19,
+            "right": 461,
+            "top": 1518.125,
+            "bottom": 1612.515625,
+            "width": 442,
+            "height": 94.390625,
+            "buttons": [
+              {
+                "text": "Save schedule",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 161.15625,
+                "top": 1518.125,
+                "bottom": 1562.125,
+                "width": 142.15625,
+                "height": 44
+              },
+              {
+                "text": "Reload",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 167.546875,
+                "right": 255.4375,
+                "top": 1518.125,
+                "bottom": 1562.125,
+                "width": 87.890625,
+                "height": 44
+              },
+              {
+                "text": "Discard local changes",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 261.828125,
+                "right": 455.546875,
+                "top": 1518.125,
+                "bottom": 1562.125,
+                "width": 193.71875,
+                "height": 44
+              },
+              {
+                "text": "Reset this schedule\u2026",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 19,
+                "right": 211.828125,
+                "top": 1568.515625,
+                "bottom": 1612.515625,
+                "width": 192.828125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 19,
+            "right": 461,
+            "top": 1618.90625,
+            "bottom": 1688.46875,
+            "width": 442,
+            "height": 69.5625,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "none",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "buttons": [
+              {
+                "text": "Use device version",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Keep local draft",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 768,
+      "bounds": {
+        "left": 193,
+        "right": 745,
+        "top": 731.3125,
+        "bottom": 955.3125,
+        "width": 552,
+        "height": 224
+      },
+      "texts": [
+        {
+          "text": "0%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 213.65625,
+          "right": 231.330078125,
+          "top": 894.3125,
+          "bottom": 908.3125,
+          "width": 17.673828125,
+          "height": 14
+        },
+        {
+          "text": "25%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 857.8125,
+          "bottom": 871.8125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "50%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 821.3125,
+          "bottom": 835.3125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "75%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 784.8125,
+          "bottom": 798.8125,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "100%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 200.296875,
+          "right": 231.318359375,
+          "top": 748.3125,
+          "bottom": 762.3125,
+          "width": 31.021484375,
+          "height": 14
+        },
+        {
+          "text": "00:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 225.984375,
+          "right": 256.33984375,
+          "top": 934.3125,
+          "bottom": 948.3125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "06:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 341.984375,
+          "right": 372.33984375,
+          "top": 934.3125,
+          "bottom": 948.3125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "12:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 457.984375,
+          "right": 488.33984375,
+          "top": 934.3125,
+          "bottom": 948.3125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "18:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 573.984375,
+          "right": 604.33984375,
+          "top": 934.3125,
+          "bottom": 948.3125,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "00:00 +1d",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 678.140625,
+          "right": 731.859375,
+          "top": 934.3125,
+          "bottom": 948.3125,
+          "width": 53.71875,
+          "height": 14
+        }
+      ],
+      "targets": [
+        {
+          "left": 378,
+          "right": 394,
+          "top": 816.8084716796875,
+          "bottom": 832.8084716796875,
+          "width": 16,
+          "height": 16
+        },
+        {
+          "left": 237.8333282470703,
+          "right": 253.8333282470703,
+          "top": 783.8125,
+          "bottom": 799.8125,
+          "width": 16,
+          "height": 16
+        }
+      ],
+      "form": {
+        "height": "758.172px",
+        "rows": "44px 44px 46.375px 40.7969px 40.7969px 46.375px 44px 44px 44px 46.375px 48px 98.3906px 46.375px",
+        "rowGap": "10.4px",
+        "alignContent": "normal",
+        "children": [
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 955.3125,
+            "bottom": 999.3125,
+            "width": 552,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1009.703125,
+            "bottom": 1053.703125,
+            "width": 552,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 745,
+            "top": 1064.09375,
+            "bottom": 1110.46875,
+            "width": 552,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1120.859375,
+            "bottom": 1161.65625,
+            "width": 552,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1172.046875,
+            "bottom": 1212.84375,
+            "width": 552,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 745,
+            "top": 1223.234375,
+            "bottom": 1269.609375,
+            "width": 552,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1280,
+            "bottom": 1324,
+            "width": 552,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1334.390625,
+            "bottom": 1378.390625,
+            "width": 552,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1388.78125,
+            "bottom": 1432.78125,
+            "width": 552,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 745,
+            "top": 1443.171875,
+            "bottom": 1489.546875,
+            "width": 552,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1503.9375,
+            "bottom": 1547.9375,
+            "width": 552,
+            "height": 44,
+            "buttons": [
+              {
+                "text": "Add instant change",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 367.1875,
+                "top": 1503.9375,
+                "bottom": 1547.9375,
+                "width": 174.1875,
+                "height": 44
+              },
+              {
+                "text": "Apply to draft",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 373.578125,
+                "right": 505.046875,
+                "top": 1503.9375,
+                "bottom": 1547.9375,
+                "width": 131.46875,
+                "height": 44
+              },
+              {
+                "text": "Remove selected",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 511.4375,
+                "right": 672.25,
+                "top": 1503.9375,
+                "bottom": 1547.9375,
+                "width": 160.8125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 745,
+            "top": 1562.328125,
+            "bottom": 1656.71875,
+            "width": 552,
+            "height": 94.390625,
+            "buttons": [
+              {
+                "text": "Save schedule",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 335.15625,
+                "top": 1562.328125,
+                "bottom": 1606.328125,
+                "width": 142.15625,
+                "height": 44
+              },
+              {
+                "text": "Reload",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 341.546875,
+                "right": 429.4375,
+                "top": 1562.328125,
+                "bottom": 1606.328125,
+                "width": 87.890625,
+                "height": 44
+              },
+              {
+                "text": "Discard local changes",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 435.828125,
+                "right": 629.546875,
+                "top": 1562.328125,
+                "bottom": 1606.328125,
+                "width": 193.71875,
+                "height": 44
+              },
+              {
+                "text": "Reset this schedule\u2026",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 385.828125,
+                "top": 1612.71875,
+                "bottom": 1656.71875,
+                "width": 192.828125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 745,
+            "top": 1667.109375,
+            "bottom": 1713.484375,
+            "width": 552,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "none",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "buttons": [
+              {
+                "text": "Use device version",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Keep local draft",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 1024,
+      "bounds": {
+        "left": 193,
+        "right": 1001,
+        "top": 578.609375,
+        "bottom": 826.609375,
+        "width": 808,
+        "height": 248
+      },
+      "texts": [
+        {
+          "text": "0%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 213.65625,
+          "right": 231.330078125,
+          "top": 765.609375,
+          "bottom": 779.609375,
+          "width": 17.673828125,
+          "height": 14
+        },
+        {
+          "text": "25%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 723.109375,
+          "bottom": 737.109375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "50%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 680.609375,
+          "bottom": 694.609375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "75%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 638.109375,
+          "bottom": 652.109375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "100%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 200.296875,
+          "right": 231.318359375,
+          "top": 595.609375,
+          "bottom": 609.609375,
+          "width": 31.021484375,
+          "height": 14
+        },
+        {
+          "text": "00:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 225.984375,
+          "right": 256.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "03:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 315.984375,
+          "right": 346.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "06:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 405.984375,
+          "right": 436.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "09:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 495.984375,
+          "right": 526.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "12:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 585.984375,
+          "right": 616.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "15:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 675.984375,
+          "right": 706.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "18:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 765.984375,
+          "right": 796.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "21:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 855.984375,
+          "right": 886.33984375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "00:00 +1d",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 934.140625,
+          "right": 987.859375,
+          "top": 805.609375,
+          "bottom": 819.609375,
+          "width": 53.71875,
+          "height": 14
+        }
+      ],
+      "targets": [
+        {
+          "left": 458,
+          "right": 474,
+          "top": 652.2393798828125,
+          "bottom": 668.2393798828125,
+          "width": 16,
+          "height": 16
+        },
+        {
+          "left": 240.5,
+          "right": 256.5,
+          "top": 637.109375,
+          "bottom": 653.109375,
+          "width": 16,
+          "height": 16
+        }
+      ],
+      "form": {
+        "height": "501.438px",
+        "rows": "44px 23.1875px 40.7969px 23.1875px 44px 44px 46.375px 48px 48px 46.375px",
+        "rowGap": "10.4px",
+        "alignContent": "normal",
+        "children": [
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 589,
+            "top": 826.609375,
+            "bottom": 870.609375,
+            "width": 396,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 605,
+            "right": 1001,
+            "top": 826.609375,
+            "bottom": 870.609375,
+            "width": 396,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1001,
+            "top": 881,
+            "bottom": 904.1875,
+            "width": 808,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 589,
+            "top": 914.578125,
+            "bottom": 955.375,
+            "width": 396,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 605,
+            "right": 1001,
+            "top": 914.578125,
+            "bottom": 955.375,
+            "width": 396,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1001,
+            "top": 965.765625,
+            "bottom": 988.953125,
+            "width": 808,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 589,
+            "top": 999.34375,
+            "bottom": 1043.34375,
+            "width": 396,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 605,
+            "right": 1001,
+            "top": 999.34375,
+            "bottom": 1043.34375,
+            "width": 396,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 589,
+            "top": 1053.734375,
+            "bottom": 1097.734375,
+            "width": 396,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1001,
+            "top": 1108.125,
+            "bottom": 1154.5,
+            "width": 808,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 1001,
+            "top": 1168.890625,
+            "bottom": 1212.890625,
+            "width": 808,
+            "height": 44,
+            "buttons": [
+              {
+                "text": "Add instant change",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 367.1875,
+                "top": 1168.890625,
+                "bottom": 1212.890625,
+                "width": 174.1875,
+                "height": 44
+              },
+              {
+                "text": "Apply to draft",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 373.578125,
+                "right": 505.046875,
+                "top": 1168.890625,
+                "bottom": 1212.890625,
+                "width": 131.46875,
+                "height": 44
+              },
+              {
+                "text": "Remove selected",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 511.4375,
+                "right": 672.25,
+                "top": 1168.890625,
+                "bottom": 1212.890625,
+                "width": 160.8125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 1001,
+            "top": 1227.28125,
+            "bottom": 1271.28125,
+            "width": 808,
+            "height": 44,
+            "buttons": [
+              {
+                "text": "Save schedule",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 335.15625,
+                "top": 1227.28125,
+                "bottom": 1271.28125,
+                "width": 142.15625,
+                "height": 44
+              },
+              {
+                "text": "Reload",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 341.546875,
+                "right": 429.4375,
+                "top": 1227.28125,
+                "bottom": 1271.28125,
+                "width": 87.890625,
+                "height": 44
+              },
+              {
+                "text": "Discard local changes",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 435.828125,
+                "right": 629.546875,
+                "top": 1227.28125,
+                "bottom": 1271.28125,
+                "width": 193.71875,
+                "height": 44
+              },
+              {
+                "text": "Reset this schedule\u2026",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 635.9375,
+                "right": 828.765625,
+                "top": 1227.28125,
+                "bottom": 1271.28125,
+                "width": 192.828125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1001,
+            "top": 1281.671875,
+            "bottom": 1328.046875,
+            "width": 808,
+            "height": 46.375,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "none",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "buttons": [
+              {
+                "text": "Use device version",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Keep local draft",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 1440,
+      "bounds": {
+        "left": 193,
+        "right": 1417,
+        "top": 248.9375,
+        "bottom": 496.9375,
+        "width": 1224,
+        "height": 248
+      },
+      "texts": [
+        {
+          "text": "0%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 213.65625,
+          "right": 231.330078125,
+          "top": 435.9375,
+          "bottom": 449.9375,
+          "width": 17.673828125,
+          "height": 14
+        },
+        {
+          "text": "25%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 393.4375,
+          "bottom": 407.4375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "50%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 350.9375,
+          "bottom": 364.9375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "75%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 206.96875,
+          "right": 231.31640625,
+          "top": 308.4375,
+          "bottom": 322.4375,
+          "width": 24.34765625,
+          "height": 14
+        },
+        {
+          "text": "100%",
+          "anchor": "end",
+          "fontPx": 12,
+          "left": 200.296875,
+          "right": 231.318359375,
+          "top": 265.9375,
+          "bottom": 279.9375,
+          "width": 31.021484375,
+          "height": 14
+        },
+        {
+          "text": "00:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 225.984375,
+          "right": 256.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "03:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 367.984375,
+          "right": 398.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "06:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 509.984375,
+          "right": 540.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "09:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 651.984375,
+          "right": 682.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "12:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 793.984375,
+          "right": 824.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "15:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 935.984375,
+          "right": 966.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "18:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 1077.984375,
+          "right": 1108.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "21:00",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 1219.984375,
+          "right": 1250.33984375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 30.35546875,
+          "height": 14
+        },
+        {
+          "text": "00:00 +1d",
+          "anchor": "middle",
+          "fontPx": 12,
+          "left": 1350.140625,
+          "right": 1403.859375,
+          "top": 475.9375,
+          "bottom": 489.9375,
+          "width": 53.71875,
+          "height": 14
+        }
+      ],
+      "targets": [
+        {
+          "left": 588,
+          "right": 604,
+          "top": 302.50750732421875,
+          "bottom": 318.50750732421875,
+          "width": 16,
+          "height": 16
+        },
+        {
+          "left": 244.8333282470703,
+          "right": 260.83331298828125,
+          "top": 307.4375,
+          "bottom": 323.4375,
+          "width": 15.999984741210938,
+          "height": 16
+        }
+      ],
+      "form": {
+        "height": "455.062px",
+        "rows": "44px 23.1875px 40.7969px 23.1875px 44px 44px 23.1875px 48px 48px 23.1875px",
+        "rowGap": "10.4px",
+        "alignContent": "normal",
+        "children": [
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 797,
+            "top": 496.9375,
+            "bottom": 540.9375,
+            "width": 604,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 813,
+            "right": 1417,
+            "top": 496.9375,
+            "bottom": 540.9375,
+            "width": 604,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1417,
+            "top": 551.328125,
+            "bottom": 574.515625,
+            "width": 1224,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 797,
+            "top": 584.90625,
+            "bottom": 625.703125,
+            "width": 604,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 813,
+            "right": 1417,
+            "top": 584.90625,
+            "bottom": 625.703125,
+            "width": 604,
+            "height": 40.796875,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1417,
+            "top": 636.09375,
+            "bottom": 659.28125,
+            "width": 1224,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 797,
+            "top": 669.671875,
+            "bottom": 713.671875,
+            "width": 604,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 813,
+            "right": 1417,
+            "top": 669.671875,
+            "bottom": 713.671875,
+            "width": 604,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 797,
+            "top": 724.0625,
+            "bottom": 768.0625,
+            "width": 604,
+            "height": 44,
+            "buttons": []
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1417,
+            "top": 778.453125,
+            "bottom": 801.640625,
+            "width": 1224,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 1417,
+            "top": 816.03125,
+            "bottom": 860.03125,
+            "width": 1224,
+            "height": 44,
+            "buttons": [
+              {
+                "text": "Add instant change",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 367.1875,
+                "top": 816.03125,
+                "bottom": 860.03125,
+                "width": 174.1875,
+                "height": 44
+              },
+              {
+                "text": "Apply to draft",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 373.578125,
+                "right": 505.046875,
+                "top": 816.03125,
+                "bottom": 860.03125,
+                "width": 131.46875,
+                "height": 44
+              },
+              {
+                "text": "Remove selected",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 511.4375,
+                "right": 672.25,
+                "top": 816.03125,
+                "bottom": 860.03125,
+                "width": 160.8125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "flex",
+            "left": 193,
+            "right": 1417,
+            "top": 874.421875,
+            "bottom": 918.421875,
+            "width": 1224,
+            "height": 44,
+            "buttons": [
+              {
+                "text": "Save schedule",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 193,
+                "right": 335.15625,
+                "top": 874.421875,
+                "bottom": 918.421875,
+                "width": 142.15625,
+                "height": 44
+              },
+              {
+                "text": "Reload",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 341.546875,
+                "right": 429.4375,
+                "top": 874.421875,
+                "bottom": 918.421875,
+                "width": 87.890625,
+                "height": 44
+              },
+              {
+                "text": "Discard local changes",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 435.828125,
+                "right": 629.546875,
+                "top": 874.421875,
+                "bottom": 918.421875,
+                "width": 193.71875,
+                "height": 44
+              },
+              {
+                "text": "Reset this schedule\u2026",
+                "disabled": false,
+                "display": "block",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 635.9375,
+                "right": 828.765625,
+                "top": 874.421875,
+                "bottom": 918.421875,
+                "width": 192.828125,
+                "height": 44
+              }
+            ]
+          },
+          {
+            "tag": "P",
+            "slot": "",
+            "display": "block",
+            "left": 193,
+            "right": 1417,
+            "top": 928.8125,
+            "bottom": 952,
+            "width": 1224,
+            "height": 23.1875,
+            "buttons": []
+          },
+          {
+            "tag": "DIV",
+            "slot": "",
+            "display": "none",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "buttons": [
+              {
+                "text": "Use device version",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "text": "Keep local draft",
+                "disabled": true,
+                "display": "none",
+                "visibility": "visible",
+                "opacity": "1",
+                "left": 0,
+                "right": 0,
+                "top": 0,
+                "bottom": 0,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "peer": {
+    "errors": [],
+    "numeric": [
+      201,
+      204,
+      200,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203,
+      200,
+      203
+    ],
+    "requests": [
+      {
+        "command": "brightness-schedule",
+        "schema": 1,
+        "requestId": "g1r1",
+        "action": "get"
+      }
+    ],
+    "connections": 1
+  },
+  "status": "PASS"
+}
