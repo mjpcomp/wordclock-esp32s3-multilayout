@@ -1,0 +1,6 @@
+{
+  "scope": "CI renderer candidate only; not promoted or flash-ready",
+  "source_sha256": "e052c8806a0cfd9bc758ece350a309a2c0ca586aab83631a04aa290446a18f5a",
+  "candidate_sha256": "9ac27148d665581407853e9c511654fa9491a26f74f9d9fc07e103fb81f3d25d",
+  "density_css_sha256": "f3c5c55b4bcb06150b48b17752c6d37c8f6cdb4ec4713307c2c7bbdcfcab326c"
+}
