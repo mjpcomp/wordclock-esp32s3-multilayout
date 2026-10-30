@@ -104,7 +104,7 @@ CSS = """
 }
 """
 SCRIPT_CHANGES = [
-    ("let colorPicker;", "let colorPicker;\n" + BOOTSTRAP),
+    ("let colorPicker;", "let colorPicker;\n" + BOOTSTRAP.rstrip("\n")),
     ("\tcreateColorPicker();", "\tcreateColorPicker();\n\tinitMirc0PreviewPage();"),
     ("\tcolorPicker.setColors([hsbFg]);", "\tcolorPicker.setColors([hsbFg]);\n\tif (mirc0PreviewPage) mirc0PreviewPage.refresh();"),
     ('document.getElementById("front-layout").value = data.clockTypeDef;', 'document.getElementById("front-layout").value = data.clockTypeDef;\n\t\t\t\tif (mirc0PreviewPage) mirc0PreviewPage.refresh();')
