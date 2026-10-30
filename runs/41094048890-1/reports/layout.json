@@ -1,0 +1,2860 @@
+{
+  "scope": "generated page, real Chromium, simulated peer; measurements are not a layout-fix pass",
+  "measurements": [
+    {
+      "label": "320/visible",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 4,
+        "right": 316,
+        "width": 312,
+        "height": 1149.703125,
+        "client": 310,
+        "scroll": 310
+      },
+      "picker": {
+        "left": 10,
+        "right": 310,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 312,
+        "width": 304,
+        "height": 1595.734375,
+        "client": 302,
+        "scroll": 302
+      },
+      "chart": {
+        "left": 19,
+        "right": 301,
+        "width": 282,
+        "height": 224,
+        "client": 282,
+        "scroll": 282
+      }
+    },
+    {
+      "label": "320/chart-hidden",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3361.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3361.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3361.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 4,
+        "right": 316,
+        "width": 312,
+        "height": 1149.703125,
+        "client": 310,
+        "scroll": 310
+      },
+      "picker": {
+        "left": 10,
+        "right": 310,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 312,
+        "width": 304,
+        "height": 1371.734375,
+        "client": 302,
+        "scroll": 302
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/editor-hidden",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 1981.703125,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 1981.703125,
+        "client": 320,
+        "scroll": 320
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 1981.703125,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 4,
+        "right": 316,
+        "width": 312,
+        "height": 1149.703125,
+        "client": 310,
+        "scroll": 310
+      },
+      "picker": {
+        "left": 10,
+        "right": 310,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-functions",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 889.71875,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 889.71875,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-frontoptions",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 1636.96875,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 1636.96875,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-settings",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 2750.671875,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 2750.671875,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-smart-home",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 793.625,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 793.625,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-about",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 558.90625,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 558.90625,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "320/navigation-main",
+      "viewport": 320,
+      "documentClient": 320,
+      "documentScroll": 320,
+      "main": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "section": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 320,
+        "width": 320,
+        "height": 3585.4375,
+        "client": 320,
+        "scroll": 320
+      },
+      "color": {
+        "left": 4,
+        "right": 316,
+        "width": 312,
+        "height": 1149.703125,
+        "client": 310,
+        "scroll": 310
+      },
+      "picker": {
+        "left": 10,
+        "right": 310,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 312,
+        "width": 304,
+        "height": 1595.734375,
+        "client": 302,
+        "scroll": 302
+      },
+      "chart": {
+        "left": 19,
+        "right": 301,
+        "width": 282,
+        "height": 224,
+        "client": 282,
+        "scroll": 282
+      }
+    },
+    {
+      "label": "480/visible",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1160.21875,
+        "client": 462,
+        "scroll": 462
+      },
+      "picker": {
+        "left": 90,
+        "right": 390,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1278.859375,
+        "client": 462,
+        "scroll": 462
+      },
+      "chart": {
+        "left": 19,
+        "right": 461,
+        "width": 442,
+        "height": 224,
+        "client": 442,
+        "scroll": 442
+      }
+    },
+    {
+      "label": "480/chart-hidden",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3055.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3055.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3055.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1160.21875,
+        "client": 462,
+        "scroll": 462
+      },
+      "picker": {
+        "left": 90,
+        "right": 390,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1054.859375,
+        "client": 462,
+        "scroll": 462
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/editor-hidden",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 1992.21875,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 1992.21875,
+        "client": 480,
+        "scroll": 480
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 1992.21875,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1160.21875,
+        "client": 462,
+        "scroll": 462
+      },
+      "picker": {
+        "left": 90,
+        "right": 390,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-functions",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 889.71875,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 889.71875,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-frontoptions",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 1618.578125,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 1618.578125,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-settings",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 2596.328125,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 2596.328125,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-smart-home",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 770.4375,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 770.4375,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-about",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 494.140625,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 494.140625,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "480/navigation-main",
+      "viewport": 480,
+      "documentClient": 480,
+      "documentScroll": 480,
+      "main": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "section": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "activeSection": {
+        "left": 0,
+        "right": 480,
+        "width": 480,
+        "height": 3279.078125,
+        "client": 480,
+        "scroll": 480
+      },
+      "color": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1160.21875,
+        "client": 462,
+        "scroll": 462
+      },
+      "picker": {
+        "left": 90,
+        "right": 390,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 8,
+        "right": 472,
+        "width": 464,
+        "height": 1278.859375,
+        "client": 462,
+        "scroll": 462
+      },
+      "chart": {
+        "left": 19,
+        "right": 461,
+        "width": 442,
+        "height": 224,
+        "client": 442,
+        "scroll": 442
+      }
+    },
+    {
+      "label": "768/visible",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1159.421875,
+        "client": 576,
+        "scroll": 576
+      },
+      "picker": {
+        "left": 319,
+        "right": 619,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1160.53125,
+        "client": 576,
+        "scroll": 576
+      },
+      "chart": {
+        "left": 193,
+        "right": 745,
+        "width": 552,
+        "height": 224,
+        "client": 552,
+        "scroll": 552
+      }
+    },
+    {
+      "label": "768/chart-hidden",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2732.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2732.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2732.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1159.421875,
+        "client": 576,
+        "scroll": 576
+      },
+      "picker": {
+        "left": 319,
+        "right": 619,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 936.53125,
+        "client": 576,
+        "scroll": 576
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/editor-hidden",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 1785.5625,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 1785.5625,
+        "client": 598,
+        "scroll": 598
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 1785.5625,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1159.421875,
+        "client": 576,
+        "scroll": 576
+      },
+      "picker": {
+        "left": 319,
+        "right": 619,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-functions",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 601.953125,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 601.953125,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-frontoptions",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 1291.03125,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 1291.03125,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-settings",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2244.9375,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2244.9375,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-smart-home",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 616.125,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 616.125,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-about",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 411.390625,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 411.390625,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "768/navigation-main",
+      "viewport": 768,
+      "documentClient": 768,
+      "documentScroll": 768,
+      "main": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "section": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 768,
+        "width": 598,
+        "height": 2956.09375,
+        "client": 598,
+        "scroll": 598
+      },
+      "color": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1159.421875,
+        "client": 576,
+        "scroll": 576
+      },
+      "picker": {
+        "left": 319,
+        "right": 619,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 758,
+        "width": 578,
+        "height": 1160.53125,
+        "client": 576,
+        "scroll": 576
+      },
+      "chart": {
+        "left": 193,
+        "right": 745,
+        "width": 552,
+        "height": 224,
+        "client": 552,
+        "scroll": 552
+      }
+    },
+    {
+      "label": "1024/visible",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 956.90625,
+        "client": 832,
+        "scroll": 832
+      },
+      "picker": {
+        "left": 610,
+        "right": 910,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 955,
+        "client": 832,
+        "scroll": 832
+      },
+      "chart": {
+        "left": 193,
+        "right": 1001,
+        "width": 808,
+        "height": 248,
+        "client": 808,
+        "scroll": 808
+      }
+    },
+    {
+      "label": "1024/chart-hidden",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2300.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2300.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2300.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 956.90625,
+        "client": 832,
+        "scroll": 832
+      },
+      "picker": {
+        "left": 610,
+        "right": 910,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 707,
+        "client": 832,
+        "scroll": 832
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/editor-hidden",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 1583.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 1583.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 1583.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 956.90625,
+        "client": 832,
+        "scroll": 832
+      },
+      "picker": {
+        "left": 610,
+        "right": 910,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-functions",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 601.953125,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 601.953125,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-frontoptions",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 1291.03125,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 1291.03125,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-settings",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2171.375,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2171.375,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-smart-home",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 592.9375,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 592.9375,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-about",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 411.390625,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 411.390625,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1024/navigation-main",
+      "viewport": 1024,
+      "documentClient": 1024,
+      "documentScroll": 1024,
+      "main": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "section": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1024,
+        "width": 854,
+        "height": 2548.046875,
+        "client": 854,
+        "scroll": 854
+      },
+      "color": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 956.90625,
+        "client": 832,
+        "scroll": 832
+      },
+      "picker": {
+        "left": 610,
+        "right": 910,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1014,
+        "width": 834,
+        "height": 955,
+        "client": 832,
+        "scroll": 832
+      },
+      "chart": {
+        "left": 193,
+        "right": 1001,
+        "width": 808,
+        "height": 248,
+        "client": 808,
+        "scroll": 808
+      }
+    },
+    {
+      "label": "1440/visible",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 559.421875,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "picker": {
+        "left": 641,
+        "right": 941,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 885.4375,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "chart": {
+        "left": 193,
+        "right": 1417,
+        "width": 1224,
+        "height": 248,
+        "client": 1224,
+        "scroll": 1224
+      }
+    },
+    {
+      "label": "1440/chart-hidden",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1833,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1833,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1833,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 559.421875,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "picker": {
+        "left": 641,
+        "right": 941,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 637.4375,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/editor-hidden",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1185.5625,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1185.5625,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1185.5625,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 559.421875,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "picker": {
+        "left": 641,
+        "right": 941,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-functions",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 601.953125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 601.953125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-frontoptions",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1291.03125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 1291.03125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-settings",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2152.984375,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2152.984375,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-smart-home",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 592.9375,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 592.9375,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-about",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 388.203125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 388.203125,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "picker": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "editor": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      },
+      "chart": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "client": 0,
+        "scroll": 0
+      }
+    },
+    {
+      "label": "1440/navigation-main",
+      "viewport": 1440,
+      "documentClient": 1440,
+      "documentScroll": 1440,
+      "main": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "section": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "activeSection": {
+        "left": 170,
+        "right": 1440,
+        "width": 1270,
+        "height": 2081,
+        "client": 1270,
+        "scroll": 1270
+      },
+      "color": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 559.421875,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "picker": {
+        "left": 641,
+        "right": 941,
+        "width": 300,
+        "height": 380,
+        "client": 300,
+        "scroll": 300
+      },
+      "editor": {
+        "left": 180,
+        "right": 1430,
+        "width": 1250,
+        "height": 885.4375,
+        "client": 1248,
+        "scroll": 1248
+      },
+      "chart": {
+        "left": 193,
+        "right": 1417,
+        "width": 1224,
+        "height": 248,
+        "client": 1224,
+        "scroll": 1224
+      }
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "peer": {
+    "errors": [],
+    "numeric": [
+      201,
+      204,
+      200,
+      206,
+      200,
+      200,
+      203,
+      200,
+      203,
+      205,
+      200,
+      203,
+      206,
+      200,
+      200,
+      203,
+      200,
+      203,
+      205,
+      200,
+      203,
+      206,
+      200,
+      200,
+      203,
+      200,
+      203,
+      205,
+      200,
+      203,
+      206,
+      200,
+      200,
+      203,
+      200,
+      203,
+      205,
+      200,
+      203,
+      206,
+      200,
+      200,
+      203,
+      200,
+      203,
+      205,
+      200,
+      203
+    ],
+    "requests": [
+      {
+        "command": "brightness-schedule",
+        "schema": 1,
+        "requestId": "g1r1",
+        "action": "get"
+      }
+    ],
+    "connections": 1
+  },
+  "status": "PASS_DIAGNOSTICS_ONLY"
+}
