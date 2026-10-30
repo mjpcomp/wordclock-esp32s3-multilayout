@@ -1,0 +1,19 @@
+{
+  "scope": "CI action presentation candidate only; no promotion, transport changes or hardware proof",
+  "density_base_css_sha256": "f3c5c55b4bcb06150b48b17752c6d37c8f6cdb4ec4713307c2c7bbdcfcab326c",
+  "unchanged_renderer_sha256": "9ac27148d665581407853e9c511654fa9491a26f74f9d9fc07e103fb81f3d25d",
+  "files": {
+    "webpage/style.css": {
+      "artifact": "action-state-style.css",
+      "sha256": "aa71ce8442c5825a179a3a6c0aa58c46fbb300dbb188203081ef91582d192439"
+    },
+    "webpage/schedule-page-binding.js": {
+      "artifact": "action-state-schedule-page-binding.js",
+      "sha256": "1085404f1f46a4f67099094940c40c6d9b2dee67ba567a2d3d6f03acb6a30a4c"
+    },
+    "webpage/index.html": {
+      "artifact": "action-state-index.html",
+      "sha256": "91300dbf352af003dc66245bca6e86663d1084e80d6410cc4e0fbe7ec9bc7a85"
+    }
+  }
+}
