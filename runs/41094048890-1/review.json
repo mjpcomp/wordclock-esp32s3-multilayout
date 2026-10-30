@@ -1,0 +1,1885 @@
+{
+  "schema": 1,
+  "repository": "mjpcomp/wordclock-esp32s3-multilayout",
+  "source_branch": "feature/optional-status-prefix",
+  "source_sha": "b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8",
+  "run_id": "41094048890",
+  "attempt": "1",
+  "run_url": "https://github.com/mjpcomp/wordclock-esp32s3-multilayout/actions/runs/41094048890",
+  "artifact_name": "compact-layout-candidate-b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8-41094048890-1",
+  "artifact_attempt": "1",
+  "candidate_result": "success",
+  "baseline_gates": "success",
+  "final_build": "success",
+  "final_checks": "success",
+  "download_result": "success",
+  "visual_review": "User sign-off required; screenshots remain in Actions.",
+  "reports": {
+    "layout": {
+      "status": "PASS_DIAGNOSTICS_ONLY",
+      "scope": "generated page, real Chromium, simulated peer; measurements are not a layout-fix pass",
+      "captures": [
+        {
+          "viewport": 320,
+          "label": "320/visible",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/chart-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/editor-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-functions",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-frontoptions",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-settings",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-smart-home",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-about",
+          "overflow": false
+        },
+        {
+          "viewport": 320,
+          "label": "320/navigation-main",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/visible",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/chart-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/editor-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-functions",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-frontoptions",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-settings",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-smart-home",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-about",
+          "overflow": false
+        },
+        {
+          "viewport": 480,
+          "label": "480/navigation-main",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/visible",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/chart-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/editor-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-functions",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-frontoptions",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-settings",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-smart-home",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-about",
+          "overflow": false
+        },
+        {
+          "viewport": 768,
+          "label": "768/navigation-main",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/visible",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/chart-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/editor-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-functions",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-frontoptions",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-settings",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-smart-home",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-about",
+          "overflow": false
+        },
+        {
+          "viewport": 1024,
+          "label": "1024/navigation-main",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/visible",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/chart-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/editor-hidden",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-functions",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-frontoptions",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-settings",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-smart-home",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-about",
+          "overflow": false
+        },
+        {
+          "viewport": 1440,
+          "label": "1440/navigation-main",
+          "overflow": false
+        }
+      ],
+      "sessions": 0,
+      "errors": [],
+      "blocked": [],
+      "peer": {
+        "connections": 1,
+        "errors": [],
+        "scheduler_actions": [
+          "get"
+        ]
+      }
+    },
+    "timeline": {
+      "status": "PASS",
+      "scope": "real Chromium with simulated peer; not hardware evidence",
+      "captures": [
+        {
+          "viewport": 320
+        },
+        {
+          "viewport": 480
+        },
+        {
+          "viewport": 768
+        },
+        {
+          "viewport": 1024
+        },
+        {
+          "viewport": 1440
+        }
+      ],
+      "sessions": 0,
+      "errors": [],
+      "blocked": [],
+      "peer": {
+        "connections": 1,
+        "errors": [],
+        "scheduler_actions": [
+          "get"
+        ]
+      }
+    },
+    "actions": {
+      "status": "PASS",
+      "scope": "Chromium action states; simulated saves, no device or hardware evidence",
+      "captures": [
+        {
+          "width": 320,
+          "label": "clean",
+          "overflow": false,
+          "status": "Schedule loaded.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "label": "dirty",
+          "overflow": false,
+          "status": "Schedule loaded. \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "label": "saving",
+          "overflow": false,
+          "status": "Saving schedule... \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "label": "choice",
+          "overflow": false,
+          "status": "Device version available. Choose which version to keep. \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "label": "kept-draft",
+          "overflow": false,
+          "status": "Schedule ready.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "label": "legacy",
+          "overflow": false,
+          "status": "Scheduler configuration unavailable; reconnect or reload to check support.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "clean",
+          "overflow": false,
+          "status": "Schedule loaded.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "dirty",
+          "overflow": false,
+          "status": "Schedule loaded. \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "saving",
+          "overflow": false,
+          "status": "Saving schedule... \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "choice",
+          "overflow": false,
+          "status": "Device version available. Choose which version to keep. \u2014 Unsaved changes",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "kept-draft",
+          "overflow": false,
+          "status": "Schedule ready.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "label": "legacy",
+          "overflow": false,
+          "status": "Scheduler configuration unavailable; reconnect or reload to check support.",
+          "buttons": [
+            {
+              "name": "add",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "apply",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "remove",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "save",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reload",
+              "disabled": false,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "opacity": "1"
+            },
+            {
+              "name": "discard",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "reset",
+              "disabled": true,
+              "hidden": false,
+              "height": 44,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "use-remote",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            },
+            {
+              "name": "keep-draft",
+              "disabled": true,
+              "hidden": true,
+              "height": 0,
+              "color": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1"
+            }
+          ]
+        }
+      ],
+      "sessions": 4,
+      "errors": [],
+      "blocked": []
+    },
+    "preview": {
+      "status": "PASS",
+      "scope": "generated-page preview with simulated peer; not firmware or hardware proof",
+      "captures": [
+        {
+          "width": 320,
+          "overflow": false,
+          "letters": 110,
+          "lit": 13,
+          "minimum_font_px": 16.472150735294118,
+          "computed_unlit_colours": [
+            "rgb(89, 99, 111)"
+          ]
+        },
+        {
+          "width": 480,
+          "overflow": false,
+          "letters": 110,
+          "lit": 13,
+          "minimum_font_px": 18,
+          "computed_unlit_colours": [
+            "rgb(89, 99, 111)"
+          ]
+        },
+        {
+          "width": 768,
+          "overflow": false,
+          "letters": 110,
+          "lit": 13,
+          "minimum_font_px": 18,
+          "computed_unlit_colours": [
+            "rgb(89, 99, 111)"
+          ]
+        },
+        {
+          "width": 1024,
+          "overflow": false,
+          "letters": 110,
+          "lit": 13,
+          "minimum_font_px": 16.472150735294118,
+          "computed_unlit_colours": [
+            "rgb(89, 99, 111)"
+          ]
+        },
+        {
+          "width": 1440,
+          "overflow": false,
+          "letters": 110,
+          "lit": 13,
+          "minimum_font_px": 18,
+          "computed_unlit_colours": [
+            "rgb(89, 99, 111)"
+          ]
+        }
+      ],
+      "sessions": 0,
+      "errors": [],
+      "blocked": [],
+      "peer": {
+        "connections": 1,
+        "errors": [],
+        "scheduler_actions": [
+          "get"
+        ]
+      },
+      "intentional_mock_colour_writes": 1
+    },
+    "disabled_fields": {
+      "status": "PASS",
+      "scope": "Chromium disabled-field styling with simulated read-only peers; not hardware evidence",
+      "captures": [
+        {
+          "width": 320,
+          "phase": "loaded",
+          "fields": [
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "phase": "selected-instant",
+          "fields": [
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:30",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "phase": "legacy",
+          "fields": [
+            {
+              "name": "changes",
+              "type": "select-one",
+              "value": "-1",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "start",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "curve",
+              "type": "select-one",
+              "value": "instant",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "target",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "phase": "loading",
+          "fields": [
+            {
+              "name": "changes",
+              "type": "select-one",
+              "value": "-1",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "start",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "curve",
+              "type": "select-one",
+              "value": "instant",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "target",
+              "type": "number",
+              "value": "100",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "phase": "loaded",
+          "fields": [
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "phase": "selected-instant",
+          "fields": [
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:30",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "phase": "legacy",
+          "fields": [
+            {
+              "name": "changes",
+              "type": "select-one",
+              "value": "-1",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "start",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "curve",
+              "type": "select-one",
+              "value": "instant",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "target",
+              "type": "number",
+              "value": "37",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "phase": "loading",
+          "fields": [
+            {
+              "name": "changes",
+              "type": "select-one",
+              "value": "-1",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "all-day",
+              "type": "number",
+              "value": "",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "start",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "end",
+              "type": "time",
+              "value": "07:00",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 40.796875,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "curve",
+              "type": "select-one",
+              "value": "instant",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            },
+            {
+              "name": "target",
+              "type": "number",
+              "value": "100",
+              "disabled": true,
+              "color": "rgb(82, 97, 113)",
+              "textFill": "rgb(82, 97, 113)",
+              "background": "rgb(228, 234, 240)",
+              "opacity": "1",
+              "height": 44,
+              "contrast": 5.239090882333304
+            }
+          ]
+        }
+      ],
+      "sessions": 6,
+      "errors": [],
+      "blocked": []
+    }
+  },
+  "source_checks": {
+    "webpage/script.js": true,
+    "webpage/index.html": true,
+    "webpage/style.css": true,
+    "Gruntfile.js": true,
+    "webpage/mirc0-preview.js": true,
+    "webpage/mirc0-preview-page.js": true
+  },
+  "status": "PASS"
+}
