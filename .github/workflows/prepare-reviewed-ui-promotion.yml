@@ -1,0 +1,47 @@
+# Read-only coordinator; dispatches a separate least-privilege branch-preparation job.
+name: Prepare reviewed UI promotion request
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - tools/promote_reviewed_ui_sources.py
+      - tests/test_reviewed_ui_sources.py
+      - .github/workflows/prepare-reviewed-ui-promotion.yml
+      - .github/workflows/prepare-reviewed-ui-branch.yml
+permissions:
+  contents: read
+  actions: write
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: python3 tests/test_reviewed_ui_sources.py
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: promotion-source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify immutable review evidence and exact UI sources
+        run: python3 promotion-source/tools/promote_reviewed_ui_sources.py preflight --root promotion-source --source-head "$GITHUB_SHA" --receipt "$RUNNER_TEMP/promotion-request.json"
+      - name: Request the separate least-privilege branch preparation run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          receipt=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'promotion-request.json')))
+          body=json.dumps({'ref':os.environ['GITHUB_SHA'],'inputs':{'source_sha':receipt['source_sha'],'target_branch':receipt['target_branch']}}).encode()
+          request=urllib.request.Request('https://api.github.com/repos/'+os.environ['GH_REPOSITORY']+'/actions/workflows/prepare-reviewed-ui-branch.yml/dispatches',data=body,headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+os.environ['GH_TOKEN'],'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},method='POST')
+          with urllib.request.urlopen(request) as response: assert response.status == 204
+          PY

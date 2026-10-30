@@ -1,0 +1,194 @@
+# Dispatched child creates only the exact isolated source branch; never a PR, merge or firmware.
+name: Prepare reviewed UI promotion branch
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Immutable reviewed source SHA
+        required: true
+        type: string
+      target_branch:
+        description: Fixed isolated promotion branch
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/feature/optional-status-prefix' && inputs.target_branch == 'promotion/reviewed-ui-b598076f' && inputs.source_sha == 'b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: promotion-source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Reverify exact source before isolated branch write
+        env:
+          REQUESTED_SHA: ${{ inputs.source_sha }}
+        run: |
+          test "$GITHUB_REF_NAME" = "feature/optional-status-prefix"
+          test "$REQUESTED_SHA" = "b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8"
+          python3 tests/test_reviewed_ui_sources.py
+      - name: Replay pinned UI generators and push isolated branch only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 promotion-source/tools/promote_reviewed_ui_sources.py prepare --root promotion-source --source-head "${{ inputs.source_sha }}" --target-branch "${{ inputs.target_branch }}"
+
+path: .github/workflows/ui-source-validation.yml
+content:
+# Validates exact promoted UI sources directly; does not replay patch generators.
+name: Validate reviewed UI source branch
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/**
+      - Gruntfile.js
+      - package.json
+      - package-lock.json
+      - eslint.config.js
+      - tests/**
+      - include/WordClockTypes/**
+      - tools/ui-source-checkpoint.json
+      - tools/promote_reviewed_ui_sources.py
+      - .github/workflows/ui-source-validation.yml
+  pull_request:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/**
+      - Gruntfile.js
+      - package.json
+      - package-lock.json
+      - eslint.config.js
+      - tests/**
+      - include/WordClockTypes/**
+      - tools/ui-source-checkpoint.json
+      - tools/promote_reviewed_ui_sources.py
+      - .github/workflows/ui-source-validation.yml
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      promoted: ${{ steps.checkpoint.outputs.promoted }}
+      final_build: ${{ steps.final_build.outcome }}
+      final_checks: ${{ steps.final_checks.outcome }}
+      artifact_name: ${{ steps.evidence_id.outputs.name }}
+      artifact_attempt: ${{ steps.evidence_id.outputs.attempt }}
+    steps:
+      - id: evidence_id
+        run: |
+          echo "name=ui-source-validation-${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+          echo "attempt=${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - id: checkpoint
+        run: python3 tools/promote_reviewed_ui_sources.py check
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: steps.checkpoint.outputs.promoted == 'true'
+        with:
+          node-version: '24'
+      - name: Verify source structure and run non-browser suites
+        if: steps.checkpoint.outputs.promoted == 'true'
+        run: |
+          python3 tests/test_reviewed_ui_sources.py
+          python3 tests/test_ui_evidence_publisher.py
+          python3 tests/test_mirc0_preview_reference.py
+          python3 tools/schedule_live/check.py
+          for suite in tests/schedule-*.test.cjs tests/mirc0-preview*.test.cjs; do
+            case "$suite" in *-browser.test.cjs) continue ;; esac
+            node "$suite"
+          done
+          python3 tests/test_mirc0_preview.py
+      - run: npm ci --ignore-scripts
+        if: steps.checkpoint.outputs.promoted == 'true'
+      - id: final_build
+        if: steps.checkpoint.outputs.promoted == 'true'
+        run: |
+          npx --no-install grunt build
+          python3 tools/schedule_live/check.py --built
+          python3 tools/promote_reviewed_ui_sources.py check
+      - name: Reuse browser tooling
+        if: steps.checkpoint.outputs.promoted == 'true'
+        run: |
+          npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
+          .ci-browser/node_modules/.bin/playwright install --with-deps chromium
+      - id: final_checks
+        if: steps.checkpoint.outputs.promoted == 'true'
+        env:
+          NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
+        run: |
+          node tests/webpage-layout.test.cjs
+          node tests/schedule-live-browser.test.cjs
+          node tests/schedule-timeline-responsive-browser.test.cjs
+          node tests/schedule-action-states-browser.test.cjs
+          node tests/mirc0-preview-browser.test.cjs
+          node tests/schedule-disabled-fields-browser.test.cjs
+      - name: Check actual source-page overflow and editor density
+        if: steps.checkpoint.outputs.promoted == 'true'
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('layout-evidence/layout-report.json').read_text())
+          rows = {row['label']: row for row in report['measurements']}
+          assert report['status'] == 'PASS_DIAGNOSTICS_ONLY' and len(rows) == 45
+          assert all(row['documentScroll'] <= row['documentClient'] for row in rows.values())
+          assert rows['320/visible']['editor']['height'] < 1838.578125
+          assert rows['480/visible']['editor']['height'] < 1524.046875
+          assert rows['1440/visible']['editor']['height'] < 1239.6875
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && steps.checkpoint.outputs.promoted == 'true'
+        with:
+          name: ${{ steps.evidence_id.outputs.name }}
+          path: |
+            compact-layout-evidence/
+            layout-evidence/
+          if-no-files-found: warn
+          retention-days: 7
+  publish-evidence:
+    needs: source
+    if: always() && github.event_name == 'push' && needs.source.outputs.promoted == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: ui-evidence-publication
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: download
+        if: needs.source.outputs.artifact_name != ''
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: ${{ needs.source.outputs.artifact_name }}
+          path: ${{ runner.temp }}/ui-evidence-input
+      - run: python3 tests/test_ui_evidence_publisher.py
+      - name: Publish source-validation results to ci-evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_RESULT: ${{ needs.source.result }}
+          BASELINE_RESULT: 'Previously reviewed in run 41094048890; not replayed after source promotion'
+          FINAL_BUILD_RESULT: ${{ needs.source.outputs.final_build }}
+          FINAL_CHECKS_RESULT: ${{ needs.source.outputs.final_checks }}
+          DOWNLOAD_RESULT: ${{ steps.download.outcome }}
+          CANDIDATE_ARTIFACT_NAME: ${{ needs.source.outputs.artifact_name }}
+          CANDIDATE_ATTEMPT: ${{ needs.source.outputs.artifact_attempt }}
+        run: python3 tools/publish_ui_evidence.py --input "${{ runner.temp }}/ui-evidence-input"
