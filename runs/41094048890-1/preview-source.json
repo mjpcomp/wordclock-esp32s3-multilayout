@@ -1,0 +1,36 @@
+{
+  "scope": "CI UI candidate only; no source promotion, device changes or hardware proof",
+  "preview_checkpoint": "bd6346d60ceceb3c0f1b3ddd708e0fd2bce4e7d4",
+  "unlit_black_text_guide": "#59636f",
+  "files": {
+    "webpage/script.js": {
+      "artifact": "preview-script.js",
+      "sha256": "cee85d74736c6a0fa949e3dc67aeb7e6e345022eaf8bf5d5c24dc1979147603f"
+    },
+    "webpage/index.html": {
+      "artifact": "preview-index.html",
+      "sha256": "304769437af4fa347fd48a08d12cc8f1e492010003af008f622b6a3664b7fec4"
+    },
+    "webpage/style.css": {
+      "artifact": "preview-style.css",
+      "sha256": "22689a11e2673feb037634c749a29d2aa57f95b3cb0fe9f1101933c1f2e60f01"
+    },
+    "Gruntfile.js": {
+      "artifact": "preview-Gruntfile.js",
+      "sha256": "84773d760615fc2fb60ace240eae046a9bc06ed0817fba830c5272da215995ec"
+    },
+    "webpage/mirc0-preview.js": {
+      "artifact": "preview-mirc0-preview.js",
+      "sha256": "495494464087eed475bada07be8513235c0af60bf18e49d2d8e48f56a587362d"
+    },
+    "webpage/mirc0-preview-page.js": {
+      "artifact": "preview-mirc0-preview-page.js",
+      "sha256": "9cb0d73a8b59fc4ab958eb75b61f17c5c8185dd524aef6569eb0dee3e4af6d05"
+    }
+  },
+  "disabled_field_base_css_sha256": "4d5c96fddeaa4823a971f6dc8d88585b472617b459a0c838bfc6eef767eb7f65",
+  "disabled_field_palette": {
+    "foreground": "#526171",
+    "background": "#e4eaf0"
+  }
+}
