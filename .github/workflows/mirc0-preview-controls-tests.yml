@@ -1,0 +1,41 @@
+# Standalone controls tests only; the module is not loaded by index.html yet.
+name: Mirc0 preview controls foundation
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/mirc0-preview-controls.js
+      - webpage/mirc0-preview-playback.js
+      - webpage/schedule-model.js
+      - tests/mirc0-preview-controls.test.cjs
+      - .github/workflows/mirc0-preview-controls-tests.yml
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+  pull_request:
+    paths:
+      - webpage/mirc0-preview-controls.js
+      - webpage/mirc0-preview-playback.js
+      - webpage/schedule-model.js
+      - tests/mirc0-preview-controls.test.cjs
+      - .github/workflows/mirc0-preview-controls-tests.yml
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+permissions:
+  contents: read
+jobs:
+  controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install eslint webpage/mirc0-preview-controls.js webpage/mirc0-preview-playback.js webpage/schedule-model.js
+      - run: node tests/mirc0-preview-playback.test.cjs
+      - run: node tests/mirc0-preview-controls.test.cjs
