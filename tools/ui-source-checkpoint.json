@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "reviewed_source": "b598076fb48cfccdfe1ac018f6eaa94ffbdb61f8",
+  "configuration_sha": "a3d43ffba6e296d256bf9bc48e601af9fe22c3fa",
+  "review_run": "41094048890",
+  "scope": "UI sources only; no firmware or hardware proof",
+  "files": {
+    "webpage/script.js": "cee85d74736c6a0fa949e3dc67aeb7e6e345022eaf8bf5d5c24dc1979147603f",
+    "webpage/index.html": "304769437af4fa347fd48a08d12cc8f1e492010003af008f622b6a3664b7fec4",
+    "webpage/style.css": "22689a11e2673feb037634c749a29d2aa57f95b3cb0fe9f1101933c1f2e60f01",
+    "Gruntfile.js": "84773d760615fc2fb60ace240eae046a9bc06ed0817fba830c5272da215995ec",
+    "webpage/mirc0-preview.js": "495494464087eed475bada07be8513235c0af60bf18e49d2d8e48f56a587362d",
+    "webpage/mirc0-preview-page.js": "9cb0d73a8b59fc4ab958eb75b61f17c5c8185dd524aef6569eb0dee3e4af6d05",
+    "webpage/schedule-timeline-view.js": "9ac27148d665581407853e9c511654fa9491a26f74f9d9fc07e103fb81f3d25d",
+    "webpage/schedule-page-binding.js": "1085404f1f46a4f67099094940c40c6d9b2dee67ba567a2d3d6f03acb6a30a4c"
+  }
+}
