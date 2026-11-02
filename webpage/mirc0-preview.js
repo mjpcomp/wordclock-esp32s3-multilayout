@@ -17,6 +17,11 @@
 		if (!Number.isInteger(row) || row < 0 || row >= 10 || !Number.isInteger(column) || column < 0 || column >= 11) throw new Error("Mirc0 cell out of range");
 		return row * 11 + (row % 2 ? 10 - column : column);
 	}
+	function physicalIndex(index, sacrificial) {
+		if (!Number.isInteger(index) || index < 0 || index >= 114) throw new Error("Mirc0 logical LED out of range");
+		if (sacrificial !== undefined && typeof sacrificial !== "boolean") throw new Error("Boolean sacrificial LED option required");
+		return index + (sacrificial === true ? 1 : 0);
+	}
 	function mask(hour, minute, prefix) {
 		if (!Number.isInteger(hour) || hour < 0 || hour > 23 || !Number.isInteger(minute) || minute < 0 || minute > 59) throw new Error("Valid local sample hour and minute required");
 		if (prefix !== undefined && typeof prefix !== "boolean") throw new Error("Boolean prefix required");
@@ -69,8 +74,10 @@
 				const foreground = value.foreground === undefined ? "#68e3a4" : value.foreground;
 				const inactive = value.inactive === undefined ? "#4b5968" : value.inactive;
 				if (typeof foreground !== "string" || typeof inactive !== "string" || !/^#[0-9a-f]{6}$/i.test(foreground) || !/^#[0-9a-f]{6}$/i.test(inactive)) throw new Error("Six-digit hex preview colours required");
+				physicalIndex(0, value.sacrificial);
 				const lit = new Set(mask(value.hour, value.minute, value.prefix));
 				cells.forEach(function(cell, index) {
+					cell.setAttribute("data-physical-led-index", physicalIndex(index, value.sacrificial));
 					cell.setAttribute("fill", lit.has(index) ? foreground : inactive);
 					cell.setAttribute("data-lit", lit.has(index) ? "true" : "false");
 				});
@@ -86,5 +93,5 @@
 			}
 		});
 	}
-	return Object.freeze({ rows: rows, logicalIndex: logicalIndex, mask: mask, create: create });
+	return Object.freeze({ rows: rows, logicalIndex: logicalIndex, physicalIndex: physicalIndex, mask: mask, create: create });
 }));
