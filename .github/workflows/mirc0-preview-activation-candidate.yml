@@ -1,11 +1,13 @@
-# Applies activation edits only in a disposable CI checkout. Never writes branches.
+# Candidate stays read-only; a separate job publishes only allow-listed evidence.
 name: Mirc0 simulation activation candidate
 on:
   push:
     branches: [feature/optional-status-prefix]
     paths:
       - tools/prepare_preview_simulation_activation.py
+      - tools/publish_preview_activation_evidence.py
       - tests/test_preview_simulation_activation.py
+      - tests/test_preview_activation_evidence.py
       - tests/mirc0-preview-simulation-browser.test.cjs
       - .github/workflows/mirc0-preview-activation-candidate.yml
 permissions:
@@ -14,7 +16,17 @@ jobs:
   candidate:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    outputs:
+      artifact_name: ${{ steps.evidence_id.outputs.name }}
+      artifact_attempt: ${{ steps.evidence_id.outputs.attempt }}
+      final_build: ${{ steps.final_build.outcome }}
+      final_checks: ${{ steps.final_checks.outcome }}
+      upload_result: ${{ steps.upload.outcome }}
     steps:
+      - id: evidence_id
+        run: |
+          echo "name=mirc0-activation-candidate-${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+          echo "attempt=${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
@@ -22,14 +34,17 @@ jobs:
         with:
           node-version: '24'
       - run: python3 tests/test_preview_simulation_activation.py
+      - run: python3 tests/test_preview_activation_evidence.py
       - run: python3 tools/prepare_preview_simulation_activation.py
       - run: npm ci --ignore-scripts
-      - run: npx --no-install grunt build
+      - id: final_build
+        run: npx --no-install grunt build
       - name: Reuse existing isolated browser tooling without changing project lockfile
         run: |
           npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
           .ci-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Check generated candidate against simulated peers only
+        id: final_checks
         env:
           NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
         run: |
@@ -43,11 +58,47 @@ jobs:
           node tests/mirc0-preview-browser.test.cjs
           node tests/mirc0-preview-simulation-browser.test.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        id: upload
         if: always()
         with:
-          name: mirc0-activation-candidate-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ steps.evidence_id.outputs.name }}
           path: |
             preview-activation-evidence/
             layout-evidence/
           if-no-files-found: warn
           retention-days: 7
+  publish-evidence:
+    needs: candidate
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/feature/optional-status-prefix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: ui-evidence-publication
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - run: python3 tests/test_preview_activation_evidence.py
+      - name: Download only this candidate run's named artifact
+        id: download
+        if: needs.candidate.outputs.artifact_name != ''
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: ${{ needs.candidate.outputs.artifact_name }}
+          path: ${{ runner.temp }}/preview-activation-input
+      - name: Publish activation JSON only to ci-evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_ARTIFACT_NAME: ${{ needs.candidate.outputs.artifact_name }}
+          CANDIDATE_ATTEMPT: ${{ needs.candidate.outputs.artifact_attempt }}
+          CANDIDATE_RESULT: ${{ needs.candidate.result }}
+          FINAL_BUILD_RESULT: ${{ needs.candidate.outputs.final_build }}
+          FINAL_CHECKS_RESULT: ${{ needs.candidate.outputs.final_checks }}
+          UPLOAD_RESULT: ${{ needs.candidate.outputs.upload_result }}
+          DOWNLOAD_RESULT: ${{ steps.download.outcome }}
+        run: python3 tools/publish_preview_activation_evidence.py --input "${{ runner.temp }}/preview-activation-input"
