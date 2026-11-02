@@ -1,0 +1,54 @@
+{
+  "scope": "CI activation candidate; real Chromium with simulated peers, not hardware proof",
+  "sessions": [
+    {
+      "width": 320,
+      "overflow": false,
+      "logicalCells": 114,
+      "peerConnections": 1,
+      "schedulerActions": [
+        "get"
+      ]
+    },
+    {
+      "width": 480,
+      "overflow": false,
+      "logicalCells": 114,
+      "peerConnections": 1,
+      "schedulerActions": [
+        "get"
+      ]
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "logicalCells": 114,
+      "peerConnections": 1,
+      "schedulerActions": [
+        "get"
+      ]
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "logicalCells": 114,
+      "peerConnections": 1,
+      "schedulerActions": [
+        "get"
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "logicalCells": 114,
+      "peerConnections": 1,
+      "schedulerActions": [
+        "get"
+      ]
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "mutations": [],
+  "status": "PASS"
+}
