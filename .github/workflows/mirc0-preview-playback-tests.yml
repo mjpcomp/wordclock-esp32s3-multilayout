@@ -1,0 +1,44 @@
+# Pure playback and host evaluator gates only; no UI integration or device access.
+name: Mirc0 preview playback foundation
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - webpage/mirc0-preview-playback.js
+      - webpage/schedule-model.js
+      - include/BrightnessSchedule.h
+      - tests/mirc0-preview-playback.test.cjs
+      - tests/test_preview_schedule_parity.py
+      - .github/workflows/mirc0-preview-playback-tests.yml
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+  pull_request:
+    paths:
+      - webpage/mirc0-preview-playback.js
+      - webpage/schedule-model.js
+      - include/BrightnessSchedule.h
+      - tests/mirc0-preview-playback.test.cjs
+      - tests/test_preview_schedule_parity.py
+      - .github/workflows/mirc0-preview-playback-tests.yml
+      - eslint.config.js
+      - package.json
+      - package-lock.json
+permissions:
+  contents: read
+jobs:
+  playback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install eslint webpage/mirc0-preview-playback.js webpage/schedule-model.js
+      - run: node tests/schedule-model.test.cjs
+      - run: node tests/mirc0-preview-playback.test.cjs
+      - run: python3 tests/test_preview_schedule_parity.py
