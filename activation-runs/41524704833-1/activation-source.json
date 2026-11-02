@@ -1,0 +1,17 @@
+{
+  "scope": "CI activation candidate only; no repository promotion, device changes or hardware proof",
+  "files": {
+    "webpage/script.js": {
+      "base_sha256": "cee85d74736c6a0fa949e3dc67aeb7e6e345022eaf8bf5d5c24dc1979147603f",
+      "candidate_sha256": "1a26301f3802c783aa66871ab0f6251717d6aa7b7ca170708472838813f90b6c"
+    },
+    "webpage/index.html": {
+      "base_sha256": "304769437af4fa347fd48a08d12cc8f1e492010003af008f622b6a3664b7fec4",
+      "candidate_sha256": "0655e3d2533d41ab5b66c59dfd30829e56ac6b7777eb904ddb6e9d58e7467369"
+    },
+    "webpage/style.css": {
+      "base_sha256": "22689a11e2673feb037634c749a29d2aa57f95b3cb0fe9f1101933c1f2e60f01",
+      "candidate_sha256": "db173399bda9e27a3f596c5bf201c12a0e05726742367df7d5fe77f1c9b8a03c"
+    }
+  }
+}
