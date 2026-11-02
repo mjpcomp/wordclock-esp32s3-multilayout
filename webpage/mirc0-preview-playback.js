@@ -23,9 +23,17 @@
 		let source = null;
 		function snapshot() {
 			const localMinute = (positionMs % DAY_MS) / 60000;
-			return { positionMs: positionMs, localMinute: localMinute, speed: speed, running: running, loop: loop, ended: positionMs === DAY_MS,
-				scheduleSource: source, schedule: schedule === null ? null : model.validate(schedule),
-				levelTenths: schedule === null ? null : model.sampleTenths(schedule, localMinute) };
+			return {
+				positionMs: positionMs,
+				localMinute: localMinute,
+				speed: speed,
+				running: running,
+				loop: loop,
+				ended: positionMs === DAY_MS,
+				scheduleSource: source,
+				schedule: schedule === null ? null : model.validate(schedule),
+				levelTenths: schedule === null ? null : model.sampleTenths(schedule, localMinute)
+			};
 		}
 		function seek(value) {
 			requireValue(Number.isFinite(value) && value >= 0 && value <= DAY_MS, "Position must be in this sample day");
