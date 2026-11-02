@@ -1,0 +1,56 @@
+# Creates a fixed isolated branch only; never opens a PR, merges, or uploads firmware.
+name: Prepare reviewed virtual preview activation branch
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - tools/prepare_reviewed_preview_activation.py
+      - tests/test_reviewed_preview_activation.py
+      - .github/workflows/prepare-reviewed-preview-activation.yml
+permissions:
+  contents: read
+concurrency:
+  group: reviewed-preview-activation-preparation
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - run: python3 tests/test_reviewed_preview_activation.py
+      - name: Reproduce exact candidate against pinned published review/manifest/diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/prepare_reviewed_preview_activation.py verify --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/reviewed-activation-bundle"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: reviewed-activation-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/reviewed-activation-bundle/
+          if-no-files-found: error
+          retention-days: 7
+  prepare:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/optional-status-prefix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: reviewed-activation-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/reviewed-activation-bundle
+      - name: Prepare fixed branch only; retain working branch and main unchanged
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/prepare_reviewed_preview_activation.py prepare --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/reviewed-activation-bundle" --target promotion/preview-simulation-fb0e5359
