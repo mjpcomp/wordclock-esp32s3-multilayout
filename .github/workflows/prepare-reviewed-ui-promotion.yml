@@ -1,5 +1,5 @@
-# Read-only coordinator; dispatches a separate least-privilege branch-preparation job.
-name: Prepare reviewed UI promotion request
+# Verification, branch preparation, and validation use separate runners/tokens.
+name: Prepare and validate reviewed UI promotion
 on:
   push:
     branches: [feature/optional-status-prefix]
@@ -10,11 +10,15 @@ on:
       - .github/workflows/prepare-reviewed-ui-branch.yml
 permissions:
   contents: read
-  actions: write
+concurrency:
+  group: reviewed-ui-promotion
+  cancel-in-progress: false
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -25,23 +29,102 @@ jobs:
         with:
           node-version: '24'
       - run: python3 tests/test_reviewed_ui_sources.py
+      - name: Reproduce reviewed sources and reconcile pinned manifests
+        run: python3 tools/promote_reviewed_ui_sources.py verify --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/reviewed-ui-bundle"
+      - name: Test reproduced source without write credentials
+        working-directory: ../reviewed-ui-replay
+        run: |
+          python3 tests/test_mirc0_preview_reference.py
+          python3 tests/test_mirc0_preview.py
+          python3 tools/schedule_live/check.py
+          for suite in tests/schedule-*.test.cjs tests/mirc0-preview*.test.cjs; do
+            case "$suite" in *-browser.test.cjs) continue ;; esac
+            node "$suite"
+          done
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: reviewed-ui-bundle-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/reviewed-ui-bundle/
+          if-no-files-found: error
+          retention-days: 7
+  prepare:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/optional-status-prefix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      head: ${{ steps.prepare.outputs.head }}
+    steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
-          path: promotion-source
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify immutable review evidence and exact UI sources
-        run: python3 promotion-source/tools/promote_reviewed_ui_sources.py preflight --root promotion-source --source-head "$GITHUB_SHA" --receipt "$RUNNER_TEMP/promotion-request.json"
-      - name: Request the separate least-privilege branch preparation run
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: reviewed-ui-bundle-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/reviewed-ui-bundle
+      - name: Create only the fixed isolated branch; no PR or merge
+        id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPOSITORY: ${{ github.repository }}
+        run: python3 tools/promote_reviewed_ui_sources.py prepare --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/reviewed-ui-bundle" --target promotion/reviewed-ui-b598076f
+  validate:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.prepare.outputs.head }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Check exact promoted sources and receipt
+        run: python3 tools/promote_reviewed_ui_sources.py check --config-sha "$GITHUB_SHA"
+      - run: python3 tests/test_reviewed_ui_sources.py
+      - run: npm ci --ignore-scripts
+      - name: Build UI assets only
+        run: |
+          npx --no-install grunt build
+          python3 tools/schedule_live/check.py --built
+          python3 tools/promote_reviewed_ui_sources.py check --config-sha "$GITHUB_SHA"
+      - name: Reuse existing isolated browser tooling
+        run: |
+          npm install --prefix .ci-browser --no-save --no-package-lock --ignore-scripts playwright@1.64.1
+          .ci-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise prepared UI against simulated peers
+        env:
+          NODE_PATH: ${{ github.workspace }}/.ci-browser/node_modules
+        run: |
+          node tests/webpage-layout.test.cjs
+          node tests/schedule-live-browser.test.cjs
+          node tests/schedule-timeline-responsive-browser.test.cjs
+          node tests/schedule-action-states-browser.test.cjs
+          node tests/mirc0-preview-browser.test.cjs
+          node tests/schedule-disabled-fields-browser.test.cjs
+      - name: Preserve final-page overflow gate
         run: |
           python3 - <<'PY'
-          import json, os, urllib.request
-          receipt=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'promotion-request.json')))
-          body=json.dumps({'ref':os.environ['GITHUB_SHA'],'inputs':{'source_sha':receipt['source_sha'],'target_branch':receipt['target_branch']}}).encode()
-          request=urllib.request.Request('https://api.github.com/repos/'+os.environ['GH_REPOSITORY']+'/actions/workflows/prepare-reviewed-ui-branch.yml/dispatches',data=body,headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+os.environ['GH_TOKEN'],'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},method='POST')
-          with urllib.request.urlopen(request) as response: assert response.status == 204
+          import json
+          from pathlib import Path
+          report = json.loads(Path('layout-evidence/layout-report.json').read_text())
+          assert report['status'] == 'PASS_DIAGNOSTICS_ONLY'
+          assert len(report['measurements']) == 45
+          assert all(row['documentScroll'] <= row['documentClient'] for row in report['measurements'])
           PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reviewed-ui-validation-${{ needs.prepare.outputs.head }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            compact-layout-evidence/
+            layout-evidence/
+            tools/ui-source-checkpoint.json
+          if-no-files-found: warn
+          retention-days: 7
