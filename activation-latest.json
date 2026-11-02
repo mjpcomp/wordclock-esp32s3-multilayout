@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "source_sha": "fb0e53599535b4a4ed6788de2c139d1e010a906b",
+  "run_id": "41524704833",
+  "attempt": "1",
+  "status": "PASS",
+  "run_url": "https://github.com/mjpcomp/wordclock-esp32s3-multilayout/actions/runs/41524704833",
+  "artifact_name": "mirc0-activation-candidate-fb0e53599535b4a4ed6788de2c139d1e010a906b-41524704833-1",
+  "review_path": "activation-runs/41524704833-1/review.json",
+  "review_commit": "8ec46b80144ed070aeeb48f2c604b84fece30f01",
+  "file_commits": {
+    "review.json": "8ec46b80144ed070aeeb48f2c604b84fece30f01",
+    "activation-source.json": "f70b4c2f1bcba0d23ce3988fcce2f64915b969ec",
+    "simulation-browser.json": "78265323a94769353915a740aca1e0fdd171c540",
+    "layout.json": "de252bef4005fd8056da23264bef9051cc83df59",
+    "preview.json": "c3da476dfddca88182f1e8aa781d5f9008735882",
+    "activation-diff.json": "904b398adf0178294de62dc79144b6075b46e69b"
+  }
+}
