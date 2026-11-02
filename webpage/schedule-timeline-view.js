@@ -25,7 +25,7 @@
 		const model = options.model;
 		const adapter = options.adapter;
 		const namespace = "http://www.w3.org/2000/svg";
-		const previous = { viewBox: svg.getAttribute("viewBox"), role: svg.getAttribute("role"), label: svg.getAttribute("aria-label"), touch: svg.style.touchAction };
+		const previous = { viewBox: svg.getAttribute("viewBox"), role: svg.getAttribute("role"), label: svg.getAttribute("aria-label"), touch: svg.style.touchAction, height: svg.style.height };
 		const layer = svg.ownerDocument.createElementNS(namespace, "g");
 		const listeners = [];
 		let current = null;
@@ -36,6 +36,38 @@
 		let drag = null;
 		let destroyed = false;
 		let revision = 0;
+		// CSS-pixel geometry keeps axes legible; hidden panels retain valid size.
+		const hostWindow = svg.ownerDocument.defaultView;
+		let dimensions = { width: 1000, height: 300, plotLeft: 65, plotTop: 25, plotWidth: 880, plotHeight: 230, labelY: 280 };
+		let resizeObserver = null;
+		let frameToken = null;
+		function fitGeometry() {
+			if (destroyed || typeof svg.getBoundingClientRect !== "function") return false;
+			const width = Math.floor(svg.getBoundingClientRect().width);
+			if (!Number.isFinite(width) || width < 120) return false;
+			const height = width < 600 ? 224 : 248;
+			if (dimensions.width === width && dimensions.height === height) return false;
+			cancel(); revision += 1;
+			dimensions = { width: width, height: height, plotLeft: 48, plotTop: 24, plotWidth: width - 88, plotHeight: height - 78, labelY: height - 10 };
+			svg.style.height = height + "px";
+			svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+			return true;
+		}
+		function queueFit() {
+			if (destroyed || frameToken !== null) return;
+			if (hostWindow && typeof hostWindow.requestAnimationFrame === "function" && typeof hostWindow.cancelAnimationFrame === "function") {
+				frameToken = hostWindow.requestAnimationFrame(function() {
+					frameToken = null;
+					if (fitGeometry() && current) paint(current, selected);
+				});
+			} else if (fitGeometry() && current) paint(current, selected);
+		}
+		function tickStep() {
+			const minimum = right - left > 500 ? 180 : 30;
+			const needed = Math.max(minimum, (right - left) * 80 / dimensions.plotWidth);
+			return [30, 60, 120, 180, 240, 360, 480, 720, 1440].find(function(step) { return step >= needed; }) || 1440;
+		}
+
 		function notifyError(error) {
 			if (typeof options.onError === "function") options.onError(error.message || "Timeline edit failed");
 		}
@@ -49,23 +81,27 @@
 			layer.appendChild(item);
 			return item;
 		}
-		function positionX(minute) { return 65 + (minute - left) * 880 / (right - left); }
-		function positionY(level) { return 255 - level * 230 / 1000; }
+		function positionX(minute) { return dimensions.plotLeft + (minute - left) * dimensions.plotWidth / (right - left); }
+		function positionY(level) { return dimensions.plotTop + dimensions.plotHeight - level * dimensions.plotHeight / 1000; }
 		function paint(schedule, selection) {
 			const geometry = adapter.geometry(schedule, left, right);
 			while (layer.firstChild) layer.removeChild(layer.firstChild);
 			for (let level = 0; level <= 1000; level += 250) {
-				node("line", { x1: 65, y1: positionY(level), x2: 945, y2: positionY(level), stroke: "#e2e9f0" });
-				node("text", { "x": 55, "y": positionY(level) + 4, "text-anchor": "end", "font-size": 12, fill: "#60758b" }, level / 10 + "%");
+				node("line", { x1: dimensions.plotLeft, y1: positionY(level), x2: dimensions.plotLeft + dimensions.plotWidth, y2: positionY(level), stroke: "#e2e9f0" });
+				node("text", { "x": dimensions.plotLeft - 10, "y": positionY(level) + 4, "text-anchor": "end", "font-size": 12, fill: "#60758b" }, level / 10 + "%");
 			}
-			const step = right - left > 500 ? 180 : 30;
+			const step = tickStep();
 			for (let minute = Math.ceil(left / step) * step; minute <= right; minute += step) {
-				node("text", { "x": positionX(minute), "y": 280, "text-anchor": "middle", "font-size": 12, fill: "#60758b" }, clock(minute));
+				node("text", { "x": positionX(minute), "y": dimensions.labelY, "text-anchor": "middle", "font-size": 12, fill: "#60758b" }, clock(minute));
 			}
 			geometry.lines.forEach(function(line) {
 				const attributes = { x1: positionX(line.start), y1: positionY(line.fromTenths), x2: positionX(line.end), y2: positionY(line.toTenths), "data-index": line.eventIndex };
 				if (Number.isInteger(line.eventIndex)) node("line", Object.assign({}, attributes, { stroke: "transparent", "stroke-width": 18 }));
 				node("line", Object.assign({}, attributes, { stroke: line.eventIndex === selection ? "#17558c" : "#287bc1", "stroke-width": 3, "pointer-events": "none" }));
+			});
+			geometry.handles.forEach(function(handle) {
+				// Keep touch areas below every visible handle, including later events.
+				node("circle", { "cx": positionX(handle.minute), "cy": positionY(handle.targetTenths), "r": 22, "data-index": handle.eventIndex, "data-hit-kind": handle.kind, "aria-hidden": "true", fill: "transparent", stroke: "none" });
 			});
 			geometry.handles.forEach(function(handle) {
 				const horizontal = positionX(handle.minute);
@@ -90,7 +126,7 @@
 			if (!current || !target || !target.hasAttribute("data-index")) return null;
 			const index = Number(target.getAttribute("data-index"));
 			if (!Number.isInteger(index) || index < 0 || index >= current.events.length) return null;
-			return { index: index, kind: target.getAttribute("data-kind") };
+			return { index: index, kind: target.getAttribute("data-kind") || target.getAttribute("data-hit-kind") };
 		}
 		function select(index) {
 			selected = index;
@@ -103,6 +139,12 @@
 		svg.setAttribute("role", "group");
 		svg.setAttribute("aria-label", options.label || "Daily brightness timeline");
 		svg.style.touchAction = "none";
+		fitGeometry();
+		if (hostWindow && typeof hostWindow.addEventListener === "function") hostWindow.addEventListener("resize", queueFit);
+		if (hostWindow && typeof hostWindow.ResizeObserver === "function") {
+			resizeObserver = new hostWindow.ResizeObserver(queueFit);
+			resizeObserver.observe(svg);
+		}
 		listen("pointerdown", function(event) {
 			if (destroyed || drag || event.button !== 0 || event.isPrimary === false) return;
 			const handle = hit(event);
@@ -121,8 +163,8 @@
 				const point = svg.createSVGPoint();
 				point["x"] = event.clientX; point["y"] = event.clientY;
 				const local = point.matrixTransform(svg.getScreenCTM().inverse());
-				const minute = Math.round(Math.max(left, Math.min(right, left + (local.x - 65) * (right - left) / 880)));
-				const target = Math.round(Math.max(0, Math.min(1000, (255 - local.y) * 1000 / 230)));
+				const minute = Math.round(Math.max(left, Math.min(right, left + (local.x - dimensions.plotLeft) * (right - left) / dimensions.plotWidth)));
+				const target = Math.round(Math.max(0, Math.min(1000, (dimensions.plotTop + dimensions.plotHeight - local.y) * 1000 / dimensions.plotHeight)));
 				const original = drag.source.events[drag.index];
 				const start = drag.kind === "start" ? minute : original.minute;
 				const end = drag.kind === "start" ? minute + original.fadeMinutes : minute;
@@ -168,17 +210,23 @@
 				cancel(); revision += 1;
 				current = schedule; selected = Number.isInteger(index) && index >= 0 && index < schedule.events.length ? index : -1;
 				left = begin; right = end; editable = allowEditing === true;
+				fitGeometry();
 				paint(current, selected);
 			},
 			destroy: function() {
 				if (destroyed) return;
 				cancel(); destroyed = true;
+				if (resizeObserver) resizeObserver.disconnect();
+				if (hostWindow && typeof hostWindow.removeEventListener === "function") hostWindow.removeEventListener("resize", queueFit);
+				if (frameToken !== null && hostWindow) hostWindow.cancelAnimationFrame(frameToken);
+				frameToken = null;
 				listeners.forEach(function(entry) { svg.removeEventListener(entry[0], entry[1]); });
 				svg.removeChild(layer);
 				[["viewBox", previous.viewBox], ["role", previous.role], ["aria-label", previous.label]].forEach(function(entry) {
 					if (entry[1] === null) svg.removeAttribute(entry[0]); else svg.setAttribute(entry[0], entry[1]);
 				});
 				svg.style.touchAction = previous.touch;
+				svg.style.height = previous.height || "";
 				mounted.delete(svg);
 			}
 		});
