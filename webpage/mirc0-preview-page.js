@@ -46,7 +46,7 @@
 				if (!/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/.test(time.value)) { note.textContent = "Choose a valid local sample time."; return; }
 				const colors = options.readColors();
 				view.render({ hour: Number(time.value.slice(0, 2)), minute: Number(time.value.slice(3)), prefix: prefix.checked, foreground: colors[0], inactive: colors[1] });
-				note.textContent = "Local sample only; not device time or output telemetry. Colour controls keep their existing device behaviour.";
+				note.textContent = "Local sample only; not device time or output telemetry. Grey unlit letters are a guide for black backgrounds. Colour controls keep their existing device behaviour.";
 			} catch (error) { note.textContent = "Preview unavailable: " + (error.message || "invalid preview input"); }
 		}
 		time.addEventListener("input", refresh);

@@ -186,6 +186,19 @@ const DEFAULT_TIMEZONE = "CET-1CEST,M3.5.0,M10.5.0/3";
 // color pickers
 let colorPicker;
 
+let mirc0PreviewPage = null;
+function initMirc0PreviewPage() {
+	const host = document.querySelector(".box-color");
+	if (!host) return;
+	mirc0PreviewPage = window.createWordclockMirc0PreviewPage(host, {
+		view: window.WordclockMirc0Preview,
+		available: function() { return document.getElementById("front-layout").value === "36"; },
+		readColors: function() {
+			return hsb.slice(0, 2).map(function(color) { return new iro.Color({ h: color[0], s: color[1], v: color[2] }).hexString; });
+		}
+	});
+}
+
 /**
  * Indicates local development of the webinterface.
  * @returns {boolean|boolean}
@@ -465,6 +478,7 @@ function initWebsocket() {
 
 				hasSpecialWordHappyBirthday = data.hasSpecialWordHappyBirthday;
 				document.getElementById("front-layout").value = data.clockTypeDef;
+				if (mirc0PreviewPage) mirc0PreviewPage.refresh();
 				document.getElementById("buildtype").value = data.buildtype;
 				document.getElementById("whitetype").value = data.wType;
 				document.getElementById("colortype").value = data.colortype;
@@ -636,6 +650,7 @@ function setColors() {
 		v: hsb[colorPosition][2]
 	};
 	colorPicker.setColors([hsbFg]);
+	if (mirc0PreviewPage) mirc0PreviewPage.refresh();
 }
 
 function setSliders() {
@@ -787,6 +802,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	initConfigValues();
 	createColorPicker();
+	initMirc0PreviewPage();
 	setSliders();
 	setElementsForFunctionsMenu();
 	initSchedulePage();

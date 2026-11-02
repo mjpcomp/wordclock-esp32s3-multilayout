@@ -34,6 +34,19 @@
 		function editable(state) { return supported(state) && state.canEdit && !state.pending; }
 		function savable(state) { return supported(state) && state.canSave && !state.pending; }
 		function resettable(state) { return supported(state) && !state.pending && !state.needsReload; }
+		function statusMessage(state) {
+			if (state.pending) {
+				const pending = { get: "Reading schedule...", save: "Saving schedule...", reset: "Resetting schedule..." };
+				return text("status-pending-" + state.pending.action, pending[state.pending.action] || "Schedule request in progress...");
+			}
+			if (!state.connected) return text("status-offline", "Disconnected. Reconnect before saving.");
+			if (!supported(state)) return text("status-unavailable", "Scheduler configuration unavailable; reconnect or reload to check support.");
+			if (state.remote) return text("status-choice", "Device version available. Choose which version to keep.");
+			if (state.resetRequired) return text("status-reset-required", "Stored schedule cannot be used. An explicit schedule reset is required.");
+			if (state.needsReload) return text("status-reload", "Reload the schedule to confirm the device version before saving.");
+			const messages = { loaded: "Schedule loaded.", "unsaved-default": "No saved schedule. Edit a local draft, then Save.", saved: "Schedule saved.", reset: "Schedule reset.", ready: "Schedule ready." };
+			return text("status-" + state.status, messages[state.status] || "Schedule status: " + state.status + ".");
+		}
 		function report(error) { fields.status.textContent = error.message || text("edit-error", "Edit rejected"); }
 		const controller = options.createController(Object.assign({}, options.controllerOptions, { onState: render }));
 		function render(state, reason) {
@@ -42,7 +55,7 @@
 			const selected = draft && draft.events[state.selected];
 			const canEdit = editable(state);
 			fields.end.title = selected && selected.minute + selected.fadeMinutes >= 1440 ? text("next-day", "Target reached tomorrow.") : "";
-			fields.status.textContent = state.errorText || text("status-" + state.status, state.status) + (state.dirty ? text("unsaved", " — Unsaved changes") : "");
+			fields.status.textContent = state.errorText || statusMessage(state) + (state.dirty ? text("unsaved", " — Unsaved changes") : "");
 			fields.capabilities.textContent = supported(state) ? text("configuration-only", "Configuration supported. Build components: cache=") + String(state.capabilities.rendererCacheCompiled) + ", output=" + String(state.capabilities.scheduleOutputCompiled) + text("not-readiness", ". Hardware readiness is not verified.") : text("unavailable", "Scheduler configuration support unavailable; reload after connecting.");
 			["changes", "start", "target", "level-range", "curve"].forEach(function(name) { fields[name].disabled = !canEdit; });
 			fields.apply.disabled = !canEdit || !selected;
@@ -52,7 +65,9 @@
 			fields.reload.disabled = !state.connected || Boolean(state.pending);
 			fields.reset.disabled = !resettable(state);
 			fields.discard.disabled = !state.canDiscard;
+			fields.discard.hidden = !state.dirty && !state.canDiscard;
 			fields["use-remote"].disabled = fields["keep-draft"].disabled = !state.connected || Boolean(state.pending) || !state.remote;
+			fields["use-remote"].hidden = fields["keep-draft"].hidden = !state.remote;
 			fields["all-day"].disabled = !canEdit || draft.events.length !== 0;
 			if (draft) fields["all-day"].value = String(draft.defaultTenths / 10);
 			if (reason !== "selection") {
