@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "repository": "mjpcomp/wordclock-esp32s3-multilayout",
+  "source_branch": "feature/optional-status-prefix",
+  "source_sha": "fb0e53599535b4a4ed6788de2c139d1e010a906b",
+  "run_id": "41524704833",
+  "attempt": "1",
+  "publisher_attempt": "1",
+  "run_url": "https://github.com/mjpcomp/wordclock-esp32s3-multilayout/actions/runs/41524704833",
+  "artifact_name": "mirc0-activation-candidate-fb0e53599535b4a4ed6788de2c139d1e010a906b-41524704833-1",
+  "candidate_result": "success",
+  "build_result": "success",
+  "checks_result": "success",
+  "upload_result": "success",
+  "download_result": "success",
+  "scope": "Activation candidate evidence; no UI-source promotion or hardware readiness",
+  "checks": {
+    "artifact_identity": true,
+    "candidate": true,
+    "build": true,
+    "browser_step": true,
+    "upload": true,
+    "download": true,
+    "source_manifest": true,
+    "diff": true,
+    "simulation": true,
+    "layout": true,
+    "preview": true
+  },
+  "errors": [],
+  "visual_review": "Screenshots remain in Actions; visual sign-off is separate",
+  "status": "PASS"
+}
