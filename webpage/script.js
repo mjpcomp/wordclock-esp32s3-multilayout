@@ -187,6 +187,14 @@ const DEFAULT_TIMEZONE = "CET-1CEST,M3.5.0,M10.5.0/3";
 let colorPicker;
 
 let mirc0PreviewPage = null;
+function readMirc0PreviewSchedule() {
+	if (!scheduleBridge) return null;
+	const state = scheduleBridge.snapshot();
+	const caps = state.capabilities;
+	if (!state.connected || !state.draft || !caps || caps.metadataState !== "valid" || caps.configurationProtocol !== true || state.pending || state.needsReload || state.resetRequired) return null;
+	const unsaved = state.dirty || !state.saved || state.saved.revision === 0;
+	return { schedule: window.WordclockScheduleModel.validate(state.draft), source: unsaved ? "unsaved-draft" : "saved" };
+}
 function initMirc0PreviewPage() {
 	const host = document.querySelector(".box-color");
 	if (!host) return;
@@ -195,6 +203,14 @@ function initMirc0PreviewPage() {
 		available: function() { return document.getElementById("front-layout").value === "36"; },
 		readColors: function() {
 			return hsb.slice(0, 2).map(function(color) { return new iro.Color({ h: color[0], s: color[1], v: color[2] }).hexString; });
+		},
+		simulation: {
+			playback: window.WordclockMirc0Playback,
+			model: window.WordclockScheduleModel,
+			createControls: window.createWordclockMirc0PreviewControls,
+			requestFrame: function(callback) { return window.requestAnimationFrame(callback); },
+			cancelFrame: function(handle) { window.cancelAnimationFrame(handle); },
+			readSchedule: readMirc0PreviewSchedule
 		}
 	});
 }
