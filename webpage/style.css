@@ -1229,3 +1229,28 @@ input:checked + .slider::before {
     background: #e4eaf0;
     opacity: 1;
 }
+
+/* Local simulation controls: prevent intrinsic select/button widths causing overflow. */
+#mirc0-preview-panel [data-mirc0='simulation-controls'] {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+#mirc0-preview-panel [data-mirc0='simulation-controls'] label {
+    flex-wrap: wrap;
+}
+
+#mirc0-preview-panel [data-mirc0='simulation-controls'] select,
+#mirc0-preview-panel [data-mirc0='simulation-controls'] input[type='range'] {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: var(--app-control-height);
+}
+
+#mirc0-preview-panel [data-mirc0='simulation-controls'] button {
+    max-width: 100%;
+    white-space: normal;
+}

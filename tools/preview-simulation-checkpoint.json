@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "reviewed_source": "fb0e53599535b4a4ed6788de2c139d1e010a906b",
+  "configuration_sha": "169608abb5a3a4b2202eadf8dcebd72653c34c8e",
+  "review_run": "41524704833",
+  "review_commit": "8ec46b80144ed070aeeb48f2c604b84fece30f01",
+  "files": {
+    "webpage/script.js": "1a26301f3802c783aa66871ab0f6251717d6aa7b7ca170708472838813f90b6c",
+    "webpage/index.html": "0655e3d2533d41ab5b66c59dfd30829e56ac6b7777eb904ddb6e9d58e7467369",
+    "webpage/style.css": "db173399bda9e27a3f596c5bf201c12a0e05726742367df7d5fe77f1c9b8a03c"
+  },
+  "scope": "Exact UI activation sources; no firmware or hardware readiness",
+  "visual_review": "Not established by automated evidence"
+}
