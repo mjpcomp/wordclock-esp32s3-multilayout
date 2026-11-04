@@ -67,7 +67,7 @@ function initSchedulePage() {
 }
 
 let ipEsp = "ws://192.168.4.1";
-let debug = true;
+let debug = false;
 let command = 1;
 let hsb = [
 	[0, 100, 50],
@@ -232,7 +232,7 @@ function initConfigValues() {
 		ipEsp = `ws://${location.host}`;
 	}
 
-	debug = true;
+	debug = false;
 	command = 1;
 	hsb = [
 		[0, 100, 50],
@@ -257,20 +257,15 @@ function initConfigValues() {
 	transitionDemo = false;
 }
 
-function debugMessage(debugMessage, someObject) {
-	if (debug === true) {
-
-		if (console !== undefined) {
-			if (someObject) {
-				console.log(debugMessage, someObject);
-			} else {
-				console.log(debugMessage);
-			}
-		}
-
-		const outputEl = document.getElementById("output");
-		if (outputEl) outputEl.textContent = debugMessage;
+function debugMessage(message) {
+	// Diagnostics are opt-in. Callers must pass non-sensitive status text only;
+	// never print raw payloads, configuration objects, or browser event objects.
+	if (debug !== true || typeof message !== "string") return;
+	if (typeof console !== "undefined" && console && typeof console.log === "function") {
+		console.log(message);
 	}
+	const outputEl = document.getElementById("output");
+	if (outputEl) outputEl.textContent = message;
 }
 
 /// only shows elements of class `cls` if `enbl` is true.
@@ -395,7 +390,7 @@ function initWebsocket() {
 		const connLostEl = document.getElementById("section-connection-lost");
 		if (connLostEl) connLostEl.style.display = "none";
 
-		debugMessage("WebSocket connected.", event);
+		debugMessage("WebSocket connected.");
 
 		sendCmd(CMD.REQ_COLOR_VALUES);
 		sendCmd(CMD.REQ_TRANSITION);
@@ -413,7 +408,7 @@ function initWebsocket() {
 
 		autoBrightStop();
 
-		debugMessage(`WebSocket disconnected (code ${event.code}).`, event);
+		debugMessage(`WebSocket disconnected (code ${event.code}).`);
 	};
 
 	socket.onmessage = function(event) {
@@ -426,7 +421,7 @@ function initWebsocket() {
 		try { data = JSON.parse(event.data); } catch (error) { if (error instanceof SyntaxError) return; throw error; }
 		if (!data || data.command === "brightness-schedule") return;
 
-		debugMessage(`WebSocket response arrived (command ${data.command}).`, data);
+		debugMessage("WebSocket response received.");
 
 		switch (data.command) {
 			case "mqtt": {
@@ -626,7 +621,7 @@ function initWebsocket() {
 	};
 	socket.onerror = function(event) {
 		if (socket !== websocket) return;
-		debugMessage("WebSocket connection failed.", event);
+		debugMessage("WebSocket connection failed.");
 	};
 }
 
@@ -777,7 +772,7 @@ function getPaddedString(string, maxStringLength) {
 
 function sendCmd(command, addData = "") {
 	let data = nstr(command) + addData;
-	debugMessage(`Send data: '${data}'`);
+	debugMessage(`WebSocket command ${Number.isInteger(command) ? command : "unknown"} requested.`);
 	if (websocket && websocket.readyState === WebSocket.OPEN) {
 		websocket.send(data);
 	}
