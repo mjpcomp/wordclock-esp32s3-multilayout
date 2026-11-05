@@ -11,6 +11,7 @@ on:
       - tools/schedule_live/check.py
       - tests/schedule-live-browser.test.cjs
       - tests/webpage-layout.test.cjs
+      - tests/webpage-diagnostics.test.cjs
       - tests/test_mirc0_preview_reference.py
       - tests/fixtures/mirc0-physical-face.json
       - include/WordClockTypes/EN10x11.mirc0.hpp
@@ -24,6 +25,7 @@ on:
       - tools/schedule_live/check.py
       - tests/schedule-live-browser.test.cjs
       - tests/webpage-layout.test.cjs
+      - tests/webpage-diagnostics.test.cjs
       - tests/test_mirc0_preview_reference.py
       - tests/fixtures/mirc0-physical-face.json
       - include/WordClockTypes/EN10x11.mirc0.hpp
@@ -42,6 +44,7 @@ jobs:
         with:
           node-version: '24'
       - run: python3 tests/test_mirc0_preview_reference.py
+      - run: node tests/webpage-diagnostics.test.cjs
       - run: npm ci --ignore-scripts
       - run: npx --no-install grunt build
       - run: python3 tools/schedule_live/check.py --built
