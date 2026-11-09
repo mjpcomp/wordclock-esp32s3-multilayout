@@ -1,0 +1,51 @@
+name: Runtime status observation tests
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - 'include/Brightness*'
+      - 'src/WebPageAdapter.cpp'
+      - 'webpage/**'
+      - 'tests/**'
+      - 'Gruntfile.js'
+      - 'package*.json'
+      - '.github/workflows/runtime-status-tests.yml'
+  pull_request:
+    branches: [feature/optional-status-prefix]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host-browser-package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: 0b03321ed33fa6965114424fbb023260120c856b
+          path: .ci-deps/ArduinoJson
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Existing model, storage, owner, configuration and transport regressions
+        run: |
+          python3 tests/test_brightness_schedule_runtime_model.py
+          python3 tests/test_brightness_schedule_storage.py
+          python3 tests/test_brightness_schedule_runtime_owner.py
+          python3 tests/test_brightness_schedule_protocol.py
+          python3 tests/test_brightness_schedule_transport.py
+      - name: Runtime-specific host and browser contracts
+        run: |
+          python3 tests/test_brightness_runtime_status.py
+          python3 tests/test_runtime_status_integration.py
+          python3 tests/test_runtime_status_ui_preparation.py
+          node --test tests/schedule-runtime-status.test.cjs
+      - name: Build actual embedded page with unchanged dependencies
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx --no-install grunt build
+          python3 tests/test_runtime_status_integration.py --packaged
