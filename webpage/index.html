@@ -339,6 +339,13 @@
                         <summary>Configuration support and build details</summary>
                         <p data-schedule="capabilities">Hardware readiness is not verified.</p>
                     </details>
+                    <div id="schedule-runtime-status">
+                        <h3>Device runtime snapshot</h3>
+                        <p>This observes the device, not the local preview. It does not enable output or change settings.</p>
+                        <button type="button" class="pure-button" data-runtime="refresh" disabled>Refresh runtime status</button>
+                        <p data-runtime="status" role="status" aria-live="polite">Connect, then refresh to read a device snapshot.</p>
+                        <pre data-runtime="values" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+                    </div>
                     <svg class="schedule-chart" data-schedule="timeline" role="group" aria-label="Daily schedule timeline" style="display:block;width:100%;height:auto;min-height:12rem"></svg>
                     <form class="pure-form pure-form-aligned">
                         <div class="pure-control-group"><label for="schedule-changes">Scheduled changes</label><select id="schedule-changes" data-schedule="changes" disabled><option value="-1">Select a change</option></select></div>
@@ -1052,6 +1059,7 @@
 <script src="./mirc0-preview-playback.js"></script>
 <script src="./mirc0-preview-controls.js"></script>
 <script src="./mirc0-preview-page.js"></script>
+<script src="./schedule-runtime-status.js"></script>
 <script src="./script.js"></script>
 <script src="./language/en.js"></script>
 <script src="./language/de.js"></script>
