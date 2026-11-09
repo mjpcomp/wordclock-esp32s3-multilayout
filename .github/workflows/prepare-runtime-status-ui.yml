@@ -1,0 +1,130 @@
+# Read-only verification and native builds precede isolated branch creation.
+name: Prepare manual runtime status UI
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - tools/prepare_runtime_status_ui.py
+      - tests/test_runtime_status_ui_preparation.py
+      - .github/workflows/prepare-runtime-status-ui.yml
+permissions:
+  contents: read
+concurrency:
+  group: runtime-status-ui-preparation
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      changed: ${{ steps.replay.outputs.changed }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: 0b03321ed33fa6965114424fbb023260120c856b
+          path: .ci-deps/ArduinoJson
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: python3 tests/test_runtime_status_ui_preparation.py
+      - id: replay
+        run: python3 tools/prepare_runtime_status_ui.py verify --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/runtime-ui-bundle"
+      - name: Test actual host protocol, observer and integration
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_runtime_status.py
+          python3 tests/test_brightness_schedule_transport.py
+          node --test tests/schedule-runtime-status.test.cjs
+          python3 tests/test_runtime_status_integration.py
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx --no-install grunt build
+          python3 tests/test_runtime_status_integration.py --packaged
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: runtime-ui-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/runtime-ui-bundle/
+          if-no-files-found: error
+          retention-days: 7
+  native:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [YD_ESP32S3_N16R8_BOARD_ONLY, YD_ESP32S3_N16R8_RTC_ONLY]
+        renderer_cache: ['0', '1']
+        schedule_output: ['0', '1']
+        exclude:
+          - renderer_cache: '0'
+            schedule_output: '1'
+    env:
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+      BUILD_ENV: ${{ matrix.environment }}
+      RENDERER_CACHE: ${{ matrix.renderer_cache }}
+      SCHEDULE_OUTPUT: ${{ matrix.schedule_output }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: python3 tools/prepare_runtime_status_ui.py apply --config-sha "$GITHUB_SHA"
+      - name: Stage existing isolated compile policies in disposable checkout
+        run: |
+          set -euo pipefail
+          python3 tests/test_brightness_schedule_application_binding.py --stage-application
+          for suite in clock_test_foundation button_isolation english_renderer led_factory brightness_isolation i2c_isolation rtc_isolation build_evidence prefix_status_policy onboard_diagnostic_model onboard_diagnostic_sink onboard_diagnostic_runtime; do
+            python3 "tests/test_${suite}.py"
+          done
+          python3 tests/test_brightness_schedule_renderer_binding.py --stage-binding --gate "$RENDERER_CACHE"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          path = Path('include/BrightnessScheduleRendererBinding.h')
+          text = path.read_text()
+          old = '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT 0'
+          if text.count(old) != 1:
+              raise SystemExit('Schedule output default gate drift')
+          path.write_text(text.replace(old, '#define WORDCLOCK_ENABLE_SCHEDULE_OUTPUT ' + os.environ['SCHEDULE_OUTPUT'], 1))
+          PY
+          python3 tests/test_brightness_schedule_output_candidate.py --stage-output
+      - name: Build actual firmware without upload
+        run: |
+          set -euo pipefail
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV" -t compiledb
+          .ci-venv/bin/python -m platformio run -e "$BUILD_ENV"
+          python3 tests/test_brightness_schedule_real_colors.py --environment "$BUILD_ENV"
+  prepare:
+    needs: [verify, native]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/optional-status-prefix' && needs.verify.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: runtime-ui-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/runtime-ui-bundle
+      - name: Create fixed isolated branch only; never PR or merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/prepare_runtime_status_ui.py prepare --config-sha "$GITHUB_SHA" --bundle "$RUNNER_TEMP/runtime-ui-bundle"
