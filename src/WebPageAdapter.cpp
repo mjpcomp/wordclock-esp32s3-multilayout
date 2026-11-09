@@ -6,6 +6,10 @@
 #include "BrightnessScheduleProtocol.h"
 #include "BrightnessScheduleTransport.h"
 #include "BrightnessScheduleRuntimeOwner.h"
+#include "BrightnessRuntimeStatusProtocol.h"
+#include "BrightnessScheduleRendererBinding.h"
+#include "LedStripInterface.h"
+extern LedStripInterface *activeLedStrip;
 #endif
 
 const char favicon[] PROGMEM = {
@@ -101,9 +105,27 @@ bool parseColor(uint8_t *payload, size_t length) {
 }
 
 #if defined(ESP32)
+brightnessRuntimeStatusProtocol::State readBrightnessRuntime(void *) {
+    namespace status = brightnessRuntimeStatusProtocol;
+    status::State state = {};
+    state.observation = brightnessScheduleRuntimeOwner::applicationRuntime().observation(millis());
+    state.backend = !activeLedStrip ? status::BackendKind::None :
+        activeLedStrip->isVirtual() ? status::BackendKind::Virtual : status::BackendKind::Physical;
+    state.cacheCompiled = WORDCLOCK_ENABLE_RENDERER_CACHE != 0;
+    state.outputCompiled = WORDCLOCK_ENABLE_SCHEDULE_OUTPUT != 0;
+#if WORDCLOCK_ENABLE_RENDERER_CACHE
+    state.rendererAttached = activeLedStrip && brightnessScheduleBinding::application().ready(activeLedStrip);
+#endif
+    return state;
+}
+
 // Brightness schedule transport integration; one serialized event-loop context.
 bool invokeBrightnessSchedule(const uint8_t *data, size_t size, char *reply,
                               size_t capacity, size_t &used, void *) {
+    const auto runtime = brightnessRuntimeStatusProtocol::handle(
+        data, size, reply, capacity, used, readBrightnessRuntime, nullptr);
+    if (runtime != brightnessRuntimeStatusProtocol::Result::NotRuntime)
+        return runtime == brightnessRuntimeStatusProtocol::Result::Handled;
     auto &store = brightnessScheduleRuntimeOwner::applicationRuntime().store();
     return brightnessScheduleProtocol::handle(store, data, size, reply, capacity, used);
 }
