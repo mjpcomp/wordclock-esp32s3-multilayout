@@ -39,6 +39,16 @@ const iro = window.iro; // require("@jaames/iro");
 let debugMessageReconfigured = " change requested.";
 let websocket;
 
+let runtimeStatusPage = null;
+function initRuntimeStatusPage() {
+	const root = document.getElementById("schedule-runtime-status");
+	if (!root) return;
+	runtimeStatusPage = window.createWordclockRuntimeStatus(root, {
+		setTimeout: function(callback, delay) { return window.setTimeout(callback, delay); },
+		clearTimeout: function(handle) { window.clearTimeout(handle); }
+	});
+}
+
 let scheduleBridge = null;
 function initSchedulePage() {
 	const root = document.getElementById("schedule-editor");
@@ -379,6 +389,7 @@ function initWebsocket() {
 	const socket = new WebSocket(ipEsp);
 	websocket = socket;
 	if (scheduleBridge) scheduleBridge.attach(socket);
+	if (runtimeStatusPage) runtimeStatusPage.attach(socket);
 	refreshConnectionText();
 
 	socket.onopen = function(event) {
@@ -419,7 +430,7 @@ function initWebsocket() {
 		if (typeof event.data !== "string") return;
 		let data;
 		try { data = JSON.parse(event.data); } catch (error) { if (error instanceof SyntaxError) return; throw error; }
-		if (!data || data.command === "brightness-schedule") return;
+		if (!data || data.command === "brightness-schedule" || data.command === "brightness-runtime") return;
 
 		debugMessage("WebSocket response received.");
 
@@ -817,6 +828,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	setSliders();
 	setElementsForFunctionsMenu();
 	initSchedulePage();
+	initRuntimeStatusPage();
 	initWebsocket();
 	setColors();
 
