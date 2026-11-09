@@ -12,6 +12,13 @@ namespace model = brightnessScheduleRuntimeModel;
 constexpr uint32_t kServiceIntervalMs = 50;
 struct LocalTime { uint32_t dayMs; bool valid; };
 using Clock = LocalTime (*)(void *);
+struct Observation {
+    model::Decision decision;
+    storage::Result lastResult;
+    uint32_t acceptedRevision, sampleAgeMs;
+    bool initialized, hasSample, pendingEvaluation, hasAccepted;
+    bool observedStorageFault, automatic, masterOn, timeValid;
+};
 class Owner {
     model::Model model_;
     storage::Store store_;
@@ -21,6 +28,7 @@ class Owner {
     bool observed_ = false, have_ = false, faultSeen_ = false, force_ = true, serviced_ = false;
     bool automatic_ = false, masterOn_ = true, timeValid_ = false;
     uint32_t lastMs_ = 0;
+    bool sampled_ = false;
     static bool same(const storage::Record &a, const storage::Record &b) {
         if (a.revision != b.revision || a.schedule.defaultTenths != b.schedule.defaultTenths ||
             a.schedule.count != b.schedule.count) return false;
@@ -71,6 +79,17 @@ public:
     bool initialized() const { return observed_; }
     storage::Result lastResult() const { return last_; }
     const model::Decision &current() const { return current_; }
+    Observation observation(uint32_t now) const {
+        Observation value = {};
+        value.decision = current_; value.lastResult = last_;
+        value.acceptedRevision = have_ ? accepted_.revision : 0;
+        value.sampleAgeMs = sampled_ ? uint32_t(now-lastMs_) : 0;
+        value.initialized = observed_; value.hasSample = sampled_;
+        value.pendingEvaluation = force_; value.hasAccepted = have_;
+        value.observedStorageFault = faultSeen_;
+        value.automatic = automatic_; value.masterOn = masterOn_; value.timeValid = timeValid_;
+        return value;
+    }
     storage::Result begin() {
         if (observed_) return last_;
         storage::Record record = {};
@@ -82,6 +101,7 @@ public:
                                                : model::Decision{0,0,true,false,false,false};
         const bool changed = !equalDecision(next,current_);
         current_=next; lastMs_=now; serviced_=true; force_=false;
+        if (observed_) sampled_=true;
         automatic_=automatic; masterOn_=masterOn; timeValid_=clock.valid;
         return changed;
     }
