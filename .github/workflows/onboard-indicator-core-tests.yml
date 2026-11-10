@@ -6,6 +6,8 @@ on:
       - 'include/OnboardIndicator*.h'
       - 'tests/onboard_indicator_core_test.cpp'
       - 'tests/test_onboard_indicator_core.py'
+      - 'tests/onboard_indicator_nvs_test.cpp'
+      - 'tests/test_onboard_indicator_nvs.py'
       - '.github/workflows/onboard-indicator-core-tests.yml'
   pull_request:
     branches: [feature/optional-status-prefix]
@@ -22,3 +24,5 @@ jobs:
           persist-credentials: false
       - name: Policy, canonical bytes, verified store and owner fault contracts
         run: python3 tests/test_onboard_indicator_core.py
+      - name: Portable inclusion and mocked NVS adapter fault contracts
+        run: python3 tests/test_onboard_indicator_nvs.py
