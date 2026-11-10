@@ -1,0 +1,24 @@
+name: Onboard indicator core tests
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - 'include/OnboardIndicator*.h'
+      - 'tests/onboard_indicator_core_test.cpp'
+      - 'tests/test_onboard_indicator_core.py'
+      - '.github/workflows/onboard-indicator-core-tests.yml'
+  pull_request:
+    branches: [feature/optional-status-prefix]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Policy, canonical bytes, verified store and owner fault contracts
+        run: python3 tests/test_onboard_indicator_core.py
