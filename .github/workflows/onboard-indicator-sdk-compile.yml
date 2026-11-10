@@ -1,0 +1,73 @@
+name: Onboard indicator real SDK compile
+on:
+  push:
+    branches: [feature/optional-status-prefix]
+    paths:
+      - 'include/OnboardIndicator*.h'
+      - 'tests/fixtures/onboard-indicator-sdk/**'
+      - '.github/workflows/onboard-indicator-sdk-compile.yml'
+  pull_request:
+    branches: [feature/optional-status-prefix]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      PLATFORMIO_CORE_DIR: ${{ runner.temp }}/onboard-indicator-sdk-pio
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+      EVIDENCE_DIR: ${{ github.workspace }}/build-evidence/onboard-indicator-sdk
+      SDK_PROJECT: ${{ github.workspace }}/tests/fixtures/onboard-indicator-sdk
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install existing pinned build tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          printf '%s\n' "$GITHUB_SHA" > "$EVIDENCE_DIR/commit.txt"
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install platformio==6.1.18 2>&1 | tee "$EVIDENCE_DIR/tool-install.log"
+          .ci-venv/bin/python -m platformio --version > "$EVIDENCE_DIR/core-version.txt"
+      - name: Compile and link dormant adapter against real SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          PY="$GITHUB_WORKSPACE/.ci-venv/bin/python"
+          cd "$SDK_PROJECT"
+          "$PY" -m platformio project config --json-output > "$EVIDENCE_DIR/config.json"
+          "$PY" -m platformio run -e sdk -v 2>&1 | tee "$EVIDENCE_DIR/build.log"
+          "$PY" -m platformio pkg list > "$EVIDENCE_DIR/packages.txt"
+          test -s .pio/build/sdk/firmware.elf
+          "$PLATFORMIO_CORE_DIR/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-nm" --defined-only .pio/build/sdk/firmware.elf > "$EVIDENCE_DIR/symbols.txt"
+          "$PY" - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          evidence = Path(os.environ['EVIDENCE_DIR'])
+          symbols = {line.split()[-1] for line in (evidence / 'symbols.txt').read_text().splitlines() if line.split()}
+          required = {'onboard_indicator_sdk_read', 'onboard_indicator_sdk_write',
+                      'nvs_open', 'nvs_get_blob', 'nvs_set_blob', 'nvs_commit', 'nvs_close'}
+          missing = required - symbols
+          if missing:
+              raise SystemExit('Missing retained SDK symbols: ' + ', '.join(sorted(missing)))
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          paths = sorted((root / 'include').glob('OnboardIndicator*.h'))
+          manifest = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+          (evidence / 'header-sha256.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          (evidence / 'link-verification.json').write_text(json.dumps({
+              'commit': os.environ['GITHUB_SHA'], 'required_defined_symbols': sorted(required),
+              'scope': 'standalone real SDK compile/link; not runtime, board isolation or flash-ready firmware'
+          }, indent=2) + '\n')
+          PY
+      - name: Preserve logs and metadata only, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: onboard-indicator-sdk-evidence-${{ github.sha }}
+          path: build-evidence/onboard-indicator-sdk/
+          if-no-files-found: warn
+          retention-days: 14
