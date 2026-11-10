@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include "OnboardIndicatorNvsBackend.h"
+#include "OnboardIndicatorCommandService.h"
+#include "OnboardIndicatorCommandMailbox.h"
 
 #if !defined(ESP32)
 #error "This fixture requires the real ESP32 SDK"

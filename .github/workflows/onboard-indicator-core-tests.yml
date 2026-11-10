@@ -8,6 +8,8 @@ on:
       - 'tests/test_onboard_indicator_core.py'
       - 'tests/onboard_indicator_nvs_test.cpp'
       - 'tests/test_onboard_indicator_nvs.py'
+      - 'tests/onboard_indicator_commands_test.cpp'
+      - 'tests/test_onboard_indicator_commands.py'
       - '.github/workflows/onboard-indicator-core-tests.yml'
   pull_request:
     branches: [feature/optional-status-prefix]
@@ -26,3 +28,5 @@ jobs:
         run: python3 tests/test_onboard_indicator_core.py
       - name: Portable inclusion and mocked NVS adapter fault contracts
         run: python3 tests/test_onboard_indicator_nvs.py
+      - name: Guarded commands and deferred mailbox contracts
+        run: python3 tests/test_onboard_indicator_commands.py
