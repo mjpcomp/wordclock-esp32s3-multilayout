@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
-      PLATFORMIO_CORE_DIR: ${{ runner.temp }}/onboard-indicator-sdk-pio
+      PLATFORMIO_CORE_DIR: ${{ github.workspace }}/.ci-platformio-onboard-sdk
       PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
       EVIDENCE_DIR: ${{ github.workspace }}/build-evidence/onboard-indicator-sdk
       SDK_PROJECT: ${{ github.workspace }}/tests/fixtures/onboard-indicator-sdk
