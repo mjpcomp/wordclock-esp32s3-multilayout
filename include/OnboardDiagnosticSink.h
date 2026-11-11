@@ -23,7 +23,11 @@ class Gpio48Sink {
 public:
     // Returns true only when a physical write was requested, not acknowledged.
     bool service(uint32_t now, uint8_t red, uint8_t green, uint8_t blue) {
-        if (polled && uint32_t(now - lastPoll) < 20) return false;
+        // Black bypasses throttling; duplicate black must not postpone color.
+        const bool black = !red && !green && !blue;
+        if (black && sent && !previousR && !previousG && !previousB)
+            return false;
+        if (!black && polled && uint32_t(now - lastPoll) < 20) return false;
         polled = true;
         lastPoll = now;
         red = bounded(red); green = bounded(green); blue = bounded(blue);

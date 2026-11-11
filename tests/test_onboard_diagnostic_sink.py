@@ -13,18 +13,29 @@ int main() {
  onboardDiagnostic::Gpio48Sink sink;
  assert(sink.service(0,255,7,3)); assert(writes==1 && pinSeen==48);
  assert(rSeen==20 && gSeen==7 && bSeen==3);
- assert(!sink.service(19,0,0,0)); assert(writes==1);
- assert(sink.service(20,0,0,0)); assert(writes==2);
- assert(!sink.service(40,0,0,0));
- assert(!sink.service(59,1,2,3));
- assert(sink.service(60,1,2,3));
- assert(!sink.service(80,1,2,3));
+ assert(sink.service(1,0,0,0)); assert(writes==2);
+ assert(rSeen==0 && gSeen==0 && bSeen==0);
+ assert(!sink.service(2,0,0,0)); assert(writes==2);
+ assert(!sink.service(20,1,2,3));
+ assert(sink.service(21,1,2,3)); assert(writes==3);
+ assert(!sink.service(41,1,2,3)); assert(writes==3);
+ assert(sink.service(42,0,0,0)); assert(writes==4);
+ assert(!sink.service(61,0,0,0)); assert(writes==4);
+ assert(sink.service(62,1,2,3)); assert(writes==5);
+ onboardDiagnostic::Gpio48Sink cold;
+ assert(cold.service(0,0,0,0)); assert(writes==6);
+ assert(!cold.service(19,0,0,0)); assert(writes==6);
+ assert(cold.service(20,255,255,255)); assert(writes==7);
+ assert(rSeen==20 && gSeen==20 && bSeen==20);
  onboardDiagnostic::Gpio48Sink wrap;
  const uint32_t start=UINT32_MAX-9;
  assert(wrap.service(start,1,0,0));
  assert(!wrap.service(uint32_t(start+19u),0,0,1));
  assert(wrap.service(uint32_t(start+20u),0,0,1));
  assert(pinSeen==48 && bSeen==1);
+ assert(wrap.service(uint32_t(start+21u),0,0,0));
+ assert(!wrap.service(uint32_t(start+40u),1,0,0));
+ assert(wrap.service(uint32_t(start+41u),1,0,0));
 }
 #else
 int main() { static_assert(!clockTestPolicy::IS_TEST,"normal mode"); }
@@ -62,6 +73,6 @@ def main():
   bad=subprocess.run([compiler,'-std=c++11','-DWORDCLOCK_TEST_MODE=1',
    '-I'+str(work),'-c',str(work/'test.cpp'),'-o',str(work/'bad.o')],capture_output=True,text=True)
   assert bad.returncode and 'requires ESP32-S3' in bad.stderr
- print('PASS: six mode/flag combinations; normal mode has no Arduino/HAL headers; GPIO48, clamp, cache, 20ms boundaries, wrap and wrong-target rejection.')
+ print('PASS: six mode/flag combinations; normal mode has no Arduino/HAL headers; GPIO48, clamp, cache, priority black, duplicate-black cadence, 20ms boundaries, wrap and wrong-target rejection.')
 
 if __name__=='__main__': main()
