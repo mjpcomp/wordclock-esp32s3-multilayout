@@ -1,0 +1,31 @@
+# Dormant indicator JSON codec and enqueue boundary
+
+This defines a wire contract and callable codec, not a live endpoint. No production socket route, parser invocation, service instance, startup begin, persistence activation, UI or GPIO change is installed. Do not send these fixtures to the existing brightness route and assume indicator handling exists. The future router must select this command without renumbering legacy IDs or swallowing other commands.
+
+## Common contract
+All requests are one complete text-frame JSON object, at most1024 bytes and depth4. command is "onboard-indicator", schema is integer1, requestId is1..32 ASCII alphanumeric/hyphen/underscore characters, and action is one of snapshot/reload/save/reset. Unknown/missing/duplicate keys are rejected. The restricted grammar accepts only unsigned decimal integers without leading zeros, booleans/null, objects/arrays and printable ASCII strings WITHOUT escapes. Escaped keys/values, Unicode, comments, negative/fraction/exponent numbers, trailing commas/data and partial/fragment/binary frames are rejected. This is an intentional restricted JSON wire contract, not a general-purpose JSON parser. Standard JSON.stringify of the supported ASCII fields does not require escapes.
+
+snapshot has exactly command/schema/requestId/action and performs no storage work when consumed. reload adds expectedSession and expectedView. save additionally requires expectedRevision, mode and windows. reset instead adds expectedRevision and confirmReset:true. No extra fields are accepted for an action.
+
+expectedSession is exactly16 lowercase hexadecimal digits representing a nonzero uint64; it is NEVER a JSON number. expectedView is integer1..4294967295. expectedRevision is integer0..4294967295. This preserves session values above JavaScript's exact integer range. The future lifecycle must still provide fresh session identities; serialization does not generate entropy, authentication or global uniqueness.
+
+mode is "disabled", "always" or "scheduled". windows is an array of at most2 exact objects with unsigned startMinute/endMinute values0..1439. The accepted policy validator remains authoritative: half-open boundaries, overnight and adjacent windows supported; equal endpoints/overlap rejected; scheduled requires a window. Other modes may retain valid windows. No fade or brightness fields are accepted.
+
+Examples:
+{"command":"onboard-indicator","schema":1,"requestId":"read-1","action":"snapshot"}
+{"command":"onboard-indicator","schema":1,"requestId":"save-1","action":"save","expectedSession":"0020000000000001","expectedView":1,"expectedRevision":0,"mode":"scheduled","windows":[{"startMinute":420,"endMinute":720},{"startMinute":960,"endMinute":1200}]}
+{"command":"onboard-indicator","schema":1,"requestId":"reset-1","action":"reset","expectedSession":"0020000000000001","expectedView":2,"expectedRevision":0,"confirmReset":true}
+
+## Parse, enqueue and reply behavior
+parse replaces neither the typed request nor ID unless the complete request is valid. The syntax reader enforces grammar/full consumption and counts raw keys; exact decoded key sets and expected total counts catch duplicates rather than trusting ArduinoJson's collapsed object representation. Boolean and string coercions to integers are rejected before conversion; integer overflow is checked through the real parser's typed is<T>().
+
+enqueue takes a TRUSTED caller-supplied client/connection-generation route separately from JSON. It never accepts route identity from a browser, calls the service, loads/saves storage or sends a response. Queued means copied for later processing, NOT saved. Full/invalid/oversize/non-text input leaves queued work intact. No request truncation or fragment assembly is supplied.
+
+Only a later serialized mailbox consumer can execute a command. encodeReply serializes its actual Reply and correlation. status distinguishes cached snapshot, loaded/saved/reset, stale-view, revision mismatch, reload/reset required and storage errors. storageAttempted marks whether a result describes an actual storage operation; storageStatus is null otherwise. session is a lossless hex string, or null before initialization. view/expectedRevision/reloadRequired and owner initialized/hasRecord/storageFault/draft flags are distinct. lastStorageStatus is cached history, not a fresh read. Accepted policy/revision is included only when a meaningful initialized current/default or retained record exists, so a faulted retained revision may differ from the known reset base.
+
+encodeIngressError emits an uncorrelated null-requestId rejection for nonqueued results. It deliberately refuses Queued so callers cannot accidentally send premature save success. Encoding performs no storage or network IO, checks document overflow/serialized length, and requires a1536-byte output buffer including termination space. Failure reports used0 and clears the first byte when possible. Request and reply documents each use an in-place1024-byte pool; parse/enqueue and later encoding are separate calls. Future runtime integration must budget stack and callbacks explicitly; bounded allocation is not physical stack validation.
+
+## Dependency and evidence
+Use the existing ArduinoJson CI source commit0b03321ed33fa6965114424fbb023260120c856b, whose official library.json identifies6.21.6. The host workflow checks it out credential-disabled; the SDK fixture declares the same exact Git commit. No parser/CLI/platform upgrade or vendored source. Default host tests REQUIRE actual ArduinoJson headers, exercise normal/MAX_INPUT platform-macro builds, schema/types/duplicates/framing/session precision, full mailbox enqueue-to-consumer responses and capacity failures. Explicit --syntax-only tests only the independent grammar and is NOT full codec evidence; CI must never use that flag.
+
+The SDK fixture adds only the parser dependency and codec include, preserving empty setup/loop and the existing NVS link roots/symbol gate. It is not flashable Word Clock firmware. Passing does not validate live routing, session generation, NVS runtime, time/TZ, startup/priority black, blocking/no-replay integration, GPIO/UI or hardware. Those require later approved plans. Issues #3/#4 remain open.

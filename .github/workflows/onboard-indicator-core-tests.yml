@@ -10,6 +10,8 @@ on:
       - 'tests/test_onboard_indicator_nvs.py'
       - 'tests/onboard_indicator_commands_test.cpp'
       - 'tests/test_onboard_indicator_commands.py'
+      - 'tests/onboard_indicator_protocol_test.cpp'
+      - 'tests/test_onboard_indicator_protocol.py'
       - '.github/workflows/onboard-indicator-core-tests.yml'
   pull_request:
     branches: [feature/optional-status-prefix]
@@ -24,9 +26,17 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: bblanchon/ArduinoJson
+          ref: 0b03321ed33fa6965114424fbb023260120c856b
+          path: .ci-deps/ArduinoJson
+          persist-credentials: false
       - name: Policy, canonical bytes, verified store and owner fault contracts
         run: python3 tests/test_onboard_indicator_core.py
       - name: Portable inclusion and mocked NVS adapter fault contracts
         run: python3 tests/test_onboard_indicator_nvs.py
       - name: Guarded commands and deferred mailbox contracts
         run: python3 tests/test_onboard_indicator_commands.py
+      - name: Strict indicator JSON codec and enqueue contracts
+        run: python3 tests/test_onboard_indicator_protocol.py

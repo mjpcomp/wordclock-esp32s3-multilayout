@@ -2,6 +2,7 @@
 #include "OnboardIndicatorNvsBackend.h"
 #include "OnboardIndicatorCommandService.h"
 #include "OnboardIndicatorCommandMailbox.h"
+#include "OnboardIndicatorProtocol.h"
 
 #if !defined(ESP32)
 #error "This fixture requires the real ESP32 SDK"
