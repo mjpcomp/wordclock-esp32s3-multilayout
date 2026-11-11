@@ -64,12 +64,12 @@ int main(){
  assert(enqueue(snapshot)==wire::Ingress::QueueFull);
  while(queue.size())assert(queue.consumeOne(service,current,send,&out)==m::Drain::Delivered);
  assert(enqueue(save)==wire::Ingress::Queued);out.live.connection=8;const unsigned before=memory.reads;assert(queue.consumeOne(service,current,send,&out)==m::Drain::Dropped&&memory.reads==before&&memory.writes==1);
- char output[wire::kReplyBytes];size_t used=99;assert(wire::encodeIngressError(wire::Ingress::QueueFull,output,sizeof(output),used));reply.clear();assert(!deserializeJson(reply,output,used)&&!strcmp(reply["status"],"queue-full")&&reply["requestId"].isNull());
+ char output[wire::kReplyBytes];size_t used=99;assert(wire::encodeIngressError(wire::Ingress::QueueFull,output,sizeof(output),used));reply.clear();assert(!deserializeJson(reply,static_cast<const char*>(output),used)&&!strcmp(reply["status"],"queue-full")&&reply["requestId"].isNull());
  assert(!wire::encodeIngressError(wire::Ingress::Queued,output,sizeof(output),used)&&used==0);
  assert(!wire::encodeIngressError(wire::Ingress::QueueFull,output,1,used)&&used==0&&output[0]==0);
  assert(!wire::encodeIngressError(wire::Ingress::QueueFull,nullptr,0,used)&&used==0);
  m::Envelope env={};env.route={1,7};strcpy(env.requestId,"reply");env.request.action=c::Action::Snapshot;
- auto value=service.handle(c::Request{});assert(wire::encodeReply(env,value,output,sizeof(output),used));reply.clear();assert(!deserializeJson(reply,output,used)&&!strcmp(reply["status"],"snapshot")&&reply["storageStatus"].isNull());
+ auto value=service.handle(c::Request{});assert(wire::encodeReply(env,value,output,sizeof(output),used));reply.clear();assert(!deserializeJson(reply,static_cast<const char*>(output),used)&&!strcmp(reply["status"],"snapshot")&&reply["storageStatus"].isNull());
  env.requestId[0]=0;assert(!wire::encodeReply(env,value,output,sizeof(output),used)&&used==0);
 #endif
 }
