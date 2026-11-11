@@ -1,0 +1,22 @@
+# Lifecycle inspection: ownership and suppression
+
+Inspected 2026-11-11 at 76327ce3ed269995d6a0bface62aaf65f31a2c2a on feature/optional-status-prefix in mjpcomp/wordclock-esp32s3-multilayout. This is source inspection, not implementation, an approved implementation plan, or test execution. Read together with docs/onboard-indicator-lifecycle-checkpoint.md. Group 2A is already landed at 7e692029; do not reapply it.
+
+## Verified current boundaries
+
+- include/OnboardIndicatorCommandService.h (blob 186ff1d6876be037f01a59efe7187d7faff6bf8e): Service owns Owner, has no Store escape hatch, and requires serialized access. prepare() performs owner startup only when uninitialized and updates the cached revision/reload fence; it does not set a communication session. begin(nonzeroSession) calls prepare(), then assigns session and view 1. Before begin(), handle() returns NotInitialized, even if policy was prepared. Repeated preparation does not retry a failed startup load.
+- include/OnboardIndicatorRuntimeOwner.h (blob b4c2114710aaa6c1285458a82f3df0906641b538): begin() marks initialized and attempts one read-only load; later retries require an explicit action. Permission reads are RAM-only and require initialized, nonfaulted state. Initial Missing before any verified record selects freshPolicy without writing. Missing after verified lineage and actual storage faults deny permission. Owner passes timeValid && timezoneReady to the pure policy evaluator.
+- include/OnboardIndicatorNvsBackend.h (blob 7ca896092e7a8b015d7bf4aad336f9acd9c03875): actual native adapter path; OnboardIndicatorNvs.h does not exist. Constructor does no IO; framework/application must initialize NVS first. Reads open wc-onboard/policy read-only and validate blob size/read outcome. Writes are separate read-write operations with commit; lifecycle preparation must not invoke them. No initialization or erase belongs in this adapter.
+- include/OnboardIndicatorPolicy.h (blob 1a3f76917455d48bb211e9ffd99fcad1375d3747): freshPolicy is AlwaysEnabled with zero windows. AlwaysEnabled intentionally ignores time validity; Scheduled requires valid time and a local minute inside a configured half-open window; Disabled denies permission. Do not globally deny AlwaysEnabled just because timezone/time is unavailable.
+- include/OnboardDiagnosticRuntime.h (blob a74b3414a157c95df62d9ddd05beddfda3d26941): no policy-permission parameter or suppress API yet. service() consumes pending NTP, tracks frame deltas, samples the model and forwards color. NTP records original event time; frame changes use service time. A sink-only black write does not clear model events or pending event/frame state. A future suppression/no-replay design needs explicit event-draining and frame-baseline tests, while preserving source truth and cooldown behavior.
+- include/OnboardDiagnosticApplication.hpp (blob f3f5dd5b1f4c288786ca51fa0dbcb4ae1828e18c): normal-mode API is no-op; isolated modes instantiate a sink and runtime in the single-inclusion adapter. service() calls runtime without policy permission. No lifecycle service/backend is wired here. Existing time reporting observes configuration and network state; do not mutate DNS/SNTP behavior while adding lifecycle control.
+
+## Next small exploration batch
+
+Read configuration, actual startup/loop and all timezone mutation/application paths before choosing lifecycle placement or proposing application edits. Resolve when NVS and configured timezone become ready, when diagnostic calls can occur during cooperative/blocking work, and which call sites need black/suppression. Read existing runtime/model tests before specifying changes. Do not claim those call sites were inspected in this batch.
+
+Then write a fresh exact-code plan split into lifecycle module/tests, suppression runtime/tests, and separately reviewed application wiring. Do not create a second owner/backend writer or start a production communication session merely to load policy. Confirm normal-mode absence and unsupported-target behavior in planned tests. Real SDK/target builds and physical acceptance remain separate gates.
+
+## Evidence and continuity
+
+No code changed and no new tests ran during this inspection. The earlier host sink results remain scoped to Group 2A. Never infer successful CI, target compilation or hardware darkness from this document. Refresh source identities before implementation. Persist new findings in small repository note updates with explicit confirmation; do not rely on cross-turn sandbox variables.
