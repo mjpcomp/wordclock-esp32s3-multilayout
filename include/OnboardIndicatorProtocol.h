@@ -123,7 +123,7 @@ inline bool encodeReply(const m::Envelope&request,const c::Reply&value,char*outp
  doc["command"]="onboard-indicator";doc["schema"]=1;doc["requestId"]=request.requestId;doc["action"]=actionName(request.request.action);
  doc["status"]=statusName(value,request.request.action);doc["storageAttempted"]=value.storageAttempted;
  if(value.storageAttempted)doc["storageStatus"]=resultName(value.result);else doc["storageStatus"]=nullptr;
- if(value.state.owner.initialized)doc["session"]=token;else doc["session"]=nullptr;
+ if(value.state.stamp.session)doc["session"]=token;else doc["session"]=nullptr;
  doc["view"]=value.state.stamp.view;doc["expectedRevision"]=value.state.expectedRevision;doc["reloadRequired"]=value.state.reloadRequired;
  const auto&owner=value.state.owner;doc["initialized"]=owner.initialized;doc["hasRecord"]=owner.hasRecord;doc["storageFault"]=owner.fault;
  doc["draft"]=owner.initialized&&!owner.hasRecord&&!owner.fault;

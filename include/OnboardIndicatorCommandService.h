@@ -30,10 +30,14 @@ public:
  Service(const Service&)=delete;Service&operator=(const Service&)=delete;
  // Caller supplies a nonzero session that differs across service lifecycles.
  // True means initialized, not storage healthy. Repeated same-session begin is inert.
+ s::Result prepare(){
+  if(owner_.observation().initialized)return owner_.observation().lastResult;
+  owner_.begin();const s::Result result=owner_.observation().lastResult;observed(result);return result;
+ }
  bool begin(uint64_t session){
   if(begun_)return session==stamp_.session;
   if(!session)return false;
-  begun_=true;stamp_={session,1};owner_.begin();observed(owner_.observation().lastResult);return true;
+  (void)prepare();begun_=true;stamp_={session,1};return true;
  }
  Snapshot snapshot()const{return Snapshot{stamp_,revision_,reload_,owner_.observation()};}
  bool permitted(bool timeValid,bool timezoneReady,uint16_t minute)const{

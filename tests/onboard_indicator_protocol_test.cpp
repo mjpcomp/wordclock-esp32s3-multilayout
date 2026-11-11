@@ -26,6 +26,20 @@ int main(){
  for(const std::string text:{"", "[]", "{}{}", "{} junk", "{a:1}", "{\"a\":1,}", "{\"a\":[1,]}", "{\"a\":01}", "{\"a\":-1}", "{\"a\":1.0}", "{\"a\":1e2}", "{\"a\":/*x*/1}", "{\"a\":\"\\u0061\"}", "{\"a\":\"\\n\"}", "{\"a\":true false}", "{\"a\":[[[[0]]]]}"})assert(!syntax(text));
  assert(!syntax(std::string(1025,' ')));assert(!syntax(std::string("{\"a\":\"")+char(0x80)+"\"}"));
 #ifndef ONBOARD_SYNTAX_ONLY
+ {
+  Memory fresh; c::Service prepared(fresh);
+  assert(prepared.prepare()==s::Result::Missing&&fresh.reads==1);
+  prepared.prepare();assert(fresh.reads==1);
+  m::Envelope boot={};strcpy(boot.requestId,"boot");boot.request.action=c::Action::Snapshot;
+  char data[wire::kReplyBytes];size_t count=0;
+  auto notReady=prepared.handle(c::Request{});
+  assert(wire::encodeReply(boot,notReady,data,sizeof(data),count));
+  StaticJsonDocument<1536> decoded;
+  assert(!deserializeJson(decoded,static_cast<const char*>(data),count));
+  assert(decoded["session"].isNull()&&decoded["initialized"].as<bool>());
+  assert(!strcmp(decoded["status"],"not-initialized"));
+  assert(prepared.begin(7)&&fresh.reads==1);
+ }
  const std::string snapshot=R"({"command":"onboard-indicator","schema":1,"requestId":"tab-1","action":"snapshot"})";
  const std::string reload=R"({"command":"onboard-indicator","schema":1,"requestId":"r","action":"reload","expectedSession":"ffffffffffffffff","expectedView":1})";
  const std::string save=R"({"command":"onboard-indicator","schema":1,"requestId":"s","action":"save","expectedSession":"ffffffffffffffff","expectedView":1,"expectedRevision":0,"mode":"scheduled","windows":[{"startMinute":1200,"endMinute":420}]})";

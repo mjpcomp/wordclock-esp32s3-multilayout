@@ -62,6 +62,7 @@ class Controller {
     }
 public:
     void reset() { *this = Controller(); }
+    void clearActiveEvents() { timeActive = frameActive = false; }
     bool noteTimeSync(uint32_t now) {
         if (timeSeen && uint32_t(now - timeAt) < TIME_GAP_MS) return false;
         timeSeen = timeActive = true; timeAt = now; return true;
