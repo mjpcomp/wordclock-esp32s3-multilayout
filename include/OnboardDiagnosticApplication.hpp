@@ -8,7 +8,8 @@ inline void noteNtp(uint32_t) {}
 inline void noteRtc(uint32_t) {}
 inline void resetFrames() {}
 inline void connecting(bool) {}
-inline void service() {}
+inline void suppress() {}
+inline void service(bool = true) {}
 #endif
 }
 #if WORDCLOCK_TEST_MODE != 0
@@ -54,7 +55,9 @@ inline void noteNtp(uint32_t ms) {
 inline void noteRtc(uint32_t ms) { runtime.noteRtcTime(ms); }
 inline void resetFrames() { runtime.resetFrames(); }
 inline void connecting(bool active) { connectionAttempt = active; }
-inline void service() {
+// Main/control-loop only; never call from an event callback or interrupt.
+inline void suppress() { runtime.suppress(millis()); }
+inline void service(bool permitted = true) {
     using onboardDiagnostic::Network;
     const uint32_t ms = millis();
     const int wifiStatus = WiFi.status();
@@ -68,7 +71,7 @@ inline void service() {
     runtime.service(ms, state, time(nullptr) > 100000000,
                     externalRTC, unexpectedBackend,
                     stats.countersAvailable && !unexpectedBackend,
-                    stats.changedFrames);
+                    stats.changedFrames, permitted);
     reportTimeState(ms, wifiStatus);
 }
 }

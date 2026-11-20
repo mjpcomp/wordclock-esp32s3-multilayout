@@ -15,6 +15,9 @@ CPP=r"""#include <stdint.h>
 #if WORDCLOCK_TEST_MODE != 0
 static std::string logText;
 static unsigned reportCalls=0, sinkCalls=0;
+static unsigned suppressionCalls=0;
+static uint32_t lastSuppressionMs=0;
+static bool lastPermitted=false;
 struct SerialMock { void printf(const char *fmt,...) {
  char b[512];va_list args;va_start(args,fmt);vsnprintf(b,sizeof(b),fmt,args);va_end(args);
  logText+=b; ++reportCalls;
@@ -44,9 +47,10 @@ time_t fakeTime(time_t*){return testEpoch;}
 #include "OnboardDiagnosticApplication.hpp"
 int main(){using namespace onboardDiagnosticApplication;
 #if WORDCLOCK_TEST_MODE == 0
- service();noteNtp(0);noteRtc(0);resetFrames();connecting(true);
+ service();service(false);service(true);suppress();
+ noteNtp(0);noteRtc(0);resetFrames();connecting(true);
 #else
- service();assert(reportCalls==3&&sinkCalls==1);
+ service();assert(reportCalls==3&&sinkCalls==1&&lastPermitted);
  assert(logText.find("dns0=192.168.16.1 dns1=0.0.0.0")!=std::string::npos);
  assert(logText.find("epoch=1700000000 time_valid=1 ntp_events=0")!=std::string::npos);
  assert(logText.find("configured_ntp=168.61.215.74")!=std::string::npos);
@@ -64,6 +68,23 @@ int main(){using namespace onboardDiagnosticApplication;
  testMs=UINT32_MAX-499;service();n=reportCalls;
  testMs=500;service();assert(reportCalls==n);
  testMs=29500;service();assert(reportCalls==n+3);
+ n=reportCalls;
+ unsigned services=sinkCalls;
+ service(false);
+ assert(sinkCalls==services+1&&!lastPermitted&&reportCalls==n);
+ service(true);
+ assert(sinkCalls==services+2&&lastPermitted&&reportCalls==n);
+ testMs=29600;
+ suppress();
+ assert(suppressionCalls==1&&lastSuppressionMs==29600);
+ assert(sinkCalls==services+2&&reportCalls==n);
+ noteNtp(29610);
+ assert(suppressionCalls==1&&sinkCalls==services+2&&reportCalls==n);
+ service();
+ assert(sinkCalls==services+3&&lastPermitted&&reportCalls==n);
+ suppress();
+ assert(suppressionCalls==2&&lastSuppressionMs==29600);
+ assert(sinkCalls==services+3&&reportCalls==n);
 #endif
 }
 """
@@ -73,7 +94,10 @@ enum class Network {Offline,Connecting,AccessPoint,Connected};
 template<class Sink,bool Rtc>class Runtime {public:
  explicit Runtime(Sink&){}
  void noteNtpSync(uint32_t){}void noteRtcTime(uint32_t){}void resetFrames(){}
- void service(uint32_t,Network,bool,bool,bool,bool,uint32_t){++sinkCalls;}
+ void suppress(uint32_t now){++suppressionCalls;lastSuppressionMs=now;}
+ void service(uint32_t,Network,bool,bool,bool,bool,uint32_t,bool permitted){
+  ++sinkCalls;lastPermitted=permitted;
+ }
 };
 }
 """
@@ -99,5 +123,5 @@ def main():
     '-DWORDCLOCK_TEST_MODE='+str(mode),'-I'+str(work),str(work/'test.cpp'),
     '-o',str(work/'test')],check=True)
    subprocess.run([str(work/'test')],check=True)
- print('PASS: time-report modes0/1/2, fields, callback deferral, rate limits, WiFi/event triggers, wrap and sink service forwarding; interfaces mocked.')
+ print('PASS: time-report modes0/1/2, fields, callback deferral, rate limits, WiFi/event triggers, wrap, permission forwarding and main-loop suppression forwarding; interfaces mocked.')
 if __name__=='__main__':main()
