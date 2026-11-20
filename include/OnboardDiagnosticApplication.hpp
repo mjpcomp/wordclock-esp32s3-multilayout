@@ -9,6 +9,7 @@ inline void noteRtc(uint32_t) {}
 inline void resetFrames() {}
 inline void connecting(bool) {}
 inline void suppress() {}
+inline void beforeNetworkWork() {}
 inline void service(bool = true) {}
 #endif
 }
@@ -22,6 +23,7 @@ onboardDiagnostic::Gpio48Sink sink;
 onboardDiagnostic::Runtime<onboardDiagnostic::Gpio48Sink,
                           clockTestPolicy::MODE == 2> runtime(sink);
 bool connectionAttempt = false;
+bool networkBlackout = false;
 std::atomic<uint32_t> observedNtpEvents{0};
 bool reported = false;
 uint32_t lastReportMs = 0, lastReportedEvents = 0;
@@ -56,7 +58,16 @@ inline void noteRtc(uint32_t ms) { runtime.noteRtcTime(ms); }
 inline void resetFrames() { runtime.resetFrames(); }
 inline void connecting(bool active) { connectionAttempt = active; }
 // Main/control-loop only; never call from an event callback or interrupt.
-inline void suppress() { runtime.suppress(millis()); }
+inline void suppress() {
+    networkBlackout = true;
+    runtime.suppress(millis());
+}
+// Main-task dispatch only. Nested synchronous callbacks may reach this only
+// after their enclosing dispatch has already requested black.
+inline void beforeNetworkWork() {
+    if (networkBlackout) return;
+    suppress();
+}
 inline void service(bool permitted = true) {
     using onboardDiagnostic::Network;
     const uint32_t ms = millis();
@@ -73,6 +84,12 @@ inline void service(bool permitted = true) {
                     stats.countersAvailable && !unexpectedBackend,
                     stats.changedFrames, permitted);
     reportTimeState(ms, wifiStatus);
+    networkBlackout = !permitted;
 }
 }
 #endif
+
+// One definition: this header is included once in WordClock.cpp.
+extern "C" void wordclockDiagnosticBeforeNetworkWork() {
+    onboardDiagnosticApplication::beforeNetworkWork();
+}
