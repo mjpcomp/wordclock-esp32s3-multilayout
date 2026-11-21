@@ -1,0 +1,221 @@
+/**
+ * Copyright (c) 2015 Markus Sattler. All rights reserved.
+ * This file is part of the WebSockets for Arduino.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+// Normalized-LF method excerpts, NOT complete upstream translation units.
+// Links2004/arduinoWebSockets tag 2.4.1, commit c5e7a5eb0896f762e423c31ff1a99cdf8c55a5af.
+// WebSockets.cpp blob 2d3a2547d17cf7bb904a8bdb5120415d66080d34.
+// WebSocketsServer.cpp blob e11e1cf7c8552531cd3fd681cde4260c27f41944.
+// BEGIN disconnect
+void WebSockets::clientDisconnect(WSclient_t * client, uint16_t code, char * reason, size_t reasonLen) {
+    DEBUG_WEBSOCKETS("[WS][%d][handleWebsocket] clientDisconnect code: %u\n", client->num, code);
+    if(client->status == WSC_CONNECTED && code) {
+        if(reason) {
+            sendFrame(client, WSop_close, (uint8_t *)reason, reasonLen);
+        } else {
+            uint8_t buffer[2];
+            buffer[0] = ((code >> 8) & 0xFF);
+            buffer[1] = (code & 0xFF);
+            sendFrame(client, WSop_close, &buffer[0], 2);
+        }
+    }
+    clientDisconnect(client);
+}
+// END disconnect
+// BEGIN write
+size_t WebSockets::write(WSclient_t * client, uint8_t * out, size_t n) {
+    if(out == NULL)
+        return 0;
+    if(client == NULL)
+        return 0;
+    unsigned long t = millis();
+    size_t len      = 0;
+    size_t total    = 0;
+    DEBUG_WEBSOCKETS("[write] n: %zu t: %lu\n", n, t);
+    while(n > 0) {
+        if(client->tcp == NULL) {
+            DEBUG_WEBSOCKETS("[write] tcp is null!\n");
+            break;
+        }
+
+        if(!client->tcp->connected()) {
+            DEBUG_WEBSOCKETS("[write] not connected!\n");
+            break;
+        }
+
+        if((millis() - t) > WEBSOCKETS_TCP_TIMEOUT) {
+            DEBUG_WEBSOCKETS("[write] write TIMEOUT! %lu\n", (millis() - t));
+            break;
+        }
+
+        len = client->tcp->write((const uint8_t *)out, n);
+        if(len) {
+            t = millis();
+            out += len;
+            n -= len;
+            total += len;
+            // DEBUG_WEBSOCKETS("write %d left %d!\n", len, n);
+        } else {
+            DEBUG_WEBSOCKETS("WS write %d failed left %d!\n", len, n);
+        }
+        if(n > 0) {
+            WEBSOCKETS_YIELD();
+        }
+    }
+    WEBSOCKETS_YIELD();
+    return total;
+}
+// END write
+// BEGIN heartbeat
+void WebSockets::handleHBTimeout(WSclient_t * client) {
+    if(client->pingInterval) {    // if heartbeat is enabled
+        uint32_t pi = millis() - client->lastPing;
+
+        if(client->pongReceived) {
+            client->pongTimeoutCount = 0;
+        } else {
+            if(pi > client->pongTimeout) {    // pong not received in time
+                client->pongTimeoutCount++;
+                client->lastPing = millis() - client->pingInterval - 500;    // force ping on the next run
+
+                DEBUG_WEBSOCKETS("[HBtimeout] pong TIMEOUT! lp=%d millis=%lu pi=%d count=%d\n", client->lastPing, millis(), pi, client->pongTimeoutCount);
+
+                if(client->disconnectTimeoutCount && client->pongTimeoutCount >= client->disconnectTimeoutCount) {
+                    DEBUG_WEBSOCKETS("[HBtimeout] count=%d, DISCONNECTING\n", client->pongTimeoutCount);
+                    clientDisconnect(client);
+                }
+            }
+        }
+    }
+}
+// END heartbeat
+// BEGIN drop
+void WebSocketsServerCore::dropNativeClient(WSclient_t * client) {
+    if(!client) {
+        return;
+    }
+    if(client->tcp) {
+        if(client->tcp->connected()) {
+#if(WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC) && (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP32) && (WEBSOCKETS_NETWORK_TYPE != NETWORK_RP2040)
+            client->tcp->flush();
+#endif
+            client->tcp->stop();
+        }
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC)
+        client->status = WSC_NOT_CONNECTED;
+#else
+        delete client->tcp;
+#endif
+        client->tcp = NULL;
+    }
+}
+// END drop
+// BEGIN cleanup
+void WebSocketsServerCore::clientDisconnect(WSclient_t * client) {
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_RP2040)
+    if(client->isSSL && client->ssl) {
+        if(client->ssl->connected()) {
+            client->ssl->flush();
+            client->ssl->stop();
+        }
+        delete client->ssl;
+        client->ssl = NULL;
+        client->tcp = NULL;
+    }
+#endif
+
+    dropNativeClient(client);
+
+    client->cUrl         = "";
+    client->cKey         = "";
+    client->cProtocol    = "";
+    client->cVersion     = 0;
+    client->cIsUpgrade   = false;
+    client->cIsWebsocket = false;
+
+    client->cWsRXsize = 0;
+
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC)
+    client->cHttpLine = "";
+#endif
+
+    client->status = WSC_NOT_CONNECTED;
+
+    DEBUG_WEBSOCKETS("[WS-Server][%d] client disconnected.\n", client->num);
+
+    runCbEvent(client->num, WStype_DISCONNECTED, NULL, 0);
+}
+// END cleanup
+// BEGIN connected
+bool WebSocketsServerCore::clientIsConnected(WSclient_t * client) {
+    if(!client->tcp) {
+        return false;
+    }
+
+    if(client->tcp->connected()) {
+        if(client->status != WSC_NOT_CONNECTED) {
+            return true;
+        }
+    } else {
+        // client lost
+        if(client->status != WSC_NOT_CONNECTED) {
+            DEBUG_WEBSOCKETS("[WS-Server][%d] client connection lost.\n", client->num);
+            // do cleanup
+            clientDisconnect(client);
+        }
+    }
+
+    if(client->tcp) {
+        // do cleanup
+        DEBUG_WEBSOCKETS("[WS-Server][%d] client list cleanup.\n", client->num);
+        clientDisconnect(client);
+    }
+
+    return false;
+}
+// END connected
+// BEGIN data
+void WebSocketsServerCore::handleClientData(void) {
+    WSclient_t * client;
+    for(uint8_t i = 0; i < WEBSOCKETS_SERVER_CLIENT_MAX; i++) {
+        client = &_clients[i];
+        if(clientIsConnected(client)) {
+            int len = client->tcp->available();
+            if(len > 0) {
+                // DEBUG_WEBSOCKETS("[WS-Server][%d][handleClientData] len: %d\n", client->num, len);
+                switch(client->status) {
+                    case WSC_HEADER: {
+                        String headerLine = client->tcp->readStringUntil('\n');
+                        handleHeader(client, &headerLine);
+                    } break;
+                    case WSC_CONNECTED:
+                        WebSockets::handleWebsocket(client);
+                        break;
+                    default:
+                        DEBUG_WEBSOCKETS("[WS-Server][%d][handleClientData] unknown client status %d\n", client->num, client->status);
+                        WebSockets::clientDisconnect(client, 1002);
+                        break;
+                }
+            }
+
+            handleHBPing(client);
+            handleHBTimeout(client);
+        }
+        WEBSOCKETS_YIELD();
+    }
+}
+// END data
