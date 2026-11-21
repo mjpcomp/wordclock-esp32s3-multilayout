@@ -1,0 +1,92 @@
+/*
+  WebServer.cpp - Dead simple web-server.
+  Supports only one simultaneous client, knows how to handle GET and POST.
+
+  Copyright (c) 2014 Ivan Grokhotkov. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  Modified 8 May 2015 by Hristo Gochkov (proper post and file upload handling)
+*/
+// Excerpt: espressif/arduino-esp32 tag 2.0.17, libraries/WebServer/src/WebServer.cpp
+// Complete-source Git blob: d296ce716b0bacdce36f0b97ee71dabe9a49bbdf
+// BEGIN PINNED METHOD
+void WebServer::handleClient() {
+  if (_currentStatus == HC_NONE) {
+    _currentClient = _server.available();
+    if (!_currentClient) {
+      if (_nullDelay) {
+        delay(1);
+      }
+      return;
+    }
+
+    log_v("New client: client.localIP()=%s", _currentClient.localIP().toString().c_str());
+
+    _currentStatus = HC_WAIT_READ;
+    _statusChange = millis();
+  }
+
+  bool keepCurrentClient = false;
+  bool callYield = false;
+
+  if (_currentClient.connected()) {
+    switch (_currentStatus) {
+    case HC_NONE:
+      // No-op to avoid C++ compiler warning
+      break;
+    case HC_WAIT_READ:
+      // Wait for data from client to become available
+      if (_currentClient.available()) {
+        if (_parseRequest(_currentClient)) {
+          // because HTTP_MAX_SEND_WAIT is expressed in milliseconds,
+          // it must be divided by 1000
+          _currentClient.setTimeout(HTTP_MAX_SEND_WAIT / 1000);
+          _contentLength = CONTENT_LENGTH_NOT_SET;
+          _handleRequest();
+
+// Fix for issue with Chrome based browsers: https://github.com/espressif/arduino-esp32/issues/3652
+//           if (_currentClient.connected()) {
+//             _currentStatus = HC_WAIT_CLOSE;
+//             _statusChange = millis();
+//             keepCurrentClient = true;
+//           }
+        }
+      } else { // !_currentClient.available()
+        if (millis() - _statusChange <= HTTP_MAX_DATA_WAIT) {
+          keepCurrentClient = true;
+        }
+        callYield = true;
+      }
+      break;
+    case HC_WAIT_CLOSE:
+      // Wait for client to close the connection
+      if (millis() - _statusChange <= HTTP_MAX_CLOSE_WAIT) {
+        keepCurrentClient = true;
+        callYield = true;
+      }
+    }
+  }
+
+  if (!keepCurrentClient) {
+    _currentClient = WiFiClient();
+    _currentStatus = HC_NONE;
+    _currentUpload.reset();
+    _currentRaw.reset();
+  }
+
+  if (callYield) {
+    yield();
+  }
+}
